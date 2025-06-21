@@ -1,23 +1,16 @@
-@extends('layouts.app')
+{{-- resources/views/home.blade.php --}}
+@extends('adminlte::page')
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+@section('title', 'Dashboard')             {{-- Título de la pestaña --}}
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+@section('content_header')                 {{-- Encabezado dentro de la página --}}
+    <h1>Dashboard</h1>
+@stop
 
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+@section('content')                        {{-- Contenido principal --}}
+    @if (session('status'))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
+
+    <p>¡Hola Cipote!</p>
+@stop

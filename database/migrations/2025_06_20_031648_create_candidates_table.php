@@ -47,7 +47,7 @@ return new class extends Migration
         $table->string('segundo_nombre', 60)->nullable();
         $table->string('primer_apellido', 60);
         $table->string('segundo_apellido', 60)->nullable();
-
+        $table->string('descripcion')->nullable();
         $table->timestamps();
     });
 }
