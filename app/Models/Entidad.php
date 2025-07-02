@@ -9,6 +9,7 @@ class Entidad extends Model
 {
     use HasFactory;
 
+    protected $table = 'entidades';
     protected $fillable = ['name'];
 
     public function nominas()

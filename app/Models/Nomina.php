@@ -9,6 +9,7 @@ class Nomina extends Model
 {
     use HasFactory;
 
+    protected $table = 'nominas';
     protected $fillable = [
         'entidad_id',
         'name',
