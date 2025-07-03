@@ -40,6 +40,17 @@
                     </select>
                 </div>
 
+                {{-- Departamento --}}
+            <div class="form-group col-md-6">
+                <label for="departamento_id"><i class="fas fa-map mr-1"></i>Departamento</label>
+                <select name="departamento_id" id="departamento_id" class="form-control">
+                    <option value="">Seleccione…</option>
+                    @foreach($departamentos as $id => $name)
+                        <option value="{{ $id }}" @selected(old('departamento_id')==$id)>{{ $name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
                 {{-- Municipio --}}
                 <div class="form-group col-md-6">
                     <label for="municipio_id"><i class="fas fa-map-marker-alt mr-1"></i>Municipio</label>

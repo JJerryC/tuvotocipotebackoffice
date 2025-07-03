@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Candidate, Party, Nomina, Municipio, Cargo, Sexo};
+use App\Models\{Candidate, Party, Nomina, Departamento, Municipio, Cargo, Sexo};
 use Illuminate\Http\Request;
 
 class CandidateController extends Controller
@@ -19,6 +19,7 @@ class CandidateController extends Controller
     return view('candidates.create', [
         'parties'    => Party::orderBy('name')->pluck('name', 'id'),
         'nominas'    => Nomina::orderBy('name')->pluck('name', 'id'),
+        'departamentos' => Departamento::orderBy('name')->pluck('name', 'id'),
         'municipios' => Municipio::orderBy('name')->pluck('name', 'id'),
         'cargos'     => Cargo::orderBy('name')->pluck('name', 'id'),
         'sexos'      => Sexo::orderBy('description')->pluck('description', 'id'),
@@ -31,6 +32,7 @@ class CandidateController extends Controller
         $data = $request->validate([
             'party_id'        => 'required|exists:parties,id',
             'nomina_id'       => 'required|exists:nominas,id',
+            'departamento_id'   => 'required|exists:departamentos,id', 
             'municipio_id'    => 'required|exists:municipios,id',
             'cargo_id'        => 'required|exists:cargos,id',
             'sexo_id'         => 'required|exists:sexos,id',
