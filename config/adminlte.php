@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
+    'logo' => '<b> &nbsp </b>',
+    'logo_img' => 'images/logoazul.webp',
+    'logo_img_class'  => 'brand-image elevation-0',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Tu voto cipote',
 
     /*
     |--------------------------------------------------------------------------
@@ -298,92 +298,97 @@ return [
     |
     */
 
-    'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
+'menu' => [
 
-        // Sidebar items:
-        [
-            'type' => 'sidebar-menu-search',
-            'text' => 'search',
-        ],
-        [
-            'text' => 'Dashboard',
-            'route' => 'home',
-            'icon' => 'fas fa-fw fa-tachometer-alt',
-        ],
-        
-        ['header' => 'GESTIÓN DE CANDIDATOS'],
-        [
-            'text' => 'Importar Candidatos',
-            'route' => 'candidates.import',
-            'icon' => 'fas fa-fw fa-upload',
-            'icon_color' => 'blue',
-        ],
-        [
-            'text' => 'Candidatos',
-            'icon' => 'fas fa-fw fa-users',
-            'submenu' => [
-                [
-                    'text' => 'Ver Todos',
-                    'url' => '#',
-                    'icon' => 'fas fa-fw fa-list',
-                ],
-                [
-                    'text' => 'Importar Excel',
-                    'route' => 'candidates.import',
-                    'icon' => 'fas fa-fw fa-file-excel',
-                ],
-                [
-                    'text' => 'Exportar Datos',
-                    'url' => '#',
-                    'icon' => 'fas fa-fw fa-download',
-                ],
+    /* ---------- NAVBAR ---------- */
+    [
+        'type' => 'navbar-search',
+        'text' => 'search',
+        'topnav_right' => true,
+    ],
+    [
+        'type' => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
+
+    /* ---------- SIDEBAR ---------- */
+    [
+        'type'  => 'sidebar-menu-search',
+        'text'  => 'search',
+    ],
+    [
+        'text'  => 'Dashboard',
+        'route' => 'home',
+        'icon'  => 'fas fa-fw fa-tachometer-alt',
+    ],
+
+    ['header' => 'GESTIÓN DE CANDIDATOS'],
+    [
+        'text'  => 'Candidatos',
+        'icon'  => 'fas fa-fw fa-users',
+        'submenu' => [
+            [
+                'text'  => 'Ver Todos',
+                'route' => 'candidates.index',
+                'icon'  => 'fas fa-fw fa-list',
+            ],
+            [
+                'text'  => 'Crear Candidato',
+                'route' => 'candidates.create',
+                'icon'  => 'fas fa-fw fa-plus-circle',
+                'can'   => 'manage candidates',
+            ],
+            [
+                'text'  => 'Importar Candidatos (Excel)',   // ← único ítem de importación
+                'route' => 'candidates.import',
+                'icon'  => 'fas fa-fw fa-file-excel',
+            ],
+            [
+                'text'  => 'Exportar Datos',
+                'url'   => '#', // cuando tengas route('candidates.export')
+                'icon'  => 'fas fa-fw fa-download',
             ],
         ],
-
-        ['header' => 'CATÁLOGOS'],
-        [
-            'text' => 'Partidos Políticos',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-flag',
-        ],
-        [
-            'text' => 'Departamentos',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-map-marker-alt',
-        ],
-        [
-            'text' => 'Municipios',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-city',
-        ],
-        [
-            'text' => 'Cargos',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-briefcase',
-        ],
-
-        ['header' => 'CONFIGURACIÓN'],
-        [
-            'text' => 'Usuarios',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-user-cog',
-        ],
-        [
-            'text' => 'Permisos',
-            'url' => '#',
-            'icon' => 'fas fa-fw fa-shield-alt',
-        ],
     ],
+
+    ['header' => 'CATÁLOGOS'],
+    [
+        'text' => 'Partidos Políticos',
+        'url'  => '#',
+        'icon' => 'fas fa-fw fa-flag',
+    ],
+    [
+        'text' => 'Departamentos',
+        'url'  => '#',
+        'icon' => 'fas fa-fw fa-map-marker-alt',
+    ],
+    [
+        'text' => 'Municipios',
+        'url'  => '#',
+        'icon' => 'fas fa-fw fa-city',
+    ],
+    [
+        'text' => 'Cargos',
+        'url'  => '#',
+        'icon' => 'fas fa-fw fa-briefcase',
+    ],
+
+    ['header' => 'CONFIGURACIÓN'],
+    [
+        'text' => 'Usuarios',
+        'route'=> 'users.index',
+        'icon' => 'fas fa-fw fa-user-cog',
+        'role' => 'admin',
+    ],
+ [
+    'text' => 'Roles & Permisos',          
+    'route'=> 'roles.index',               
+    'icon' => 'fas fa-fw fa-user-shield',  
+    'role' => 'admin',                   
+],
+],
+
+
 
     /*
     |--------------------------------------------------------------------------

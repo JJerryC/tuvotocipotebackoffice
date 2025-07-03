@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CandidateImportController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
 
 // Redirige la ruta raíz al login
 Route::redirect('/', '/login');
@@ -28,4 +31,33 @@ Route::middleware('auth')->group(function () {
     
     // Ruta para limpiar base de datos
     Route::post('/candidates/clear-database', [CandidateImportController::class, 'clearDatabase'])->name('candidates.clear-database');
+
+    // Protegidas con Spatie → solo usuarios con permiso "manage candidates"
+    Route::resource('candidates', CandidateController::class)
+      ->middleware(['auth', 'can:manage candidates']);
+
+
+      Route::middleware(['auth', 'role:admin'])   // sólo admins
+     ->resource('users', UserController::class)
+     ->only(['index', 'edit', 'update']);   // no creamos ni borramos usuarios aquí
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get ('roles',                 [RoleController::class, 'index'])->name('roles.index');
+    Route::get ('roles/{role}/edit',     [RoleController::class, 'edit'])->name('roles.edit');
+    Route::put ('roles/{role}',          [RoleController::class, 'update'])->name('roles.update');
+});
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get ('roles',              [RoleController::class, 'index' ])->name('roles.index');
+    Route::get ('roles/create',       [RoleController::class, 'create'])->name('roles.create');   // 🔹 nuevo
+    Route::post('roles',              [RoleController::class, 'store' ])->name('roles.store');    // 🔹 nuevo
+    Route::get ('roles/{role}/edit',  [RoleController::class, 'edit'  ])->name('roles.edit');
+    Route::put ('roles/{role}',       [RoleController::class, 'update'])->name('roles.update');
+});
+
+Route::middleware(['auth','role:admin'])->group(function () {
+    Route::resource('users', UserController::class)
+          ->only(['index','create','store','edit','update']);
+});
+
 });
