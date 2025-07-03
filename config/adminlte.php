@@ -316,81 +316,72 @@ return [
             'text' => 'search',
         ],
         [
-            'text' => 'blog',
-            'url' => 'admin/blog',
-            'can' => 'manage-blog',
+            'text' => 'Dashboard',
+            'route' => 'home',
+            'icon' => 'fas fa-fw fa-tachometer-alt',
+        ],
+        
+        ['header' => 'GESTIÓN DE CANDIDATOS'],
+        [
+            'text' => 'Importar Candidatos',
+            'route' => 'candidates.import',
+            'icon' => 'fas fa-fw fa-upload',
+            'icon_color' => 'blue',
         ],
         [
-            'text' => 'pages',
-            'url' => 'admin/pages',
-            'icon' => 'far fa-fw fa-file',
-            'label' => 4,
-            'label_color' => 'success',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        [
-            'text' => 'multilevel',
-            'icon' => 'fas fa-fw fa-share',
+            'text' => 'Candidatos',
+            'icon' => 'fas fa-fw fa-users',
             'submenu' => [
                 [
-                    'text' => 'level_one',
+                    'text' => 'Ver Todos',
                     'url' => '#',
+                    'icon' => 'fas fa-fw fa-list',
                 ],
                 [
-                    'text' => 'level_one',
-                    'url' => '#',
-                    'submenu' => [
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                        ],
-                        [
-                            'text' => 'level_two',
-                            'url' => '#',
-                            'submenu' => [
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                                [
-                                    'text' => 'level_three',
-                                    'url' => '#',
-                                ],
-                            ],
-                        ],
-                    ],
+                    'text' => 'Importar Excel',
+                    'route' => 'candidates.import',
+                    'icon' => 'fas fa-fw fa-file-excel',
                 ],
                 [
-                    'text' => 'level_one',
+                    'text' => 'Exportar Datos',
                     'url' => '#',
+                    'icon' => 'fas fa-fw fa-download',
                 ],
             ],
         ],
-        ['header' => 'labels'],
+
+        ['header' => 'CATÁLOGOS'],
         [
-            'text' => 'important',
-            'icon_color' => 'red',
+            'text' => 'Partidos Políticos',
             'url' => '#',
+            'icon' => 'fas fa-fw fa-flag',
         ],
         [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
+            'text' => 'Departamentos',
             'url' => '#',
+            'icon' => 'fas fa-fw fa-map-marker-alt',
         ],
         [
-            'text' => 'information',
-            'icon_color' => 'cyan',
+            'text' => 'Municipios',
             'url' => '#',
+            'icon' => 'fas fa-fw fa-city',
+        ],
+        [
+            'text' => 'Cargos',
+            'url' => '#',
+            'icon' => 'fas fa-fw fa-briefcase',
+        ],
+
+        ['header' => 'CONFIGURACIÓN'],
+        [
+            'text' => 'Usuarios',
+            'url' => '#',
+            'icon' => 'fas fa-fw fa-user-cog',
+        ],
+        [
+            'text' => 'Permisos',
+            'url' => '#',
+            'icon' => 'fas fa-fw fa-shield-alt',
         ],
     ],
 

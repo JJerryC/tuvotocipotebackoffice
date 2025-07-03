@@ -9,6 +9,7 @@ class Cargo extends Model
 {
     use HasFactory;
 
+    protected $table = 'cargos';
     protected $fillable = ['name'];
 
     public function candidates()

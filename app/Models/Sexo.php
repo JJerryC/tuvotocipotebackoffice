@@ -9,6 +9,7 @@ class Sexo extends Model
 {
     use HasFactory;
 
+    protected $table = 'sexos';
     protected $fillable = [
         'code',
         'description',
