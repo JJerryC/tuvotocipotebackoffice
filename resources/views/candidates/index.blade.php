@@ -8,16 +8,15 @@
 
 @section('content')
 <x-adminlte-card theme="primary" icon="fas fa-users" title="Candidatos">
-    <x-slot name="tools">
-        {{-- Botón crear (opcional) --}}
-        @can('manage candidates')
+
+    @can('manage candidates')
+        <div class="mb-3 text-right">
             <a href="{{ route('candidates.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus mr-1"></i> Nuevo
             </a>
-        @endcan
-    </x-slot>
+        </div>
+    @endcan
 
-    {{-- Tabla --}}
     @php
         $heads = ['ID', 'Nombre Completo', 'Partido', 'Municipio', 'Cargo', ['label' => 'Acciones', 'width' => 10]];
     @endphp
@@ -27,21 +26,28 @@
             <tr>
                 <td>{{ $c->id }}</td>
                 <td>{{ $c->nombre_completo }}</td>
-                <td>{{ $c->party->nombre ?? '—' }}</td>
-                <td>{{ $c->municipio->nombre ?? '—' }}</td>
-                <td>{{ $c->cargo->nombre ?? '—' }}</td>
+                <td>{{ $c->party->name ?? '—' }}</td>
+                <td>{{ $c->municipio->name ?? '—' }}</td>
+                <td>{{ $c->cargo->name ?? '—' }}</td>
                 <td>
-                    <a href="{{ route('candidates.edit', $c) }}" class="btn btn-xs btn-primary">
+                    <a href="{{ route('candidates.edit', $c) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    {{-- agrega destroy si lo necesitas --}}
+                    <form action="{{ route('candidates.destroy', $c) }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('¿Eliminar este candidato?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
                 </td>
             </tr>
         @endforeach
     </x-adminlte-datatable>
 
     <div class="mt-3">
-        {{ $candidates->links() }} {{-- paginación --}}
+        {{ $candidates->links() }}
     </div>
 </x-adminlte-card>
 @stop
