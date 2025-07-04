@@ -16,4 +16,10 @@ class Entidad extends Model
     {
         return $this->hasMany(Nomina::class);
     }
+
+    public function party()
+    {
+    return $this->belongsTo(Party::class);
+    }
+
 }

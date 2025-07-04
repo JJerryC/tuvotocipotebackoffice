@@ -15,4 +15,10 @@ class Party extends Model
     {
         return $this->hasMany(Candidate::class);
     }
+
+    public function entidades()
+    {
+    return $this->hasMany(Entidad::class);
+    }
+
 }

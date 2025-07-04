@@ -60,4 +60,9 @@ Route::middleware(['auth','role:admin'])->group(function () {
           ->only(['index','create','store','edit','update']);
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::resource('parties', PartyController::class);
+    Route::resource('entidades', EntidadController::class);
+});
+
 });
