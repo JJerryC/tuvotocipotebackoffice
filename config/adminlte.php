@@ -363,13 +363,13 @@ return [
         'icon' => 'fas fa-fw fa-map-marker-alt',
     ],
     [
-        'text' => 'Municipios',
-        'url'  => '#',
+        'text' => 'Nomina',
+        'url'  => 'nominas',
         'icon' => 'fas fa-fw fa-city',
     ],
     [
         'text' => 'Cargos',
-        'url'  => '#',
+        'url'  => 'cargos',
         'icon' => 'fas fa-fw fa-briefcase',
     ],
 
