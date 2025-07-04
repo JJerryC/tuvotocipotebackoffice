@@ -10,7 +10,7 @@ class Entidad extends Model
     use HasFactory;
 
     protected $table = 'entidades';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'party_id'];
 
     public function nominas()
     {

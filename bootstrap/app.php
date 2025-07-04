@@ -3,7 +3,13 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-// use App\Http\Middleware\RedirectIfAuthenticated;
+
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+
 use Spatie\Permission\Middleware\RoleMiddleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
@@ -24,25 +30,28 @@ return Application::configure(basePath: dirname(__DIR__))
      |------------------------------------------------------------*/
     ->withMiddleware(function (Middleware $middleware): void {
 
-        /* 🔸 ALIAS NATIVOS (ya venían, pon los que uses) */
+        /* 🔸 ALIAS NATIVOS */
         $middleware->alias([
             'auth'     => Illuminate\Auth\Middleware\Authenticate::class,
             'guest'    => Illuminate\Auth\Middleware\RedirectIfAuthenticated::class,
             'verified' => Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         ]);
 
-        /* 🔸 ALIAS DE SPATIE PERMISSION (lo importante) */
+        /* 🔸 ALIAS DE SPATIE PERMISSION */
         $middleware->alias([
-            'role'               => Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission'         => Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'role'               => RoleMiddleware::class,
+            'permission'         => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
 
-        /* (Opcional) middleware globales o de grupo:
-           $middleware->appendGlobal(\App\Http\Middleware\TrustProxies::class);
-           $middleware->web([...]);
-           $middleware->api([...]);
-        */
+        /* 🔸 GRUPO WEB: sesiones, cookies y CSRF */
+        $middleware->web([
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            VerifyCsrfToken::class,
+        ]);
     })
 
     /*-------------------------------------------------------------

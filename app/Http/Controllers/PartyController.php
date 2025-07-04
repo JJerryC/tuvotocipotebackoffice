@@ -2,63 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Party;
 use Illuminate\Http\Request;
 
 class PartyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct()
+    {
+        $this->middleware(['auth', 'can:manage candidates']); // O el permiso que corresponda
+    }
+
     public function index()
     {
-        //
+        $parties = Party::orderBy('name')->get();
+        return view('parties.index', compact('parties'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('parties.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:100|unique:parties,name',
+        ]);
+
+        Party::create($data);
+
+        return redirect()->route('parties.index')->with('success', 'Partido creado correctamente');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Party $party)
     {
-        //
+        return view('parties.show', compact('party'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit(Party $party)
     {
-        //
+        return view('parties.edit', compact('party'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Party $party)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:100|unique:parties,name,' . $party->id,
+        ]);
+
+        $party->update($data);
+
+        return redirect()->route('parties.index')->with('success', 'Partido actualizado correctamente');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Party $party)
     {
-        //
+        $party->delete();
+
+        return redirect()->route('parties.index')->with('success', 'Partido eliminado correctamente');
     }
 }

@@ -354,12 +354,12 @@ return [
     ['header' => 'CATÁLOGOS'],
     [
         'text' => 'Partidos Políticos',
-        'url'  => '#',
+        'url'  => 'parties',
         'icon' => 'fas fa-fw fa-flag',
     ],
     [
-        'text' => 'Departamentos',
-        'url'  => '#',
+        'text' => 'Entidades',
+        'url'  => 'entidades',
         'icon' => 'fas fa-fw fa-map-marker-alt',
     ],
     [

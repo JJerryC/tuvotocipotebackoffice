@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolesAndPermissionsSeeder::class, // crea roles & permisos
             AdminUserSeeder::class,           // crea admin@example.com y le asigna rol admin
+            BasicDataSeeder::class,
+            DefaultDataSeeder::class,
         ]);
     }
 }

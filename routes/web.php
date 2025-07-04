@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CandidateController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\EntidadController;
+use App\Http\Controllers\PartyController;
 
 // Redirige la ruta raíz al login
 Route::redirect('/', '/login');
@@ -62,7 +64,9 @@ Route::middleware(['auth','role:admin'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('parties', PartyController::class);
-    Route::resource('entidades', EntidadController::class);
+    Route::resource('entidades', EntidadController::class)->parameters([
+    'entidades' => 'entidad'  // aquí defines que el parámetro se llame {entidad}
+]);
 });
 
 });
