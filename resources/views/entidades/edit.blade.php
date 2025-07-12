@@ -3,29 +3,31 @@
 @section('title', 'Editar Entidad')
 
 @section('content_header')
-    <h1>Editar Entidad</h1>
+    <h1 class="m-0 text-dark">Editar Entidad</h1>
 @stop
 
 @section('content')
-<form action="{{ route('entidades.update', $entidad->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Editar Entidad" class="col-md-6">
+    <form action="{{ route('entidades.update', $entidad->id) }}" method="POST">
+        @csrf
+        @method('PUT')
 
-    <div class="form-group">
-        <label for="name">Nombre de la Entidad</label>
-        <input type="text" name="name" class="form-control" value="{{ old('name', $entidad->name) }}" required>
-    </div>
+        {{-- Campo: Nombre --}}
+        <x-adminlte-input name="name" label="Nombre de la Entidad" value="{{ old('name', $entidad->name) }}" required />
 
-    <div class="form-group">
-        <label for="party_id">Partido</label>
-        <select name="party_id" class="form-control" required>
+        {{-- Campo: Partido --}}
+        <x-adminlte-select name="party_id" label="Partido" required>
             <option value="">Seleccione…</option>
             @foreach($parties as $id => $name)
-                <option value="{{ $id }}" {{ $id == $entidad->party_id ? 'selected' : '' }}>{{ $name }}</option>
+                <option value="{{ $id }}" {{ old('party_id', $entidad->party_id) == $id ? 'selected' : '' }}>
+                    {{ $name }}
+                </option>
             @endforeach
-        </select>
-    </div>
+        </x-adminlte-select>
 
-    <button type="submit" class="btn btn-primary">Actualizar</button>
-</form>
+        {{-- Botones --}}
+        <x-adminlte-button type="submit" label="Actualizar" theme="primary" icon="fas fa-save" />
+        <a href="{{ route('entidades.index') }}" class="btn btn-default">Cancelar</a>
+    </form>
+</x-adminlte-card>
 @stop

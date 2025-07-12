@@ -24,8 +24,9 @@ class Candidate extends Model
         'primer_apellido',
         'segundo_apellido',
         'fotografia',
+        'fotografia_original',
         'reeleccion',
-        'planes_propuestas',
+        'propuestas',
     ];
 
     protected $casts = [

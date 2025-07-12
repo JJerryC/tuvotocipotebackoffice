@@ -2,28 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Candidate, Entidad, Party, Nomina, Departamento, Municipio, Cargo, Sexo};
+use App\Models\{
+    Candidate, Entidad, Party, Nomina,
+    Departamento, Municipio, Cargo, Sexo
+};
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class CandidateController extends Controller
 {
     public function __construct()
     {
-        // Protege todas las acciones con Spatie (permiso “manage candidates”)
         $this->middleware(['auth', 'permission:manage candidates']);
     }
 
-    /* ========== LISTAR CANDIDATOS ========== */
     public function index()
     {
-        $candidates = Candidate::with(['entidad', 'party', 'municipio', 'cargo'])
+        $candidates = Candidate::with(['entidad', 'party', 'municipio', 'cargo', 'departamento'])
             ->orderByDesc('id')
             ->paginate(15);
 
         return view('candidates.index', compact('candidates'));
     }
 
-    /* ========== FORMULARIO NUEVO ========== */
     public function create()
     {
         return view('candidates.create', [
@@ -37,12 +39,14 @@ class CandidateController extends Controller
         ]);
     }
 
-    /* ========== GUARDAR NUEVO ========== */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'entidad_id'       => 'required|exists:entidades,id',
-            'party_id'         => 'required|exists:parties,id',
+            'independiente'    => 'nullable|boolean',
+
+            'party_id'         => 'required_if:independiente,false|nullable|exists:parties,id',
+            'entidad_id'       => 'required_if:independiente,false|nullable|exists:entidades,id',
+
             'nomina_id'        => 'required|exists:nominas,id',
             'departamento_id'  => 'required|exists:departamentos,id',
             'municipio_id'     => 'required|exists:municipios,id',
@@ -54,7 +58,24 @@ class CandidateController extends Controller
             'segundo_nombre'   => 'nullable|string|max:60',
             'primer_apellido'  => 'required|string|max:60',
             'segundo_apellido' => 'nullable|string|max:60',
+            'fotografia'       => 'nullable|image|max:2048',
+            'reeleccion'       => 'nullable|boolean',
+            'propuestas'       => 'nullable|string|max:5000',
         ]);
+
+        if ($request->hasFile('fotografia')) {
+            $file = $request->file('fotografia');
+            $data['fotografia'] = $file->store('candidatos', 'public');
+            $data['fotografia_original'] = $file->getClientOriginalName();
+        }
+
+        $data['reeleccion'] = $request->has('reeleccion');
+        $data['independiente'] = $request->has('independiente');
+
+        if ($data['independiente']) {
+            $data['party_id'] = null;
+            $data['entidad_id'] = null;
+        }
 
         Candidate::create($data);
 
@@ -63,7 +84,6 @@ class CandidateController extends Controller
             ->with('success', 'Candidato creado correctamente');
     }
 
-    /* ========== FORMULARIO EDITAR ========== */
     public function edit(Candidate $candidate)
     {
         return view('candidates.edit', [
@@ -78,24 +98,50 @@ class CandidateController extends Controller
         ]);
     }
 
-    /* ========== ACTUALIZAR DATOS ========== */
     public function update(Request $request, Candidate $candidate)
     {
         $data = $request->validate([
-            'entidad_id'       => 'required|exists:entidades,id',
-            'party_id'         => 'required|exists:parties,id',
+            'independiente'    => 'nullable|boolean',
+
+            'party_id'         => 'required_if:independiente,false|nullable|exists:parties,id',
+            'entidad_id'       => 'required_if:independiente,false|nullable|exists:entidades,id',
+
             'nomina_id'        => 'required|exists:nominas,id',
             'departamento_id'  => 'required|exists:departamentos,id',
             'municipio_id'     => 'required|exists:municipios,id',
             'cargo_id'         => 'required|exists:cargos,id',
             'sexo_id'          => 'required|exists:sexos,id',
             'posicion'         => 'required|integer|min:1',
-            'numero_identidad' => 'required|string|max:25|unique:candidates,numero_identidad,' . $candidate->id,
+            'numero_identidad' => [
+                'required', 'string', 'max:25',
+                Rule::unique('candidates', 'numero_identidad')->ignore($candidate->id),
+            ],
             'primer_nombre'    => 'required|string|max:60',
             'segundo_nombre'   => 'nullable|string|max:60',
             'primer_apellido'  => 'required|string|max:60',
             'segundo_apellido' => 'nullable|string|max:60',
+            'fotografia'       => 'nullable|image|max:2048',
+            'reeleccion'       => 'nullable|boolean',
+            'propuestas'       => 'nullable|string|max:5000',
         ]);
+
+        if ($request->hasFile('fotografia')) {
+            if ($candidate->fotografia && Storage::disk('public')->exists($candidate->fotografia)) {
+                Storage::disk('public')->delete($candidate->fotografia);
+            }
+
+            $file = $request->file('fotografia');
+            $data['fotografia'] = $file->store('candidatos', 'public');
+            $data['fotografia_original'] = $file->getClientOriginalName();
+        }
+
+        $data['reeleccion'] = $request->has('reeleccion');
+        $data['independiente'] = $request->has('independiente');
+
+        if ($data['independiente']) {
+            $data['party_id'] = null;
+            $data['entidad_id'] = null;
+        }
 
         $candidate->update($data);
 
@@ -104,9 +150,12 @@ class CandidateController extends Controller
             ->with('success', 'Candidato actualizado correctamente');
     }
 
-    /* ========== ELIMINAR ========== */
     public function destroy(Candidate $candidate)
     {
+        if ($candidate->fotografia && Storage::disk('public')->exists($candidate->fotografia)) {
+            Storage::disk('public')->delete($candidate->fotografia);
+        }
+
         $candidate->delete();
 
         return redirect()

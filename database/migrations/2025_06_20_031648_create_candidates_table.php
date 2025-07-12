@@ -12,11 +12,13 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('party_id')
+                  ->nullable()
                   ->constrained('parties')
                   ->cascadeOnUpdate()
                   ->restrictOnDelete();
 
             $table->foreignId('entidad_id')
+                  ->nullable()
                   ->constrained('entidades')
                   ->cascadeOnUpdate()
                   ->restrictOnDelete();
@@ -57,6 +59,8 @@ return new class extends Migration
             $table->string('fotografia')->nullable()->comment('Ruta o nombre del archivo de la foto');
             $table->boolean('reeleccion')->default(false)->comment('¿Candidato a reelección?');
             $table->text('propuestas')->nullable()->comment('Planes y propuestas del candidato');
+            $table->boolean('independiente')->default(false)->comment('Indica si el candidato es independiente');
+            $table->string('fotografia_original')->nullable();
 
             $table->timestamps();
         });

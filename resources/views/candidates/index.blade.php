@@ -18,7 +18,7 @@
     @endcan
 
     @php
-        $heads = ['ID', 'Nombre Completo', 'Partido', 'Municipio', 'Cargo', ['label' => 'Acciones', 'width' => 10]];
+        $heads = ['ID', 'Nombre Completo', 'Partido', 'Departamento', 'Municipio', 'Cargo', ['label' => 'Acciones', 'width' => 10]];
     @endphp
 
     <x-adminlte-datatable id="candidatesTable" :heads="$heads" hoverable striped>
@@ -27,6 +27,7 @@
                 <td>{{ $c->id }}</td>
                 <td>{{ $c->nombre_completo }}</td>
                 <td>{{ $c->party->name ?? '—' }}</td>
+                <td>{{ $c->departamento->name ?? '—' }}</td>
                 <td>{{ $c->municipio->name ?? '—' }}</td>
                 <td>{{ $c->cargo->name ?? '—' }}</td>
                 <td>
