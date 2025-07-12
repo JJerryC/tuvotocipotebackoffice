@@ -11,12 +11,27 @@ use App\Http\Controllers\EntidadController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\NominaController;
+use App\Models\Entidad;
+use App\Models\Municipio;
+use App\Models\Party;
+use App\Models\Departamento;
+
 
 // Redirige la ruta raíz al login
 Route::redirect('/', '/login');
 
 // Rutas de autenticación (login, registro, logout…)
 Auth::routes();
+
+Route::get('/api/partidos/{party}/entidades', function (Party $party) {
+    // Retorna entidades relacionadas al partido
+    return response()->json($party->entidades()->select('id', 'name')->get());
+});
+
+Route::get('/api/departamentos/{departamento}/municipios', function (Departamento $departamento) {
+    // Retorna municipios relacionados al departamento
+    return response()->json($departamento->municipios()->select('id', 'name')->get());
+});
 
 // Agrupa bajo autenticación todas las rutas que necesiten estar protegidas
 Route::middleware('auth')->group(function () {

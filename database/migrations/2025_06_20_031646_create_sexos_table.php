@@ -18,12 +18,6 @@ public function up(): void
         $table->string('description');
         $table->timestamps();
     });
-
-    DB::table('sexos')->insert([
-        ['code' => 'M', 'description' => 'Masculino'],
-        ['code' => 'F', 'description' => 'Femenino'],
-        ['code' => 'O', 'description' => 'Otro'],
-    ]);
 }
 
     /**

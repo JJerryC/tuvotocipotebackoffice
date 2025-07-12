@@ -17,7 +17,7 @@
         </button>
     </div>
 
-    <form id="candidate-form" action="{{ route('candidates.store') }}" method="POST" autocomplete="off">
+    <form id="candidate-form" action="{{ route('candidates.store') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
             <div class="row">
@@ -34,7 +34,7 @@
                     @error('party_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                {{-- Entidad (cargada tras elegir partido) --}}
+                {{-- Entidad --}}
                 <div class="col-md-6 form-group">
                     <label for="entidad_id"><i class="fas fa-building mr-1"></i>Entidad</label>
                     <select name="entidad_id" id="entidad_id"
@@ -158,6 +158,30 @@
                            class="form-control @error('segundo_apellido') is-invalid @enderror"
                            value="{{ old('segundo_apellido') }}">
                     @error('segundo_apellido')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+
+                {{-- Fotografía --}}
+                <div class="col-md-6 form-group">
+                    <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
+                    <input type="file" name="fotografia" id="fotografia"
+                           class="form-control-file @error('fotografia') is-invalid @enderror" accept="image/*">
+                    @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                </div>
+
+                {{-- Candidato a reelección --}}
+                <div class="col-md-6 form-group d-flex align-items-center">
+                    <div class="form-check">
+                        <input type="checkbox" name="reeleccion" id="reeleccion" class="form-check-input" value="1" @checked(old('reeleccion'))>
+                        <label for="reeleccion" class="form-check-label">Candidato a reelección</label>
+                    </div>
+                </div>
+
+                {{-- Planes y propuestas --}}
+                <div class="col-md-12 form-group">
+                    <label for="planes_propuestas"><i class="fas fa-file-alt mr-1"></i>Planes y propuestas</label>
+                    <textarea name="planes_propuestas" id="planes_propuestas" rows="4"
+                              class="form-control @error('planes_propuestas') is-invalid @enderror">{{ old('planes_propuestas') }}</textarea>
+                    @error('planes_propuestas')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
             </div>
         </div>
