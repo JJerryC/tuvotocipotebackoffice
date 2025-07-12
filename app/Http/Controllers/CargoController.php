@@ -12,7 +12,7 @@ class CargoController extends Controller
      */
     public function index()
     {
-        $cargos = Cargo::all();
+        $cargos = Cargo::orderBy('name')->get(); // Todos sin paginar
         return view('cargos.index', compact('cargos'));
     }
 

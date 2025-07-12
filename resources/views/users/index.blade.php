@@ -11,18 +11,16 @@
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between">
-        <span>Listado</span>
+<x-adminlte-card>
 
+    <div class="mb-3 text-right">
         <a href="{{ route('users.create') }}" class="btn btn-sm btn-success">
             <i class="fas fa-user-plus mr-1"></i> Nuevo
         </a>
     </div>
 
-    <div class="card-body table-responsive p-0">
-        <table class="table table-hover">
-            <thead>
+    <table id="usersTable" class="table table-hover table-bordered">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Nombre</th>
@@ -30,29 +28,44 @@
                 <th>Roles</th>
                 <th style="width: 100px">Acciones</th>
             </tr>
-            </thead>
-            <tbody>
-            @foreach($users as $u)
-                <tr>
-                    <td>{{ $u->id }}</td>
-                    <td>{{ $u->name }}</td>
-                    <td>{{ $u->email }}</td>
-                    <td>
-                        @foreach($u->roles as $role)
-                            <span class="badge bg-info">{{ $role->name }}</span>
-                        @endforeach
-                    </td>
-                    <td>
-                        <a href="{{ route('users.edit', $u) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-user-cog"></i>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
+        </thead>
+        <tbody>
+        @foreach($users as $u)
+            <tr>
+                <td>{{ $u->id }}</td>
+                <td>{{ $u->name }}</td>
+                <td>{{ $u->email }}</td>
+                <td>
+                    @foreach($u->roles as $role)
+                        <span class="badge bg-info">{{ $role->name }}</span>
+                    @endforeach
+                </td>
+                <td>
+                    <a href="{{ route('users.edit', $u) }}" class="btn btn-sm btn-primary">
+                        <i class="fas fa-user-cog"></i>
+                    </a>
+                </td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
 
-    <div class="card-footer">{{ $users->links() }}</div>
-</div>
+</x-adminlte-card>
 @stop
+
+@push('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
+
+@push('js')
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#usersTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
+    });
+});
+</script>
+@endpush

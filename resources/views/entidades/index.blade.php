@@ -7,30 +7,34 @@
 @stop
 
 @section('content')
-    <x-adminlte-card theme="primary" icon="fas fa-building" title="Entidades">
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Entidades">
 
-        @can('manage candidates')
-            <div class="mb-3 text-right">
-                <a href="{{ route('entidades.create') }}" class="btn btn-sm btn-success">
-                    <i class="fas fa-plus mr-1"></i> Nuevo
-                </a>
-            </div>
-        @endcan
+    @can('manage candidates')
+        <div class="mb-3 text-right">
+            <a href="{{ route('entidades.create') }}" class="btn btn-sm btn-success">
+                <i class="fas fa-plus mr-1"></i> Nuevo
+            </a>
+        </div>
+    @endcan
 
-        @php
-            $heads = ['Nombre', 'Partido', 'Acciones'];
-        @endphp
-
-        <x-adminlte-datatable id="entidadesTable" :heads="$heads" hoverable striped>
+    <table id="entidadesTable" class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Partido</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
             @foreach($entidades as $entidad)
             <tr>
                 <td>{{ $entidad->name }}</td>
                 <td>{{ $entidad->party->name ?? '—' }}</td>
                 <td>
-                    <a href="{{ route('entidades.edit', $entidad->id) }}" class="btn btn-xs btn-primary" title="Editar">
+                    <a href="{{ route('entidades.edit', $entidad) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-                    <form action="{{ route('entidades.destroy', $entidad->id) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar esta entidad?');">
+                    <form action="{{ route('entidades.destroy', $entidad) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar esta entidad?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
@@ -40,6 +44,25 @@
                 </td>
             </tr>
             @endforeach
-        </x-adminlte-datatable>
-    </x-adminlte-card>
+        </tbody>
+    </table>
+
+</x-adminlte-card>
 @stop
+
+@push('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+@endpush
+
+@push('js')
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#entidadesTable').DataTable({
+        responsive: true,
+        pageLength: 10,
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
+    });
+});
+</script>
+@endpush
