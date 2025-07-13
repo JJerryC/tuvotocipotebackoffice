@@ -20,7 +20,8 @@
     <table id="candidatesTable" class="table table-bordered table-hover">
         <thead>
             <tr>
-                <th>ID</th>
+                {{-- <th>ID</th> --}} {{-- ID oculto --}}
+                <th>Foto</th>
                 <th>Nombre Completo</th>
                 <th>Partido</th>
                 <th>Departamento</th>
@@ -32,7 +33,14 @@
         <tbody>
             @foreach($candidates as $c)
                 <tr>
-                    <td>{{ $c->id }}</td>
+                    {{-- <td>{{ $c->id }}</td> --}}
+                    <td>
+                        @if($c->fotografia)
+                            <img src="{{ asset('storage/' . $c->fotografia) }}" alt="Foto de {{ $c->nombre_completo }}" style="max-height: 50px; border-radius: 4px;">
+                        @else
+                            —
+                        @endif
+                    </td>
                     <td>{{ $c->nombre_completo }}</td>
                     <td>{{ $c->party->name ?? '—' }}</td>
                     <td>{{ $c->departamento->name ?? '—' }}</td>

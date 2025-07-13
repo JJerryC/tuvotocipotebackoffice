@@ -1,4 +1,3 @@
-{{-- resources/views/candidates/create.blade.php --}}
 @extends('adminlte::page')
 
 @section('title', 'Nuevo Candidato')
@@ -152,11 +151,18 @@
                 {{-- Fotografía --}}
                 <div class="col-md-6 form-group">
                     <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
-                    <input type="file" name="fotografia" id="fotografia" class="form-control-file @error('fotografia') is-invalid @enderror" accept="image/*">
+                    <div class="custom-file">
+                        <input type="file" name="fotografia" id="fotografia" class="custom-file-input @error('fotografia') is-invalid @enderror" accept="image/*">
+                        <label class="custom-file-label" for="fotografia">Seleccionar archivo</label>
+                    </div>
                     @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+
+                    <div class="mt-2" id="preview-container" style="display:none;">
+                        <img src="#" alt="Vista previa" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                    </div>
                 </div>
 
-                {{-- Candidato a reelección --}}
+                {{-- Reelección --}}
                 <div class="col-md-6 form-group d-flex align-items-center">
                     <div class="form-check">
                         <input type="checkbox" name="reeleccion" id="reeleccion" class="form-check-input" value="1" @checked(old('reeleccion'))>
@@ -186,33 +192,22 @@
 @push('js')
 <script>
 $(function(){
-    // Función para activar/desactivar campos partido y entidad según checkbox independiente
     function toggleIndependienteFields() {
         let independiente = $('#independiente').is(':checked');
-
         $('#party_id').prop('disabled', independiente);
         if(independiente) $('#party_id').val('');
-
         $('#entidad_id').prop('disabled', independiente);
         if(independiente) $('#entidad_id').val('');
     }
 
-    // Al cargar la página
     toggleIndependienteFields();
-
-    // Al cambiar checkbox de independiente
     $('#independiente').on('change', toggleIndependienteFields);
-
-    // Inicialmente deshabilitados municipios y entidad (se cargan dinámicamente)
     $('#entidad_id, #municipio_id').prop('disabled', true);
 
-    // Al cambiar partido, cargamos entidades
     $('#party_id').on('change', function(){
         var pid = $(this).val();
         if (!pid) {
-            $('#entidad_id')
-                .html('<option value="">Seleccione…</option>')
-                .prop('disabled', true);
+            $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
             $.getJSON('/api/partidos/'+pid+'/entidades', function(data){
                 var opts = '<option value="">Seleccione…</option>';
@@ -224,13 +219,10 @@ $(function(){
         }
     });
 
-    // Al cambiar departamento, cargamos municipios
     $('#departamento_id').on('change', function(){
         var did = $(this).val();
         if (!did) {
-            $('#municipio_id')
-                .html('<option value="">Seleccione…</option>')
-                .prop('disabled', true);
+            $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
             $.getJSON('/api/departamentos/'+did+'/municipios', function(data){
                 var opts = '<option value="">Seleccione…</option>';
@@ -239,6 +231,24 @@ $(function(){
                 });
                 $('#municipio_id').html(opts).prop('disabled', false);
             });
+        }
+    });
+
+    // Vista previa y nombre del archivo de imagen con custom-file
+    $('#fotografia').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            $(this).next('.custom-file-label').html(file.name);
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#preview-image').attr('src', e.target.result);
+                $('#preview-container').show();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            $(this).next('.custom-file-label').html('Seleccionar archivo');
+            $('#preview-container').hide();
         }
     });
 });

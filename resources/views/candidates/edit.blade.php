@@ -182,10 +182,20 @@
                 {{-- Fotografía --}}
                 <div class="col-md-6 form-group">
                     <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
-                    <input type="file" name="fotografia" id="fotografia" class="form-control-file @error('fotografia') is-invalid @enderror" accept="image/*">
+                    <div class="custom-file">
+                        <input type="file" name="fotografia" id="fotografia" class="custom-file-input @error('fotografia') is-invalid @enderror" accept="image/*">
+                        <label class="custom-file-label" for="fotografia">Seleccionar archivo</label>
+                    </div>
                     @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                     @if($candidate->fotografia)
-                        <small class="form-text text-muted">Foto actual: {{ $candidate->fotografia_original ?? basename($candidate->fotografia) }}</small>
+                        <small class="form-text text-muted" id="preview-filename">Foto actual: {{ $candidate->fotografia_original ?? basename($candidate->fotografia) }}</small>
+                        <div class="mt-2" id="preview-container">
+                            <img src="{{ asset('storage/' . $candidate->fotografia) }}" alt="Foto del candidato" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                        </div>
+                    @else
+                        <div class="mt-2" id="preview-container" style="display:none;">
+                            <img src="" alt="Vista previa" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                        </div>
                     @endif
                 </div>
 
@@ -279,6 +289,25 @@ $(function(){
                 });
                 municipioSelect.html(options).prop('disabled', false);
             });
+        }
+    });
+
+    // Actualizar label y vista previa imagen al seleccionar archivo
+    $('#fotografia').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            $(this).next('.custom-file-label').html(file.name);
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#preview-image').attr('src', e.target.result);
+                $('#preview-filename small').text(file.name);
+                $('#preview-container').show();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            $(this).next('.custom-file-label').html('Seleccionar archivo');
+            $('#preview-container').hide();
         }
     });
 });
