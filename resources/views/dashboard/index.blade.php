@@ -554,13 +554,17 @@
                 <i class="fas fa-users"></i>
                 <span>Ver Candidatos</span>
             </a>
+            <a href="{{ route('dashboard.reporteria') }}" class="action-btn">
+                <i class="fas fa-chart-bar"></i>
+                <span>Reportería</span>
+            </a>
+            <a href="{{ route('dashboard.mapa') }}" class="action-btn">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>Mapa Electoral</span>
+            </a>
             <a href="{{ route('candidates.index') }}" class="action-btn">
                 <i class="fas fa-cog"></i>
                 <span>Gestión</span>
-            </a>
-            <a href="{{ route('home') }}" class="action-btn">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
             </a>
         </div>
 
@@ -738,4 +742,3 @@
     </script>
 </body>
 </html>
-

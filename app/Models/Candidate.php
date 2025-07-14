@@ -27,13 +27,21 @@ class Candidate extends Model
         'fotografia_original',
         'reeleccion',
         'propuestas',
+        'tipo_candidato',
+        'genero',
+        'independiente',
+        'porcentaje_completado',
+        'perfil_completo',
     ];
 
     protected $casts = [
         'reeleccion' => 'boolean',
+        'independiente' => 'boolean',
+        'perfil_completo' => 'boolean',
+        'porcentaje_completado' => 'integer'
     ];
 
-    /* Relaciones */
+    /* Relaciones existentes */
     public function party()
     {
         return $this->belongsTo(Party::class);
@@ -69,7 +77,7 @@ class Candidate extends Model
         return $this->belongsTo(Sexo::class);
     }
 
-    /* Accessor para nombre completo */
+    /* Accessor para nombre completo - YA EXISTE */
     public function getNombreCompletoAttribute(): string
     {
         return collect([
@@ -78,5 +86,127 @@ class Candidate extends Model
             $this->primer_apellido,
             $this->segundo_apellido,
         ])->filter()->join(' ');
+    }
+
+    /* NUEVOS ACCESSORS PARA EL DASHBOARD */
+
+    // Accessor para obtener la URL de la fotografía
+    public function getFotografiaUrlAttribute()
+    {
+        return $this->fotografia ? asset('storage/' . $this->fotografia) : asset('images/default-avatar.png');
+    }
+
+    // Scopes para filtros del dashboard
+    public function scopeTipoCandidato($query, $tipo)
+    {
+        return $query->where('tipo_candidato', $tipo);
+    }
+
+    public function scopeDepartamento($query, $departamento)
+    {
+        return $query->where('departamento_id', $departamento);
+    }
+
+    public function scopePartido($query, $partidoId)
+    {
+        return $query->where('party_id', $partidoId);
+    }
+
+    public function scopeGenero($query, $genero)
+    {
+        return $query->where('genero', $genero);
+    }
+
+    public function scopeIndependientes($query)
+    {
+        return $query->where('independiente', true);
+    }
+
+    public function scopePerfilCompleto($query, $completo = true)
+    {
+        return $query->where('perfil_completo', $completo);
+    }
+
+    // Método para calcular porcentaje de completado
+    public function calcularPorcentajeCompletado()
+    {
+        $campos = [
+            'primer_nombre',
+            'primer_apellido',
+            'fotografia',
+            'propuestas',
+            'tipo_candidato',
+            'numero_identidad'
+        ];
+
+        $completados = 0;
+
+        foreach ($campos as $campo) {
+            if (!empty($this->$campo)) {
+                $completados++;
+            }
+        }
+
+        $porcentaje = ($completados / count($campos)) * 100;
+        $this->porcentaje_completado = round($porcentaje);
+        $this->perfil_completo = $porcentaje >= 80;
+
+        return $this->porcentaje_completado;
+    }
+
+    // Método para determinar el tipo de candidato basado en el cargo
+    public function determinarTipoCandidato()
+    {
+        if (!$this->cargo) return null;
+
+        $cargo = strtolower($this->cargo->name);
+
+        if (str_contains($cargo, 'presidente') || str_contains($cargo, 'presidencial')) {
+            return 'presidencial';
+        } elseif (str_contains($cargo, 'diputado') || str_contains($cargo, 'congreso')) {
+            return 'diputado';
+        } elseif (str_contains($cargo, 'alcalde') || str_contains($cargo, 'municipal')) {
+            return 'alcalde';
+        }
+
+        return 'otro';
+    }
+
+    // Método para determinar género basado en sexo
+    public function determinarGenero()
+    {
+        if (!$this->sexo) return null;
+
+        $codigo = strtoupper($this->sexo->code);
+
+        if ($codigo === 'M' || $codigo === 'H') {
+            return 'masculino';
+        } elseif ($codigo === 'F') {
+            return 'femenino';
+        }
+
+        return null;
+    }
+
+    // Método para actualizar campos automáticamente
+    public function actualizarCamposAutomaticos()
+    {
+        // Determinar tipo de candidato si no está definido
+        if (!$this->tipo_candidato) {
+            $this->tipo_candidato = $this->determinarTipoCandidato();
+        }
+
+        // Determinar género si no está definido
+        if (!$this->genero) {
+            $this->genero = $this->determinarGenero();
+        }
+
+        // Determinar si es independiente
+        $this->independiente = $this->party_id === null;
+
+        // Calcular porcentaje de completado
+        $this->calcularPorcentajeCompletado();
+
+        $this->save();
     }
 }
