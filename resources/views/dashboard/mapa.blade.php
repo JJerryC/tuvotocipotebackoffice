@@ -376,7 +376,7 @@
         <!-- Stats Bar -->
         <div class="stats-bar">
             <div class="stat-item">
-                <div class="stat-number">{{ $candidatosPorDepartamento->flatten()->sum() }}</div>
+                <div class="stat-number">{{ $candidatosPorDepartamento->flatten()->sum('total') }}</div>
                 <div class="stat-label">Total Candidatos</div>
             </div>
             <div class="stat-item">

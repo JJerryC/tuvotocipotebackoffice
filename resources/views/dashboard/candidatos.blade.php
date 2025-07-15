@@ -691,7 +691,7 @@
 
                 if (departamentoId) {
                     // Cargar municipios
-                    fetch(`{{ route('dashboard.api.municipios', '') }}/${departamentoId}`)
+                    fetch(`/dashboard/api/municipios/${departamentoId}`)
                         .then(response => response.json())
                         .then(municipios => {
                             municipios.forEach(municipio => {
