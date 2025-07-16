@@ -312,7 +312,7 @@ return [
     ],
 
     /* ---------- SIDEBAR ---------- */
-    ['header' => 'Gestion De DashBoard'],
+    ['header' => 'GESTIÓN DE DASHBOARD'],
     [
     'text'  => 'Dashboard',
     'icon'  => 'fas fa-fw fa-tachometer-alt',

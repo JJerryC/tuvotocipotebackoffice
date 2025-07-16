@@ -3,11 +3,6 @@
 
 @section('title', 'Dashboard Electoral')
 
-{{-- --- Encabezado grande dentro de la página --- --}}
-@section('content_header')
-    <h1 class="m-0">Dashboard Electoral</h1>
-@stop
-
 {{-- --- CSS y fuentes --- --}}
 @push('css')
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -194,56 +189,6 @@
             <div class="chart-container">
                 <div class="chart-header"><h3>Candidatos por Departamento</h3></div>
                 <canvas id="departamentoChart"></canvas>
-            </div>
-        </div>
-
-        {{-- Acciones rápidas --}}
-        <div class="quick-actions">
-            <a href="{{ route('dashboard.candidatos') }}"  class="action-btn"><i class="fas fa-users"></i><span>Ver Candidatos</span></a>
-            <a href="{{ route('dashboard.reporteria') }}" class="action-btn"><i class="fas fa-chart-bar"></i><span>Reportería</span></a>
-            <a href="{{ route('dashboard.mapa') }}"      class="action-btn"><i class="fas fa-map-marked-alt"></i><span>Mapa Electoral</span></a>
-            <a href="{{ route('candidates.index') }}"    class="action-btn"><i class="fas fa-cog"></i><span>Gestión</span></a>
-        </div>
-
-        {{-- Carrusel de candidatos --}}
-        <div class="carousel-section">
-            <div class="carousel-header"><h3>Candidatos Destacados</h3></div>
-            <div class="candidates-carousel">
-                @forelse($candidatosCarrusel as $candidato)
-                    <div class="candidate-card">
-                        <div class="candidate-front">
-                            <img src="{{ $candidato->fotografia_url }}" alt="{{ $candidato->nombre_completo }}" class="candidate-photo">
-                            <div class="candidate-info">
-                                <h4>{{ $candidato->nombre_completo }}</h4>
-                                <p class="candidate-type">{{ ucfirst($candidato->tipo_candidato ?? 'Candidato') }}</p>
-                                <p class="candidate-party">{{ $candidato->party->name ?? 'Independiente' }}</p>
-                            </div>
-                        </div>
-                        <div class="candidate-back">
-                            <div class="candidate-details">
-                                <h4>{{ $candidato->nombre_completo }}</h4>
-                                <div class="candidate-proposals">
-                                    <h5>Propuestas:</h5>
-                                    <p>{{ Str::limit($candidato->propuestas, 150) ?: 'Sin propuestas registradas' }}</p>
-                                </div>
-                                <div class="candidate-metadata">
-                                    @if($candidato->departamento)
-                                        <span class="department">{{ $candidato->departamento->name }}</span>
-                                    @endif
-                                    @if($candidato->reeleccion)
-                                        <span class="reelection">Reelección</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="empty-state">
-                        <div class="empty-icon"><i class="fas fa-users-slash"></i></div>
-                        <h3>No hay candidatos destacados</h3>
-                        <p>Aún no hay candidatos con perfiles completos para mostrar.</p>
-                    </div>
-                @endforelse
             </div>
         </div>
     </div>
