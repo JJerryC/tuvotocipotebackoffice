@@ -312,16 +312,28 @@ return [
     ],
 
     /* ---------- SIDEBAR ---------- */
+    ['header' => 'Gestion De DashBoard'],
     [
-        'type'  => 'sidebar-menu-search',
-        'text'  => 'search',
+    'text'  => 'Dashboard',
+    'icon'  => 'fas fa-fw fa-tachometer-alt',
+    'submenu' => [
+        [
+            'text'  => 'Principal',
+            'route' => 'home',
+            'icon'  => 'fas fa-home',
+        ],
+        [
+            'text'  => 'Candidatos',
+            'route' => 'dashboard.candidatos',
+            'icon'  => 'fas fa-users',
+        ],
+        [
+            'text'  => 'Reportería',
+            'route' => 'dashboard.reporteria',
+            'icon'  => 'fas fa-chart-bar',
+        ],
     ],
-    [
-        'text'  => 'Dashboard',
-        'route' => 'home',
-        'icon'  => 'fas fa-fw fa-tachometer-alt',
-    ],
-
+],
     ['header' => 'GESTIÓN DE CANDIDATOS'],
     [
         'text'  => 'Candidatos',
@@ -351,27 +363,34 @@ return [
         ],
     ],
 
-    ['header' => 'CATÁLOGOS'],
+    ['header' => 'GESTIÓN DE CATÁLOGOS'],
     [
-        'text' => 'Partidos Políticos',
-        'url'  => 'parties',
-        'icon' => 'fas fa-fw fa-flag',
+        'text'  => 'Catalogos',
+        'icon'  => 'fas fa-folder-open',
+        'submenu' => [
+            [
+                'text' => 'Partidos Políticos',
+                'url'  => 'parties',
+                'icon' => 'fas fa-fw fa-flag',
+            ],
+            [
+            'text' => 'Entidades',
+            'url'  => 'entidades',
+                'icon' => 'fas fa-fw fa-map-marker-alt',
+            ],
+            [
+                'text' => 'Nomina',
+                'url'  => 'nominas',
+                'icon' => 'fas fa-fw fa-city',
+            ],
+            [
+                'text' => 'Cargos',
+                'url'  => 'cargos',
+                'icon' => 'fas fa-fw fa-briefcase',
+            ],
+        ],
     ],
-    [
-        'text' => 'Entidades',
-        'url'  => 'entidades',
-        'icon' => 'fas fa-fw fa-map-marker-alt',
-    ],
-    [
-        'text' => 'Nomina',
-        'url'  => 'nominas',
-        'icon' => 'fas fa-fw fa-city',
-    ],
-    [
-        'text' => 'Cargos',
-        'url'  => 'cargos',
-        'icon' => 'fas fa-fw fa-briefcase',
-    ],
+
 
     ['header' => 'CONFIGURACIÓN'],
     [
