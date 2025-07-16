@@ -16,7 +16,7 @@ class CandidateImportController extends Controller
     public function index()
     {
         // Debug: verificar que el método se está ejecutando
-        \Log::info('CandidateImportController@index ejecutándose');
+        Log::info('CandidateImportController@index ejecutándose');
         
         // Verificar si la vista existe
         if (!view()->exists('candidates.import')) {
