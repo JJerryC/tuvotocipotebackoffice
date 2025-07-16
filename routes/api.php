@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CandidateApiController;
 
 
-Route::middleware('check-api-key')->group(function () {
+Route::middleware(['check-api-key', 'throttle:candidates-api'])->group(function () {
     //PRUEBA JJ luego borrar
     Route::get('ping', function () {
         return response()->json(['message' => 'pong']);
