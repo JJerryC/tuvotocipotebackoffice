@@ -27,40 +27,109 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function candidatos(Request $r)
-    {
-        $q = Candidate::with(['party','departamento','municipio','cargo','sexo']);
-        if ($r->filled('cargo_id'))        $q->where('cargo_id', $r->cargo_id);
-        if ($r->filled('departamento_id')) $q->where('departamento_id', $r->departamento_id);
-        if ($r->filled('municipio_id'))    $q->where('municipio_id', $r->municipio_id);
-        if ($r->filled('party_id'))        $q->where('party_id', $r->party_id);
-        if ($r->filled('sexo_id'))         $q->where('sexo_id', $r->sexo_id);
-        if ($r->filled('reeleccion'))      $q->where('reeleccion', $r->reeleccion);
-        if ($r->filled('search')) {
-            $s = $r->search;
-            $q->where(fn($w)=>
-                $w->where('primer_nombre','like',"%$s%")
-                  ->orWhere('primer_apellido','like',"%$s%")
-                  ->orWhere('numero_identidad','like',"%$s%"));
-        }
-        return view('dashboard.candidatos', [
-            'candidatos'    => $q->paginate(12),
-            'partidos'      => Party::orderBy('name')->get(),
-            'departamentos' => Departamento::orderBy('name')->get(),
-            'municipios'    => $r->filled('departamento_id')
-                                 ? Municipio::where('departamento_id',$r->departamento_id)->orderBy('name')->get()
-                                 : collect(),
-        ]);
+public function candidatos(Request $r)
+{
+    $q = Candidate::with(['party','departamento','municipio','cargo','sexo']);
+
+    if ($r->filled('cargo_id') && is_numeric($r->cargo_id)) {
+        $q->where('cargo_id', $r->cargo_id);
     }
 
-    public function reporteria()
-    {
-        return view('dashboard.reporteria', [
-            'estadisticas'       => $this->estadisticasDetalladas(),
-            'evolucionRegistros' => $this->evolucionRegistros(),
-            'mapaCalor'          => $this->mapaCalor(),
-        ]);
+    if ($r->filled('departamento_id') && is_numeric($r->departamento_id)) {
+        $q->where('departamento_id', $r->departamento_id);
     }
+
+    if ($r->filled('municipio_id') && is_numeric($r->municipio_id)) {
+        $q->where('municipio_id', $r->municipio_id);
+    }
+
+    if ($r->filled('party_id') && is_numeric($r->party_id)) {
+        $q->where('party_id', $r->party_id);
+    }
+
+    if ($r->filled('sexo_id') && is_numeric($r->sexo_id)) {
+        $q->where('sexo_id', $r->sexo_id);
+    }
+
+    if ($r->filled('reeleccion')) {
+        $reeleccion = filter_var($r->reeleccion, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        if ($reeleccion !== null) {
+            $q->where('reeleccion', $reeleccion);
+        }
+    }
+
+    if ($r->filled('search')) {
+        $s = $r->search;
+        $q->where(function ($w) use ($s) {
+            $w->where('primer_nombre', 'like', "%$s%")
+              ->orWhere('primer_apellido', 'like', "%$s%")
+              ->orWhere('numero_identidad', 'like', "%$s%");
+        });
+    }
+
+    return view('dashboard.candidatos', [
+        'candidatos'    => $q->paginate(12),
+        'partidos'      => Party::orderBy('name')->get(),
+        'departamentos' => Departamento::orderBy('name')->get(),
+        'municipios'    => $r->filled('departamento_id')
+                             ? Municipio::where('departamento_id', $r->departamento_id)->orderBy('name')->get()
+                             : collect(),
+    ]);
+}
+
+ public function reporteria()
+{
+    // Totales por tipo de candidato
+$candidatosPresidenciales = Candidate::where('cargo_id', $this->cargoId('Presidente'))->count();
+$candidatosDiputados = Candidate::where('cargo_id', $this->cargoId('Diputado'))->count();
+$candidatosAlcaldes = Candidate::where('cargo_id', $this->cargoId('Alcalde'))->count();
+    $totalCandidatos = $candidatosPresidenciales + $candidatosDiputados + $candidatosAlcaldes;
+
+    // Estadísticas por departamento y tipo para Top Departamentos
+$estadisticasPorDepartamento = Candidate::selectRaw('departamentos.name as departamento, tipo_candidato, COUNT(*) as total')
+    ->join('departamentos', 'candidates.departamento_id', '=', 'departamentos.id')
+    ->groupBy('departamentos.name', 'tipo_candidato')
+    ->get();
+
+    // Completitud de perfiles
+    $completitud = Candidate::selectRaw("CASE 
+            WHEN fotografia IS NULL OR fotografia = '' THEN 'Sin fotografía'
+            WHEN propuestas IS NULL OR propuestas = '' THEN 'Sin propuestas'
+            ELSE 'Perfil completo' END as estado, COUNT(*) as total")
+        ->groupBy('estado')
+        ->get();
+
+    // Por partido
+    $porPartido = Party::withCount(['candidates as estadisticas_total_candidatos' => function ($q) {
+        $q->select(\DB::raw("count(*)"));
+    }])->get()->map(function ($partido) {
+        return [
+            'partido' => $partido,
+            'estadisticas' => [
+                'total_candidatos' => $partido->estadisticas_total_candidatos
+            ]
+        ];
+    });
+
+    // Timeline para gráfico
+    $evolucionRegistros = Candidate::selectRaw("DATE(created_at) as fecha, COUNT(*) as total")
+        ->groupByRaw("DATE(created_at)")
+        ->orderBy('fecha')
+        ->get();
+
+    return view('dashboard.reporteria', [
+        'estadisticas' => [
+            'candidatos_presidenciales' => $candidatosPresidenciales,
+            'candidatos_diputados' => $candidatosDiputados,
+            'candidatos_alcaldes' => $candidatosAlcaldes,
+            'total_candidatos' => $totalCandidatos,
+            'por_departamento' => collect($estadisticasPorDepartamento),
+            'completitud_perfiles' => $completitud,
+            'por_partido' => $porPartido,
+        ],
+        'evolucionRegistros' => $evolucionRegistros
+    ]);
+}
 
     public function mapa()
     {
@@ -85,10 +154,10 @@ class DashboardController extends Controller
         return response()->json($this->estadisticasGenerales());
     }
 
-    private function cargoId(string $nombre): int
-    {
-        return Cargo::where('name',$nombre)->value('id') ?? 0;
-    }
+ private function cargoId(string $nombre): ?int
+{
+    return Cargo::where('name', 'like', "%$nombre%")->value('id');
+}
 
     private function estadisticasGenerales(): array
     {
@@ -122,21 +191,21 @@ class DashboardController extends Controller
             ->get();
     }
 
-    private function datosGraficos(): array
-    {
-        return [
-            'candidatos_por_genero' => Candidate::select('sexos.description as genero', DB::raw('count(*) as total'))
-                ->join('sexos','candidates.sexo_id','=','sexos.id')
-                ->groupBy('sexos.id','sexos.description')
-                ->get(),
-            'candidatos_por_departamento' => Candidate::select('departamentos.name as departamento', DB::raw('count(*) as total'))
-                ->join('departamentos','candidates.departamento_id','=','departamentos.id')
-                ->groupBy('departamentos.id','departamentos.name')
-                ->orderBy('total','desc')
-                ->limit(10)
-                ->get(),
-        ];
-    }
+private function datosGraficos(): array
+{
+    return [
+        'candidatos_por_genero' => Candidate::select('sexos.description as genero', DB::raw('count(*) as total'))
+            ->join('sexos','candidates.sexo_id','=','sexos.id')
+            ->groupBy('sexos.id','sexos.description')
+            ->get(),
+        'candidatos_por_departamento' => Candidate::select('departamentos.name as departamento', DB::raw('count(*) as total'))
+            ->join('departamentos','candidates.departamento_id','=','departamentos.id')
+            ->groupBy('departamentos.id','departamentos.name')
+            ->orderBy('total','desc')
+            ->limit(10)
+            ->get(),
+    ];
+}
 
     private function estadisticasDetalladas(): array
     {

@@ -85,14 +85,31 @@
             const estadisticas   = @json($estadisticas   ?? []);
             const datosGraficos  = @json($datosGraficos  ?? []);
 
-            /* ====== Género ====== */
-            new Chart(document.getElementById('generoChart'), {
-                type:'doughnut',
-                data:{labels:['Hombres','Mujeres'],
-                      datasets:[{data:[estadisticas.hombres ?? 0, estadisticas.mujeres ?? 0],
-                                 backgroundColor:['#4F46E5','#EC4899'],borderWidth:0}]},
-                options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#fff'}}}}
-            });
+/* ====== Género ====== */
+const generoData = datosGraficos.candidatos_por_genero ?? [];
+const labelsGenero = generoData.map(g => g.genero);
+const datosGenero = generoData.map(g => g.total);
+
+new Chart(document.getElementById('generoChart'), {
+    type:'doughnut',
+    data: {
+        labels: labelsGenero,
+        datasets: [{
+            data: datosGenero,
+            backgroundColor: ['#4F46E5', '#EC4899', '#F59E0B', '#10B981'], // colores adicionales si hay más géneros
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { color: '#fff' }
+            }
+        }
+    }
+});
 
             /* ====== Completitud ====== */
             new Chart(document.getElementById('completitudChart'), {

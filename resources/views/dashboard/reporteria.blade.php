@@ -15,7 +15,7 @@
                 <div class="summary-icon">
                     <i class="fas fa-crown"></i>
                 </div>
-                <div class="summary-number">{{ $estadisticas['por_departamento']->where('tipo_candidato', 'presidencial')->sum('total') }}</div>
+                <div class="summary-number">{{ $estadisticas['candidatos_presidenciales'] ?? 0 }}</div>
                 <div class="summary-label">Candidatos Presidenciales</div>
             </div>
 
@@ -23,7 +23,7 @@
                 <div class="summary-icon">
                     <i class="fas fa-users"></i>
                 </div>
-                <div class="summary-number">{{ $estadisticas['por_departamento']->where('tipo_candidato', 'diputado')->sum('total') }}</div>
+                <div class="summary-number">{{ $estadisticas['candidatos_diputados'] ?? 0 }}</div>
                 <div class="summary-label">Candidatos a Diputados</div>
             </div>
 
@@ -31,7 +31,7 @@
                 <div class="summary-icon">
                     <i class="fas fa-building"></i>
                 </div>
-                <div class="summary-number">{{ $estadisticas['por_departamento']->where('tipo_candidato', 'alcalde')->sum('total') }}</div>
+                <div class="summary-number">{{ $estadisticas['candidatos_alcaldes'] ?? 0 }}</div>
                 <div class="summary-label">Candidatos a Alcaldes</div>
             </div>
 
@@ -39,7 +39,7 @@
                 <div class="summary-icon">
                     <i class="fas fa-chart-pie"></i>
                 </div>
-                <div class="summary-number">{{ $estadisticas['por_departamento']->sum('total') }}</div>
+                <div class="summary-number">{{ $estadisticas['total_candidatos'] ?? 0 }}</div>
                 <div class="summary-label">Total de Candidatos</div>
             </div>
         </div>
