@@ -11,9 +11,10 @@ class NominaController extends Controller
     /**
      * Display a listing of the resource.
      */
+    
     public function index()
     {
-        $nominas = Nomina::with('entidad')->get();
+        $nominas = Nomina::with('entidad')->orderBy('name')->get();
         return view('nominas.index', compact('nominas'));
     }
 

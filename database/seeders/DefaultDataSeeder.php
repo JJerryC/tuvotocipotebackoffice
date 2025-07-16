@@ -37,6 +37,11 @@ class DefaultDataSeeder extends Seeder
         ['description' => 'MUJER']
         );
 
+        Sexo::firstOrCreate(
+        ['code' => 'O'],
+        ['description' => 'OTRO']
+        );
+
         // Datos de departamentos y municipios
         $datos = [
             '01' => [

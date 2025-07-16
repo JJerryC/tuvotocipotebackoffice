@@ -67,7 +67,7 @@ return [
     'logo_img' => 'images/logoazul.webp',
     'logo_img_class'  => 'brand-image elevation-0',
     'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs',
+    'logo_img_xl_class' => 'brand-image-xs ',
     'logo_img_alt' => 'Tu voto cipote',
 
     /*
@@ -365,7 +365,7 @@ return [
     [
         'text' => 'Nomina',
         'url'  => 'nominas',
-        'icon' => 'fas fa-fw fa-city',
+        'icon' => 'fas fa-fw fa-list-alt',
     ],
     [
         'text' => 'Cargos',

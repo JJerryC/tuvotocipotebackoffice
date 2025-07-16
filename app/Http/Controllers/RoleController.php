@@ -23,9 +23,10 @@ class RoleController extends Controller
     }
 
     /* ---------- LISTA ---------- */
+    
     public function index()
     {
-        $roles = Role::with('permissions')->paginate(15);
+        $roles = Role::with('permissions')->orderBy('name')->get();
         return view('roles.index', compact('roles'));
     }
 

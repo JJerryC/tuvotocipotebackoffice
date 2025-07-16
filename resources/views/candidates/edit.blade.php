@@ -8,133 +8,308 @@
 
 @section('content')
 <div class="card card-primary">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Datos del candidato</h3>
+        <button type="submit" form="candidate-form" class="btn btn-sm btn-success">
+            <i class="fas fa-save mr-1"></i>Actualizar
+        </button>
     </div>
 
-    <form action="{{ route('candidates.update', $candidate) }}" method="POST">
+    <form id="candidate-form" action="{{ route('candidates.update', $candidate) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="card-body">
             <div class="row">
 
+                {{-- Independiente --}}
+                <div class="col-md-12 form-group d-flex align-items-center mb-3">
+                    <div class="form-check">
+                        <input type="checkbox" name="independiente" id="independiente" class="form-check-input"
+                               value="1" @checked(old('independiente', $candidate->independiente))>
+                        <label for="independiente" class="form-check-label font-weight-bold">Candidato Independiente</label>
+                    </div>
+                </div>
+
                 {{-- Partido --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="party_id"><i class="fas fa-flag mr-1"></i>Partido</label>
-                    <select name="party_id" id="party_id" class="form-control">
+                    <select name="party_id" id="party_id" class="form-control @error('party_id') is-invalid @enderror" 
+                        {{ old('independiente', $candidate->independiente) ? 'disabled' : '' }}>
                         <option value="">Seleccione…</option>
                         @foreach($parties as $id => $name)
                             <option value="{{ $id }}" @selected(old('party_id', $candidate->party_id) == $id)>{{ $name }}</option>
                         @endforeach
                     </select>
+                    @error('party_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+
+                {{-- Entidad --}}
+                <div class="col-md-6 form-group">
+                    <label for="entidad_id"><i class="fas fa-building mr-1"></i>Entidad</label>
+                    <select name="entidad_id" id="entidad_id" class="form-control @error('entidad_id') is-invalid @enderror"
+                        {{ old('independiente', $candidate->independiente) ? 'disabled' : '' }}>
+                        @if($entidades)
+                            <option value="">Seleccione…</option>
+                            @foreach($entidades as $id => $name)
+                                <option value="{{ $id }}" @selected(old('entidad_id', $candidate->entidad_id) == $id)>{{ $name }}</option>
+                            @endforeach
+                        @else
+                            <option value="">Seleccione…</option>
+                        @endif
+                    </select>
+                    @error('entidad_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Nómina --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="nomina_id"><i class="fas fa-users mr-1"></i>Nómina</label>
-                    <select name="nomina_id" id="nomina_id" class="form-control">
+                    <select name="nomina_id" id="nomina_id" class="form-control @error('nomina_id') is-invalid @enderror">
                         <option value="">Seleccione…</option>
                         @foreach($nominas as $id => $name)
                             <option value="{{ $id }}" @selected(old('nomina_id', $candidate->nomina_id) == $id)>{{ $name }}</option>
                         @endforeach
                     </select>
+                    @error('nomina_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Departamento --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="departamento_id"><i class="fas fa-map mr-1"></i>Departamento</label>
-                    <select name="departamento_id" id="departamento_id" class="form-control">
+                    <select name="departamento_id" id="departamento_id" class="form-control @error('departamento_id') is-invalid @enderror">
                         <option value="">Seleccione…</option>
                         @foreach($departamentos as $id => $name)
                             <option value="{{ $id }}" @selected(old('departamento_id', $candidate->departamento_id) == $id)>{{ $name }}</option>
                         @endforeach
                     </select>
+                    @error('departamento_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Municipio --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="municipio_id"><i class="fas fa-map-marker-alt mr-1"></i>Municipio</label>
-                    <select name="municipio_id" id="municipio_id" class="form-control">
-                        <option value="">Seleccione…</option>
-                        @foreach($municipios as $id => $name)
-                            <option value="{{ $id }}" @selected(old('municipio_id', $candidate->municipio_id) == $id)>{{ $name }}</option>
-                        @endforeach
+                    <select name="municipio_id" id="municipio_id" class="form-control @error('municipio_id') is-invalid @enderror" 
+                        {{ old('municipio_id', $candidate->municipio_id) ? '' : 'disabled' }}>
+                        @if($municipios)
+                            <option value="">Seleccione…</option>
+                            @foreach($municipios as $id => $name)
+                                <option value="{{ $id }}" @selected(old('municipio_id', $candidate->municipio_id) == $id)>{{ $name }}</option>
+                            @endforeach
+                        @else
+                            <option value="">Seleccione…</option>
+                        @endif
                     </select>
+                    @error('municipio_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Cargo --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="cargo_id"><i class="fas fa-briefcase mr-1"></i>Cargo</label>
-                    <select name="cargo_id" id="cargo_id" class="form-control">
+                    <select name="cargo_id" id="cargo_id" class="form-control @error('cargo_id') is-invalid @enderror">
                         <option value="">Seleccione…</option>
                         @foreach($cargos as $id => $name)
                             <option value="{{ $id }}" @selected(old('cargo_id', $candidate->cargo_id) == $id)>{{ $name }}</option>
                         @endforeach
                     </select>
+                    @error('cargo_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Sexo --}}
-                <div class="form-group col-md-6">
+                <div class="col-md-6 form-group">
                     <label for="sexo_id"><i class="fas fa-venus-mars mr-1"></i>Sexo</label>
-                    <select name="sexo_id" id="sexo_id" class="form-control">
+                    <select name="sexo_id" id="sexo_id" class="form-control @error('sexo_id') is-invalid @enderror">
                         <option value="">Seleccione…</option>
                         @foreach($sexos as $id => $desc)
                             <option value="{{ $id }}" @selected(old('sexo_id', $candidate->sexo_id) == $id)>{{ $desc }}</option>
                         @endforeach
                     </select>
+                    @error('sexo_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
                 {{-- Posición --}}
-                <div class="form-group col-md-3">
+                <div class="col-md-3 form-group">
                     <label for="posicion"><i class="fas fa-sort-numeric-down mr-1"></i>Posición</label>
-                    <input type="number" min="1" name="posicion" id="posicion"
-                           value="{{ old('posicion', $candidate->posicion) }}" class="form-control">
+                    <input type="number" name="posicion" id="posicion" min="1" step="1"
+                           class="form-control @error('posicion') is-invalid @enderror"
+                           value="{{ old('posicion', $candidate->posicion) }}">
+                    @error('posicion')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                {{-- Número de identidad --}}
-                <div class="form-group col-md-9">
+                {{-- Número de Identidad --}}
+                <div class="col-md-9 form-group">
                     <label for="numero_identidad"><i class="fas fa-id-card mr-1"></i>Número de Identidad</label>
                     <input type="text" name="numero_identidad" id="numero_identidad" maxlength="25"
-                           value="{{ old('numero_identidad', $candidate->numero_identidad) }}" class="form-control">
+                           class="form-control @error('numero_identidad') is-invalid @enderror"
+                           value="{{ old('numero_identidad', $candidate->numero_identidad) }}">
+                    @error('numero_identidad')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                {{-- Nombres --}}
-                <div class="form-group col-md-6">
+                {{-- Primer Nombre --}}
+                <div class="col-md-6 form-group">
                     <label for="primer_nombre">Primer Nombre</label>
                     <input type="text" name="primer_nombre" id="primer_nombre"
-                           value="{{ old('primer_nombre', $candidate->primer_nombre) }}" class="form-control">
+                           class="form-control @error('primer_nombre') is-invalid @enderror"
+                           value="{{ old('primer_nombre', $candidate->primer_nombre) }}">
+                    @error('primer_nombre')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                <div class="form-group col-md-6">
+                {{-- Segundo Nombre --}}
+                <div class="col-md-6 form-group">
                     <label for="segundo_nombre">Segundo Nombre</label>
                     <input type="text" name="segundo_nombre" id="segundo_nombre"
-                           value="{{ old('segundo_nombre', $candidate->segundo_nombre) }}" class="form-control">
+                           class="form-control @error('segundo_nombre') is-invalid @enderror"
+                           value="{{ old('segundo_nombre', $candidate->segundo_nombre) }}">
+                    @error('segundo_nombre')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                {{-- Apellidos --}}
-                <div class="form-group col-md-6">
+                {{-- Primer Apellido --}}
+                <div class="col-md-6 form-group">
                     <label for="primer_apellido">Primer Apellido</label>
                     <input type="text" name="primer_apellido" id="primer_apellido"
-                           value="{{ old('primer_apellido', $candidate->primer_apellido) }}" class="form-control">
+                           class="form-control @error('primer_apellido') is-invalid @enderror"
+                           value="{{ old('primer_apellido', $candidate->primer_apellido) }}">
+                    @error('primer_apellido')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                <div class="form-group col-md-6">
+                {{-- Segundo Apellido --}}
+                <div class="col-md-6 form-group">
                     <label for="segundo_apellido">Segundo Apellido</label>
                     <input type="text" name="segundo_apellido" id="segundo_apellido"
-                           value="{{ old('segundo_apellido', $candidate->segundo_apellido) }}" class="form-control">
+                           class="form-control @error('segundo_apellido') is-invalid @enderror"
+                           value="{{ old('segundo_apellido', $candidate->segundo_apellido) }}">
+                    @error('segundo_apellido')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-            </div> {{-- /.row --}}
-        </div> {{-- /.card-body --}}
+                {{-- Fotografía --}}
+                <div class="col-md-6 form-group">
+                    <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
+                    <div class="custom-file">
+                        <input type="file" name="fotografia" id="fotografia" class="custom-file-input @error('fotografia') is-invalid @enderror" accept="image/*">
+                        <label class="custom-file-label" for="fotografia">Seleccionar archivo</label>
+                    </div>
+                    @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+                    @if($candidate->fotografia)
+                        <small class="form-text text-muted" id="preview-filename">Foto actual: {{ $candidate->fotografia_original ?? basename($candidate->fotografia) }}</small>
+                        <div class="mt-2" id="preview-container">
+                            <img src="{{ asset('storage/' . $candidate->fotografia) }}" alt="Foto del candidato" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                        </div>
+                    @else
+                        <div class="mt-2" id="preview-container" style="display:none;">
+                            <img src="" alt="Vista previa" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
+                        </div>
+                    @endif
+                </div>
 
-        <div class="card-footer d-flex justify-content-between">
+                {{-- Candidato a reelección --}}
+                <div class="col-md-6 form-group d-flex align-items-center">
+                    <div class="form-check">
+                        <input type="checkbox" name="reeleccion" id="reeleccion" class="form-check-input"
+                               value="1" @checked(old('reeleccion', $candidate->reeleccion))>
+                        <label for="reeleccion" class="form-check-label">Candidato a reelección</label>
+                    </div>
+                </div>
+
+                {{-- Planes y propuestas --}}
+                <div class="col-md-12 form-group">
+                    <label for="propuestas"><i class="fas fa-file-alt mr-1"></i>Planes y propuestas</label>
+                    <textarea name="propuestas" id="propuestas" rows="4"
+                              class="form-control @error('propuestas') is-invalid @enderror">{{ old('propuestas', $candidate->propuestas) }}</textarea>
+                    @error('propuestas')<span class="invalid-feedback">{{ $message }}</span>@enderror
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card-footer">
             <a href="{{ route('candidates.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left mr-1"></i> Cancelar
+                <i class="fas fa-arrow-left mr-1"></i>Cancelar
             </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save mr-1"></i> Actualizar
-            </button>
         </div>
     </form>
 </div>
 @stop
+
+@push('js')
+<script>
+$(function(){
+    const entidadSelect = $('#entidad_id');
+    const municipioSelect = $('#municipio_id');
+    const partySelect = $('#party_id');
+    const independienteCheckbox = $('#independiente');
+
+    // Función para activar/desactivar selects party y entidad según independiente
+    function toggleIndependiente() {
+        const isIndependiente = independienteCheckbox.is(':checked');
+        partySelect.prop('disabled', isIndependiente);
+        entidadSelect.prop('disabled', isIndependiente);
+        if (isIndependiente) {
+            entidadSelect.html('<option value="">Seleccione…</option>');
+            partySelect.val('');
+            entidadSelect.val('');
+        }
+    }
+
+    // Ejecutar al cargar la página
+    toggleIndependiente();
+
+    // Cambiar cuando se marca o desmarca independiente
+    independienteCheckbox.on('change', function(){
+        toggleIndependiente();
+    });
+
+    // Al cambiar partido, cargar entidades solo si no es independiente
+    partySelect.on('change', function(){
+        if (independienteCheckbox.is(':checked')) {
+            entidadSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+            return;
+        }
+        let pid = $(this).val();
+        if(!pid) {
+            entidadSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+            return;
+        }
+        $.getJSON('/api/partidos/' + pid + '/entidades', function(data){
+            let options = '<option value="">Seleccione…</option>';
+            $.each(data, (i, item) => {
+                options += `<option value="${item.id}">${item.name}</option>`;
+            });
+            entidadSelect.html(options).prop('disabled', false);
+        });
+    });
+
+    // Al cambiar departamento, cargar municipios
+    $('#departamento_id').on('change', function(){
+        let did = $(this).val();
+        municipioSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+
+        if(did) {
+            $.getJSON('/api/departamentos/' + did + '/municipios', function(data){
+                let options = '<option value="">Seleccione…</option>';
+                $.each(data, (i, item) => {
+                    options += `<option value="${item.id}">${item.name}</option>`;
+                });
+                municipioSelect.html(options).prop('disabled', false);
+            });
+        }
+    });
+
+    // Actualizar label y vista previa imagen al seleccionar archivo
+    $('#fotografia').on('change', function() {
+        const file = this.files[0];
+        if (file) {
+            $(this).next('.custom-file-label').html(file.name);
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                $('#preview-image').attr('src', e.target.result);
+                $('#preview-filename small').text(file.name);
+                $('#preview-container').show();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            $(this).next('.custom-file-label').html('Seleccionar archivo');
+            $('#preview-container').hide();
+        }
+    });
+});
+</script>
+@endpush

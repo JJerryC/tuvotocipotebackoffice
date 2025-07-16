@@ -16,6 +16,7 @@ class EntidadController extends Controller
     /**
      * Mostrar listado de entidades.
      */
+    
     public function index()
     {
         $entidades = Entidad::with('party')->orderBy('name')->get();
