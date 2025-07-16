@@ -88,5 +88,6 @@ Route::middleware('auth')->group(function () {
         ]);
         Route::resource('nominas', NominaController::class);
         Route::resource('cargos', CargoController::class);
+        Route::resource('candidates', CandidateController::class);
     });
 });

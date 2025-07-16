@@ -162,4 +162,18 @@ class CandidateController extends Controller
             ->route('candidates.index')
             ->with('success', 'Candidato eliminado correctamente');
     }
+public function show(Candidate $candidate)
+{
+    $candidate->load([
+        'party',
+        'entidad',
+        'nomina',
+        'departamento',
+        'municipio',
+        'cargo',
+        'sexo',
+    ]);
+
+    return view('candidates.show', compact('candidate'));
+}
 }

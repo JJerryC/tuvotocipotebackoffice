@@ -83,17 +83,6 @@
                     </div>
                     @endif
 
-                    <div class="progress-section mb-3">
-                        <div class="progress-label d-flex justify-content-between text-secondary mb-1">
-                            <span>Completitud del perfil</span>
-                            <span>{{ $candidato->porcentaje_completado ?? 0 }}%</span>
-                        </div>
-                        <div class="progress" style="height: 6px;">
-                            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $candidato->porcentaje_completado ?? 0 }}%;" 
-                                aria-valuenow="{{ $candidato->porcentaje_completado ?? 0 }}" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
-
                     <div class="candidate-actions d-flex gap-2">
                         <a href="{{ route('candidates.show', $candidato->id) }}" class="btn btn-info btn-sm btn-glass">
                             <i class="fas fa-eye"></i> Ver

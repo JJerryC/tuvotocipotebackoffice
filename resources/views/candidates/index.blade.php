@@ -78,4 +78,38 @@
             });
         });
     </script>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Busca el link en el menú que tiene texto 'Modo Oscuro'
+        const btn = document.querySelector('a.btn-dark-mode');
+
+        if (!btn) return;
+
+        const darkClass = 'dark-mode';
+
+        // Inicializa estado
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add(darkClass);
+            btn.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i> Modo Oscuro';
+        }
+
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+
+            if (document.body.classList.contains(darkClass)) {
+                document.body.classList.remove(darkClass);
+                localStorage.setItem('darkMode', 'disabled');
+                btn.innerHTML = '<i class="fas fa-moon"></i> Modo Oscuro';
+            } else {
+                document.body.classList.add(darkClass);
+                localStorage.setItem('darkMode', 'enabled');
+                btn.innerHTML = '<i class="fas fa-sun"></i> Modo Claro';
+            }
+        });
+    });
+</script>
 @endpush
