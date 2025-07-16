@@ -20,6 +20,8 @@ Auth::routes();
 
 // Rutas protegidas por auth
 Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'permission:view cargos'])->get('/cargos', [CargoController::class, 'index']);
+Route::middleware(['auth', 'permission:edit cargos'])->get('/cargos/{id}/edit', [CargoController::class, 'edit']);
 
     // Página principal después del login
     Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -42,8 +44,14 @@ Route::middleware('auth')->group(function () {
     Route::middleware(['auth', 'can:view confidential candidates'])->get('/candidates/export-confidential', [CandidateController::class, 'exportConfidential'])->name('candidates.export-confidential');
 
     // Solo para usuarios con rol admin (Spatie)
-    Route::middleware('role:admin')->group(function () {
+        Route::middleware('role:admin')->group(function () {
+        Route::middleware(['auth', 'permission:view candidates'])->get('/candidates', [CandidateController::class, 'index']);
+        Route::middleware(['auth', 'permission:create candidates'])->get('/candidates/create', [CandidateController::class, 'create']);
+        Route::middleware(['auth', 'permission:edit candidates'])->get('/candidates/{id}/edit', [CandidateController::class, 'edit']);
         // Rutas para usuarios
+        Route::middleware(['auth', 'permission:view users'])->get('/users', [UserController::class, 'index']);
+        Route::middleware(['auth', 'permission:create users'])->get('/users/create', [UserController::class, 'create']);
+        Route::middleware(['auth', 'permission:edit users'])->get('/users/{id}/edit', [UserController::class, 'edit']);
         Route::resource('users', UserController::class)
               ->only(['index', 'create', 'store', 'edit', 'update']);
 
@@ -53,6 +61,8 @@ Route::middleware('auth')->group(function () {
         Route::post('roles',                 [RoleController::class, 'store'])->name('roles.store');
         Route::get ('roles/{role}/edit',     [RoleController::class, 'edit'])->name('roles.edit');
         Route::put ('roles/{role}',          [RoleController::class, 'update'])->name('roles.update');
+
+        
     });
 
     // Rutas generales (solo requieren estar autenticado)

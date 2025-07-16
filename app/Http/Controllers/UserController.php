@@ -13,6 +13,14 @@ class UserController extends Controller
     {
         // Solo administradores pueden entrar a este módulo
         $this->middleware(['auth', 'role:admin']);
+        //Solo administradores pueden ver, crear y editar usuarios
+        $this->middleware('permission:view users')->only('index');
+        $this->middleware('permission:create users')->only(['create', 'store']);
+        $this->middleware('permission:edit users')->only(['edit', 'update']);
+        //Protege controladores de cargo
+        
+        $this->middleware('permission:view cargos')->only('index');
+        $this->middleware('permission:edit cargos')->only(['edit', 'update']);
     }
 
     /* ---------- LISTA ---------- */
