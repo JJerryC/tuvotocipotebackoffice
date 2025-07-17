@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Candidate;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\{Role, Permission};
 
 class RoleController extends Controller
 {
+    public function exportConfidential()
+{
+    $this->authorize('view confidential candidates');
+    // lógica para exportar candidatos confidenciales
+
+    // Aquí solo entran los usuarios con permiso
+    $candidates = Candidate::where('is_confidential', true)->get();
+    // Exportar a Excel
+}
     public function __construct()
     {
         $this->middleware(['auth', 'role:admin']);
