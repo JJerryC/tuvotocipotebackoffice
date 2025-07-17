@@ -15,6 +15,18 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <style>
+        /* Estilos rápidos para modo oscuro */
+        body.dark-mode {
+            background-color: #121212 !important;
+            color: #eee !important;
+        }
+        body.dark-mode .navbar {
+            background-color: #222 !important;
+        }
+        /* Ajusta otros estilos según necesites */
+    </style>
 </head>
 <body>
     <div id="app">
@@ -30,11 +42,17 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
                     </ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
+                        <!-- Botón modo oscuro -->
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" id="darkModeToggle" title="Modo Oscuro">
+                                <i class="fas fa-moon"></i>
+                            </a>
+                        </li>
+
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
@@ -76,5 +94,39 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Script para togglear modo oscuro -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('darkModeToggle');
+            const darkClass = 'dark-mode';
+
+            // Cargar estado del modo oscuro
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add(darkClass);
+                btn.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                btn.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+
+            btn.addEventListener('click', e => {
+                e.preventDefault();
+
+                if (document.body.classList.contains(darkClass)) {
+                    document.body.classList.remove(darkClass);
+                    localStorage.setItem('darkMode', 'disabled');
+                    btn.innerHTML = '<i class="fas fa-moon"></i>';
+                } else {
+                    document.body.classList.add(darkClass);
+                    localStorage.setItem('darkMode', 'enabled');
+                    btn.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            });
+        });
+    </script>
+    
+    <!-- Asegúrate de tener FontAwesome para los iconos -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
 </body>
 </html>

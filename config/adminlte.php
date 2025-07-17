@@ -157,7 +157,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => True,
 
     /*
     |--------------------------------------------------------------------------
@@ -198,7 +198,7 @@ return [
     'classes_content' => '',
     'classes_sidebar' => 'sidebar-dark-primary elevation-4',
     'classes_sidebar_nav' => '',
-    'classes_topnav' => 'navbar-white navbar-light',
+    'classes_topnav' => 'sidebar-dark-primary elevation-4 navbar-dark',
     'classes_topnav_nav' => 'navbar-expand',
     'classes_topnav_container' => 'container',
 
@@ -300,28 +300,34 @@ return [
 
 'menu' => [
 
-    /* ---------- NAVBAR ---------- */
-    [
-        'type' => 'navbar-search',
-        'text' => 'search',
-        'topnav_right' => true,
-    ],
     [
         'type' => 'fullscreen-widget',
         'topnav_right' => true,
     ],
 
     /* ---------- SIDEBAR ---------- */
+    ['header' => 'GESTIÓN DE DASHBOARD'],
     [
-        'type'  => 'sidebar-menu-search',
-        'text'  => 'search',
+    'text'  => 'Dashboard',
+    'icon'  => 'fas fa-fw fa-tachometer-alt',
+    'submenu' => [
+        [
+            'text'  => 'Principal',
+            'route' => 'home',
+            'icon'  => 'fas fa-home',
+        ],
+        [
+            'text'  => 'Candidatos',
+            'route' => 'dashboard.candidatos',
+            'icon'  => 'fas fa-users',
+        ],
+        [
+            'text'  => 'Reportería',
+            'route' => 'dashboard.reporteria',
+            'icon'  => 'fas fa-chart-bar',
+        ],
     ],
-    [
-        'text'  => 'Dashboard',
-        'route' => 'home',
-        'icon'  => 'fas fa-fw fa-tachometer-alt',
-    ],
-
+],
     ['header' => 'GESTIÓN DE CANDIDATOS'],
     [
         'text'  => 'Candidatos',
@@ -351,27 +357,31 @@ return [
         ],
     ],
 
-    ['header' => 'CATÁLOGOS'],
-    [
-        'text' => 'Partidos Políticos',
-        'url'  => 'parties',
-        'icon' => 'fas fa-fw fa-flag',
+    ['header' => 'GESTIÓN DE CATÁLOGOS'],
+        'submenu' => [
+            [
+                'text' => 'Partidos Políticos',
+                'url'  => 'parties',
+                'icon' => 'fas fa-fw fa-flag',
+            ],
+            [
+            'text' => 'Entidades',
+            'url'  => 'entidades',
+                'icon' => 'fas fa-fw fa-map-marker-alt',
+            ],
+            [
+                'text' => 'Nomina',
+                'url'  => 'nominas',
+                'icon' => 'fas fa-fw fa-city',
+            ],
+            [
+                'text' => 'Cargos',
+                'url'  => 'cargos',
+                'icon' => 'fas fa-fw fa-briefcase',
+            ],
+        ],
     ],
-    [
-        'text' => 'Entidades',
-        'url'  => 'entidades',
-        'icon' => 'fas fa-fw fa-map-marker-alt',
-    ],
-    [
-        'text' => 'Nomina',
-        'url'  => 'nominas',
-        'icon' => 'fas fa-fw fa-list-alt',
-    ],
-    [
-        'text' => 'Cargos',
-        'url'  => 'cargos',
-        'icon' => 'fas fa-fw fa-briefcase',
-    ],
+
 
     ['header' => 'CONFIGURACIÓN'],
     [
@@ -386,7 +396,7 @@ return [
     'icon' => 'fas fa-fw fa-user-shield',  
     'role' => 'admin',                   
 ],
-],
+
 
 
 
