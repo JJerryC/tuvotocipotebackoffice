@@ -87,9 +87,6 @@
                         <a href="{{ route('candidates.show', $candidato->id) }}" class="btn btn-info btn-sm btn-glass">
                             <i class="fas fa-eye"></i> Ver
                         </a>
-                        <a href="{{ route('candidates.edit', $candidato->id) }}" class="btn btn-warning btn-sm btn-glass">
-                            <i class="fas fa-edit"></i> Editar
-                        </a>
                     </div>
                 </div>
             </div>
