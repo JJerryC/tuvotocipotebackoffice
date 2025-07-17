@@ -8,22 +8,24 @@ use Spatie\Permission\Models\{Role, Permission};
 
 class RoleController extends Controller
 {
-    public function exportConfidential()
-{
-    $this->authorize('view confidential candidates');
-    // lógica para exportar candidatos confidenciales
-
-    // Aquí solo entran los usuarios con permiso
-    $candidates = Candidate::where('is_confidential', true)->get();
-    // Exportar a Excel
-}
     public function __construct()
     {
         $this->middleware(['auth', 'role:admin']);
     }
 
+    /* ---------- Exportar confidenciales ---------- */
+    public function exportConfidential()
+    {
+        $this->authorize('view confidential candidates');
+
+        // Solo los usuarios con permiso acceden aquí
+        $candidates = Candidate::where('is_confidential', true)->get();
+
+        // Lógica de exportación a Excel (implementa según tu librería, ej. Laravel Excel)
+        // return Excel::download(...);
+    }
+
     /* ---------- LISTA ---------- */
-    
     public function index()
     {
         $roles = Role::with('permissions')->orderBy('name')->get();
@@ -31,15 +33,17 @@ class RoleController extends Controller
     }
 
     /* ---------- NUEVO ---------- */
-    public function create()                            // ← DEBE EXISTIR
+    public function create()
     {
-        return view('roles.create', [
-            'permissions' => Permission::orderBy('name')
-                                        ->pluck('name', 'id'),
-        ]);
+        // Agrupar los permisos por el segundo término (ej. 'edit users' → 'users')
+        $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
+            return explode(' ', $perm->name)[1] ?? 'otros';
+        });
+
+        return view('roles.create', compact('permissions'));
     }
 
-    public function store(Request $request)            // ← DEBE EXISTIR
+    public function store(Request $request)
     {
         $data = $request->validate([
             'role_name'      => 'required|string|max:50|unique:roles,name',
@@ -47,9 +51,9 @@ class RoleController extends Controller
             'permissions.*'  => 'exists:permissions,id',
         ]);
 
-        $role  = Role::create(['name' => $data['role_name']]);
-        $perms = Permission::whereIn('id', $data['permissions'] ?? [])
-                            ->get();
+        $role = Role::create(['name' => $data['role_name']]);
+
+        $perms = Permission::whereIn('id', $data['permissions'] ?? [])->get();
         $role->syncPermissions($perms);
 
         return redirect()->route('roles.index')
@@ -59,22 +63,21 @@ class RoleController extends Controller
     /* ---------- EDITAR ---------- */
     public function edit(Role $role)
     {
-        return view('roles.edit', [
-            'role'        => $role,
-            'permissions' => Permission::orderBy('name')
-                                        ->pluck('name', 'id'),
-        ]);
+        $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
+            return explode(' ', $perm->name)[1] ?? 'otros';
+        });
+
+        return view('roles.edit', compact('role', 'permissions'));
     }
 
     public function update(Request $request, Role $role)
     {
         $data = $request->validate([
-            'permissions'   => 'array',
+            'permissions'   => 'nullable|array',
             'permissions.*' => 'exists:permissions,id',
         ]);
 
-        $perms = Permission::whereIn('id', $data['permissions'] ?? [])
-                            ->get();
+        $perms = Permission::whereIn('id', $data['permissions'] ?? [])->get();
         $role->syncPermissions($perms);
 
         return redirect()->route('roles.index')

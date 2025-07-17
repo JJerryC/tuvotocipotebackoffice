@@ -13,23 +13,24 @@
 
 <form method="POST" action="{{ route('roles.update',$role) }}">
     @csrf @method('PUT')
-    <div class="card card-primary">
-        <div class="card-header"><h3 class="card-title">Permisos</h3></div>
-
-        <div class="card-body">
-            <div class="row">
-                @foreach($permissions as $id => $name)
-                    <div class="col-md-4">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"
-                                   name="permissions[]" value="{{ $id }}" id="p{{ $id }}"
-                                   @checked($role->permissions->pluck('id')->contains($id))>
-                            <label class="form-check-label" for="p{{ $id }}">{{ $name }}</label>
-                        </div>
+<div class="form-group">
+    <label>Permisos</label>
+    @foreach($permissions as $group => $perms)
+        <h5 class="mt-3">{{ ucfirst($group) }}</h5>
+        <div class="row">
+            @foreach($perms as $perm)
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}"
+                               @checked($role->permissions->pluck('id')->contains($perm->id))>
+                        <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
                     </div>
-                @endforeach
-            </div>
+                </div>
+            @endforeach
         </div>
+    @endforeach
+</div>
 
         <div class="card-footer d-flex justify-content-between">
             <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary">

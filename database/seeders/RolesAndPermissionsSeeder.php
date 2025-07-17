@@ -9,30 +9,46 @@ use App\Models\User;
 
 class RolesAndPermissionsSeeder extends Seeder
 {
-    public function run(): void
-    {
-        // Crear permisos (si no existen)
-        $permissions = [
-            'manage candidates',
-            'view confidential candidates',
-            'export candidates',
-            'import candidates'
-        ];
+public function run(): void
+{
+    $permissions = [
+        // CANDIDATOS
+        'view candidates',
+        'create candidates',
+        'edit candidates',
+        'view confidential candidates',
 
-        foreach ($permissions as $permName) {
-            Permission::firstOrCreate(['name' => $permName]);
-        }
+        // USUARIOS
+        'view users',
+        'create users',
+        'edit users',
 
-        // Crear rol admin (si no existe)
-        $admin = Role::firstOrCreate(['name' => 'admin']);
+        // ROLES
+        'view roles',
+        'create roles',
+        'edit roles',
 
-        // Asignar todos los permisos al rol admin
-        $admin->syncPermissions($permissions);
+        // REPORTERÍA
+        'view reports',
 
-        // Asignar permiso específico a usuario (ID 1 por ejemplo)
-        $user = User::find(1);
-        if ($user) {
-            $user->givePermissionTo('view confidential candidates');
-        }
+        // CATÁLOGOS (MANTENIMIENTO)
+        'view maintenance',
+        'create maintenance',
+        'edit maintenance',
+    ];
+
+    foreach ($permissions as $permName) {
+        Permission::firstOrCreate(['name' => $permName]);
     }
+
+    // Crear rol admin (si no existe)
+    $admin = Role::firstOrCreate(['name' => 'admin']);
+    $admin->syncPermissions($permissions); // Asignar todos los permisos al admin
+
+    // Asignar admin al usuario 1 (si no lo tiene)
+    $user = \App\Models\User::find(1);
+    if ($user && !$user->hasRole('admin')) {
+        $user->assignRole($admin);
+    }
+}
 }

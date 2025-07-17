@@ -28,21 +28,23 @@
             </div>
 
             {{-- permisos --}}
-            <div class="form-group">
-                <label>Permisos</label>
-                <div class="row">
-                    @foreach($permissions as $id => $name)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
-                                       name="permissions[]" id="p{{ $id }}" value="{{ $id }}">
-                                <label class="form-check-label" for="p{{ $id }}">{{ $name }}</label>
-                            </div>
-                        </div>
-                    @endforeach
+<div class="form-group">
+    <label>Permisos</label>
+    @foreach($permissions as $group => $perms)
+        <h5 class="mt-3">{{ ucfirst($group) }}</h5>
+        <div class="row">
+            @foreach($perms as $perm)
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                               name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}">
+                        <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
+                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
+    @endforeach
+</div>
 
         <div class="card-footer d-flex justify-content-end">
             <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary mr-2">Cancelar</a>
