@@ -11,7 +11,8 @@ use App\Http\Controllers\EntidadController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\NominaController;
-use App\Http\Controllers\DashboardController; // 🔹 NUEVO
+use App\Http\Controllers\DashboardController;
+
 use App\Models\Entidad;
 use App\Models\Municipio;
 use App\Models\Party;
@@ -20,53 +21,10 @@ use App\Models\Departamento;
 // Redirige la ruta raíz al login
 Route::redirect('/', '/login');
 
-// Rutas de autenticación (login, logout, etc.)
+// Rutas de autenticación
 Auth::routes();
 
-// Rutas protegidas por auth
-Route::middleware('auth')->group(function () {
-
-    // Página principal después del login
-    Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-    // Importación de candidatos (no requieren permisos extra)
-    Route::get('/candidates/import', [CandidateImportController::class, 'index'])->name('candidates.import');
-    Route::post('/candidates/preview', [CandidateImportController::class, 'preview'])->name('candidates.preview');
-    Route::post('/candidates/import-confirm', [CandidateImportController::class, 'import'])->name('candidates.import.confirm');
-    Route::post('/candidates/start-import', [CandidateImportController::class, 'startImport'])->name('candidates.start-import');
-    Route::get('/candidates/import-progress/{sessionId}', [CandidateImportController::class, 'getImportProgress'])->name('candidates.import-progress');
-    Route::post('/candidates/import-batch/{sessionId}', [CandidateImportController::class, 'importBatch'])->name('candidates.import-batch');
-    Route::post('/candidates/clear-database', [CandidateImportController::class, 'clearDatabase'])->name('candidates.clear-database');
-
-    // Rutas protegidas con permiso específico (Spatie)
-    Route::middleware('can:manage candidates')->group(function () {
-        Route::resource('candidates', CandidateController::class);
-    });
-
-    //Rutas protegidas para Excel
-    Route::middleware(['auth', 'can:view confidential candidates'])->get('/candidates/export-confidential', [CandidateController::class, 'exportConfidential'])->name('candidates.export-confidential');
-
-    // Solo para usuarios con rol admin (Spatie)
-    Route::middleware('role:admin')->group(function () {
-        // Rutas para usuarios
-        Route::resource('users', UserController::class)
-              ->only(['index', 'create', 'store', 'edit', 'update']);
-
-        // Rutas para roles
-        Route::get ('roles',                 [RoleController::class, 'index'])->name('roles.index');
-        Route::get ('roles/create',          [RoleController::class, 'create'])->name('roles.create');
-        Route::post('roles',                 [RoleController::class, 'store'])->name('roles.store');
-        Route::get ('roles/{role}/edit',     [RoleController::class, 'edit'])->name('roles.edit');
-        Route::put ('roles/{role}',          [RoleController::class, 'update'])->name('roles.update');
-    });
-
-    // Rutas generales (solo requieren estar autenticado)
-    Route::resource('parties', PartyController::class);
-    Route::resource('entidades', EntidadController::class)->parameters([
-        'entidades' => 'entidad' // parámetro personalizado
-    ]);
-    Route::resource('nominas', NominaController::class);
-    Route::resource('cargos', CargoController::class);
+// Rutas API públicas
 Route::get('/api/partidos/{party}/entidades', function (Party $party) {
     return response()->json($party->entidades()->select('id', 'name')->get());
 });
@@ -75,12 +33,15 @@ Route::get('/api/departamentos/{departamento}/municipios', function (Departament
     return response()->json($departamento->municipios()->select('id', 'name')->get());
 });
 
-// Agrupa bajo autenticación todas las rutas que necesiten estar protegidas
+// Rutas protegidas por autenticación
 Route::middleware('auth')->group(function () {
-    // Dashboard o home tras login - MANTENER COMO ESTABA
+
+    // Página principal
     Route::get('/home', [HomeController::class, 'index'])->name('home');
 
-    // 🔹 NUEVAS RUTAS DEL DASHBOARD FUTURISTA
+    /**
+     * DASHBOARD MODERNO
+     */
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
         Route::get('/candidatos', [DashboardController::class, 'candidatos'])->name('candidatos');
@@ -93,46 +54,50 @@ Route::middleware('auth')->group(function () {
         Route::post('/api/actualizar-datos', [DashboardController::class, 'actualizarDatosAutomaticos'])->name('api.actualizar-datos');
     });
 
-    // Rutas para importación de candidatos - MANTENER COMO ESTABAN
+    /**
+     * IMPORTACIÓN DE CANDIDATOS
+     */
     Route::get('/candidates/import', [CandidateImportController::class, 'index'])->name('candidates.import');
     Route::post('/candidates/preview', [CandidateImportController::class, 'preview'])->name('candidates.preview');
     Route::post('/candidates/import-confirm', [CandidateImportController::class, 'import'])->name('candidates.import.confirm');
-
-    // Nuevas rutas para importación con progreso - MANTENER
     Route::post('/candidates/start-import', [CandidateImportController::class, 'startImport'])->name('candidates.start-import');
     Route::get('/candidates/import-progress/{sessionId}', [CandidateImportController::class, 'getImportProgress'])->name('candidates.import-progress');
     Route::post('/candidates/import-batch/{sessionId}', [CandidateImportController::class, 'importBatch'])->name('candidates.import-batch');
-
-    // Ruta para limpiar base de datos - MANTENER
     Route::post('/candidates/clear-database', [CandidateImportController::class, 'clearDatabase'])->name('candidates.clear-database');
 
-    // CRUD Candidatos - MANTENER
-    Route::resource('candidates', CandidateController::class)
-      ->middleware(['auth', 'can:manage candidates']);
-
-    // Gestión de usuarios - MANTENER
-    Route::middleware(['auth', 'role:admin'])
-     ->resource('users', UserController::class)
-     ->only(['index', 'create', 'store', 'edit', 'update']);
-
-    // Gestión de roles - MANTENER
-    Route::middleware(['auth', 'role:admin'])->group(function () {
-        Route::get ('roles',              [RoleController::class, 'index' ])->name('roles.index');
-        Route::get ('roles/create',       [RoleController::class, 'create'])->name('roles.create');
-        Route::post('roles',              [RoleController::class, 'store' ])->name('roles.store');
-        Route::get ('roles/{role}/edit',  [RoleController::class, 'edit'  ])->name('roles.edit');
-        Route::put ('roles/{role}',       [RoleController::class, 'update'])->name('roles.update');
-    });
-
-    // Gestión de catálogos - MANTENER
-    Route::middleware(['auth'])->group(function () {
-        Route::resource('parties', PartyController::class);
-        Route::resource('entidades', EntidadController::class)->parameters([
-            'entidades' => 'entidad'
-        ]);
-        Route::resource('nominas', NominaController::class);
-        Route::resource('cargos', CargoController::class);
+    /**
+     * CANDIDATOS
+     */
+    // Usando middleware 'can' para permisos
+    Route::middleware('can:manage candidates')->group(function () {
         Route::resource('candidates', CandidateController::class);
     });
+
+    // Exportación confidencial (permiso específico)
+    Route::middleware('can:view confidential candidates')->get('/candidates/export-confidential', [CandidateController::class, 'exportConfidential'])->name('candidates.export-confidential');
+
+    /**
+     * USUARIOS (solo admin)
+     */
+    // Middleware 'role' para rol admin — asegúrate que lo tienes creado y registrado
+    Route::middleware('role:admin')->group(function () {
+        Route::resource('users', UserController::class)->only(['index', 'create', 'store', 'edit', 'update']);
+
+        // RUTAS PARA ROLES
+        Route::get ('roles', [RoleController::class, 'index'])->name('roles.index');
+        Route::get ('roles/create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+        Route::get ('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put ('roles/{role}', [RoleController::class, 'update'])->name('roles.update');
+    });
+
+    /**
+     * CATÁLOGOS
+     */
+    Route::resource('parties', PartyController::class);
+    Route::resource('entidades', EntidadController::class)->parameters([
+        'entidades' => 'entidad'
+    ]);
+    Route::resource('nominas', NominaController::class);
+    Route::resource('cargos', CargoController::class);
 });
-};

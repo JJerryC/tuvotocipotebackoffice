@@ -67,7 +67,7 @@ return [
     'logo_img' => 'images/logoazul.webp',
     'logo_img_class'  => 'brand-image elevation-0',
     'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs ',
+    'logo_img_xl_class' => 'brand-image-xs',
     'logo_img_alt' => 'Tu voto cipote',
 
     /*
@@ -358,6 +358,9 @@ return [
     ],
 
     ['header' => 'GESTIÓN DE CATÁLOGOS'],
+    [
+        'text'  => 'Catalogos',
+        'icon'  => 'fas fa-folder-open',
         'submenu' => [
             [
                 'text' => 'Partidos Políticos',
@@ -396,7 +399,7 @@ return [
     'icon' => 'fas fa-fw fa-user-shield',  
     'role' => 'admin',                   
 ],
-
+],
 
 
 
