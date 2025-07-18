@@ -380,7 +380,7 @@ return [
             [
                 'text' => 'Nomina',
                 'url'  => 'nominas',
-                'icon' => 'fas fa-fw fa-city',
+                'icon' => '	fas fa-clipboard-list',
             ],
             [
                 'text' => 'Cargos',
