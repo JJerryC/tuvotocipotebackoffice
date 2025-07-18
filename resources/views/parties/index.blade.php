@@ -28,7 +28,7 @@
             @foreach($parties as $party)
             <tr>
                 <td>{{ $party->name }}</td>
-                <td>
+                <td class="text-right">
                     <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -40,7 +40,7 @@
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>
-                </td>
+            </td>
             </tr>
             @endforeach
         </tbody>

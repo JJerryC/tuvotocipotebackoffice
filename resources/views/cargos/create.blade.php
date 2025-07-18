@@ -11,8 +11,11 @@
     <form action="{{ route('cargos.store') }}" method="POST">
         @csrf
         <x-adminlte-input name="name" label="Nombre" placeholder="Nombre del cargo" required />
-        <x-adminlte-button type="submit" label="Guardar" theme="success" icon="fas fa-save" />
-        <a href="{{ route('cargos.index') }}" class="btn btn-default">Cancelar</a>
+
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ route('cargos.index') }}" class="btn btn-default">Cancelar</a>
+            <x-adminlte-button type="submit" label="Guardar" theme="success" icon="fas fa-save" />
+        </div>
     </form>
 </x-adminlte-card>
 @stop

@@ -46,12 +46,12 @@
                     <td>{{ $c->departamento->name ?? '—' }}</td>
                     <td>{{ $c->municipio->name ?? '—' }}</td>
                     <td>{{ $c->cargo->name ?? '—' }}</td>
-                    <td>
+                    <td class="text-right">
                         <a href="{{ route('candidates.edit', $c) }}" class="btn btn-xs btn-primary" title="Editar">
                             <i class="fas fa-edit"></i>
                         </a>
                         <form action="{{ route('candidates.destroy', $c) }}" method="POST" class="d-inline"
-                              onsubmit="return confirm('¿Eliminar este candidato?')">
+                            onsubmit="return confirm('¿Eliminar este candidato?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">

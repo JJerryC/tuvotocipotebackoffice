@@ -25,9 +25,12 @@
             @endforeach
         </x-adminlte-select>
 
-        {{-- Botones --}}
-        <x-adminlte-button type="submit" label="Actualizar" theme="primary" icon="fas fa-save" />
-        <a href="{{ route('entidades.index') }}" class="btn btn-default">Cancelar</a>
+        {{-- Botones alineados a izquierda y derecha --}}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ route('entidades.index') }}" class="btn btn-default">Cancelar</a>
+
+            <x-adminlte-button type="submit" label="Actualizar" theme="primary" icon="fas fa-save" />
+        </div>
     </form>
 </x-adminlte-card>
 @stop

@@ -11,9 +11,15 @@
     <form action="{{ route('cargos.update', $cargo) }}" method="POST">
         @csrf
         @method('PUT')
+
         <x-adminlte-input name="name" label="Nombre" value="{{ old('name', $cargo->name) }}" required />
-        <x-adminlte-button type="submit" label="Actualizar" theme="primary" icon="fas fa-save" />
-        <a href="{{ route('cargos.index') }}" class="btn btn-default">Cancelar</a>
+
+        {{-- Botones separados a extremos opuestos --}}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ route('cargos.index') }}" class="btn btn-default">Cancelar</a>
+
+            <x-adminlte-button type="submit" label="Actualizar" theme="primary" icon="fas fa-save" />
+        </div>
     </form>
 </x-adminlte-card>
 @stop

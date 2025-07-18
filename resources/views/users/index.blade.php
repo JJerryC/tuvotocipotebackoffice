@@ -40,7 +40,7 @@
                         <span class="badge bg-info">{{ $role->name }}</span>
                     @endforeach
                 </td>
-                <td>
+                <td style="text-align: right;">
                     <a href="{{ route('users.edit', $u) }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-user-cog"></i>
                     </a>

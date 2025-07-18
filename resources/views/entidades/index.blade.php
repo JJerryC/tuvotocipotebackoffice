@@ -30,7 +30,7 @@
             <tr>
                 <td>{{ $entidad->name }}</td>
                 <td>{{ $entidad->party->name ?? '—' }}</td>
-                <td>
+                <td class="text-right">
                     <a href="{{ route('entidades.edit', $entidad) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>

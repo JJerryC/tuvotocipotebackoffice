@@ -3,27 +3,29 @@
 @section('title', 'Crear Entidad')
 
 @section('content_header')
-    <h1>Crear Entidad</h1>
+    <h1 class="m-0 text-dark">Crear Entidad</h1>
 @stop
 
 @section('content')
-<form action="{{ route('entidades.store') }}" method="POST">
-    @csrf
-    <div class="form-group">
-        <label for="name">Nombre de la Entidad</label>
-        <input type="text" name="name" class="form-control" required>
-    </div>
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Nueva Entidad" class="col-md-6">
+    <form action="{{ route('entidades.store') }}" method="POST">
+        @csrf
 
-    <div class="form-group">
-        <label for="party_id">Partido</label>
-        <select name="party_id" class="form-control" required>
+        <x-adminlte-input name="name" label="Nombre de la Entidad" placeholder="Ingrese el nombre" required />
+
+        <x-adminlte-select name="party_id" label="Partido" required>
             <option value="">Seleccione…</option>
             @foreach($parties as $id => $name)
                 <option value="{{ $id }}">{{ $name }}</option>
             @endforeach
-        </select>
-    </div>
+        </x-adminlte-select>
 
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+        {{-- Botones alineados a izquierda y derecha --}}
+        <div class="d-flex justify-content-between mt-3">
+            <a href="{{ route('entidades.index') }}" class="btn btn-default">Cancelar</a>
+
+            <x-adminlte-button type="submit" label="Guardar" theme="success" icon="fas fa-save" />
+        </div>
+    </form>
+</x-adminlte-card>
 @stop

@@ -8,11 +8,8 @@
 
 @section('content')
 <div class="card card-primary">
-    <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card-header d-flex align-items-center">
         <h3 class="card-title"><i class="fas fa-user-plus mr-1"></i>Datos del candidato</h3>
-        <button type="submit" form="candidate-form" class="btn btn-sm btn-success">
-            <i class="fas fa-save mr-1"></i>Guardar
-        </button>
     </div>
 
     <form id="candidate-form" action="{{ route('candidates.store') }}" method="POST" autocomplete="off" enctype="multipart/form-data">
@@ -107,14 +104,13 @@
                 </div>
 
                 {{-- Posición --}}
-                <div class="col-md-3 form-group">
+                <div class="col-md-6 form-group">
                     <label for="posicion"><i class="fas fa-sort-numeric-down mr-1"></i>Posición</label>
                     <input type="number" name="posicion" id="posicion" min="1" step="1" class="form-control @error('posicion') is-invalid @enderror" value="{{ old('posicion') }}">
                     @error('posicion')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
-                {{-- Número de Identidad --}}
-                <div class="col-md-9 form-group">
+                <div class="col-md-6 form-group">
                     <label for="numero_identidad"><i class="fas fa-id-card mr-1"></i>Número de Identidad</label>
                     <input type="text" name="numero_identidad" id="numero_identidad" maxlength="25" class="form-control @error('numero_identidad') is-invalid @enderror" value="{{ old('numero_identidad') }}">
                     @error('numero_identidad')<span class="invalid-feedback">{{ $message }}</span>@enderror
@@ -180,10 +176,14 @@
             </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer d-flex align-items-center">
             <a href="{{ route('candidates.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left mr-1"></i>Cancelar
             </a>
+
+            <button type="submit" form="candidate-form" class="btn btn-success" style="margin-left: auto;">
+                <i class="fas fa-save mr-1"></i>Guardar
+            </button>
         </div>
     </form>
 </div>

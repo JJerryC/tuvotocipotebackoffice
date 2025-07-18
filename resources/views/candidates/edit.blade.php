@@ -10,9 +10,6 @@
 <div class="card card-primary">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h3 class="card-title">Datos del candidato</h3>
-        <button type="submit" form="candidate-form" class="btn btn-sm btn-success">
-            <i class="fas fa-save mr-1"></i>Actualizar
-        </button>
     </div>
 
     <form id="candidate-form" action="{{ route('candidates.update', $candidate) }}" method="POST" enctype="multipart/form-data">
@@ -126,7 +123,7 @@
                 </div>
 
                 {{-- Posición --}}
-                <div class="col-md-3 form-group">
+                <div class="col-md-6 form-group">
                     <label for="posicion"><i class="fas fa-sort-numeric-down mr-1"></i>Posición</label>
                     <input type="number" name="posicion" id="posicion" min="1" step="1"
                            class="form-control @error('posicion') is-invalid @enderror"
@@ -135,7 +132,7 @@
                 </div>
 
                 {{-- Número de Identidad --}}
-                <div class="col-md-9 form-group">
+                <div class="col-md-12 form-group">
                     <label for="numero_identidad"><i class="fas fa-id-card mr-1"></i>Número de Identidad</label>
                     <input type="text" name="numero_identidad" id="numero_identidad" maxlength="25"
                            class="form-control @error('numero_identidad') is-invalid @enderror"
@@ -180,32 +177,37 @@
                 </div>
 
                 {{-- Fotografía --}}
-                <div class="col-md-6 form-group">
-                    <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
-                    <div class="custom-file">
+                <div class="col-md-8 form-group d-flex align-items-center">
+
+                    {{-- Input archivo con label --}}
+                    <div class="custom-file flex-grow-1 mr-3">
+                        <label for="fotografia"><i class="fas fa-camera mr-1"></i>Fotografía</label>
                         <input type="file" name="fotografia" id="fotografia" class="custom-file-input @error('fotografia') is-invalid @enderror" accept="image/*">
                         <label class="custom-file-label" for="fotografia">Seleccionar archivo</label>
+
+                        @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
                     </div>
-                    @error('fotografia')<span class="invalid-feedback d-block">{{ $message }}</span>@enderror
+
+                    {{-- Checkbox reelección --}}
+                    <div class="form-check" style="white-space: nowrap;">
+                        <input type="checkbox" name="reeleccion" id="reeleccion" class="form-check-input"
+                            value="1" @checked(old('reeleccion', $candidate->reeleccion))>
+                        <label for="reeleccion" class="form-check-label mb-0">Candidato a reelección</label>
+                    </div>
+                </div>
+
+                {{-- Preview de foto --}}
+                <div class="col-md-6 form-group">
                     @if($candidate->fotografia)
                         <small class="form-text text-muted" id="preview-filename">Foto actual: {{ $candidate->fotografia_original ?? basename($candidate->fotografia) }}</small>
-                        <div class="mt-2" id="preview-container">
+                        <div id="preview-container">
                             <img src="{{ asset('storage/' . $candidate->fotografia) }}" alt="Foto del candidato" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
                         </div>
                     @else
-                        <div class="mt-2" id="preview-container" style="display:none;">
+                        <div id="preview-container" style="display:none;">
                             <img src="" alt="Vista previa" id="preview-image" style="max-width: 200px; max-height: 200px; border-radius: 5px;">
                         </div>
                     @endif
-                </div>
-
-                {{-- Candidato a reelección --}}
-                <div class="col-md-6 form-group d-flex align-items-center">
-                    <div class="form-check">
-                        <input type="checkbox" name="reeleccion" id="reeleccion" class="form-check-input"
-                               value="1" @checked(old('reeleccion', $candidate->reeleccion))>
-                        <label for="reeleccion" class="form-check-label">Candidato a reelección</label>
-                    </div>
                 </div>
 
                 {{-- Planes y propuestas --}}
@@ -219,10 +221,14 @@
             </div>
         </div>
 
-        <div class="card-footer">
+        <div class="card-footer d-flex align-items-center">
             <a href="{{ route('candidates.index') }}" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left mr-1"></i>Cancelar
             </a>
+
+            <button type="submit" form="candidate-form" class="btn btn-success" style="margin-left: auto;">
+                <i class="fas fa-save mr-1"></i>Actualizar
+            </button>
         </div>
     </form>
 </div>

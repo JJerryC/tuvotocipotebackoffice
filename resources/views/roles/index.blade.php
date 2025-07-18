@@ -38,7 +38,7 @@
                         <span class="text-muted">—</span>
                     @endforelse
                 </td>
-                <td>
+                <td class="text-right">
                     <a href="{{ route('roles.edit',$role) }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-edit"></i>
                     </a>

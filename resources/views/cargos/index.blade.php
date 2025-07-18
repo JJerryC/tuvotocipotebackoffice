@@ -28,7 +28,7 @@
             @foreach($cargos as $cargo)
             <tr>
                 <td>{{ $cargo->name }}</td>
-                <td>
+                <td class="text-right">
                     <a href="{{ route('cargos.edit', $cargo) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>

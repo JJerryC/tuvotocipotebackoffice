@@ -20,17 +20,19 @@
                 <!-- Añade aquí el resto de tus filtros -->
             </div>
 
-            <div class="filter-actions mt-3 d-flex flex-wrap gap-2">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i> Filtrar
-                </button>
-                <a href="{{ route('dashboard.candidatos') }}" class="btn btn-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-                <a href="{{ route('candidates.create') }}" class="btn btn-success">
-                    <i class="fas fa-plus"></i> Nuevo Candidato
-                </a>
-            </div>
+    <div class="filter-actions mt-3 d-flex justify-content-end">
+        <a href="{{ route('candidates.create') }}" class="btn btn-success mr-2">
+            <i class="fas fa-plus"></i> Nuevo Candidato
+        </a>
+
+        <a href="{{ route('dashboard.candidatos') }}" class="btn btn-secondary mr-2">
+            <i class="fas fa-times"></i> Limpiar
+        </a>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Filtrar
+        </button>
+    </div>
         </form>
     </div>
 
@@ -83,7 +85,7 @@
                     </div>
                     @endif
 
-                    <div class="candidate-actions d-flex gap-2">
+                    <div class="candidate-actions d-flex justify-content-end gap-2">
                         <a href="{{ route('candidates.show', $candidato->id) }}" class="btn btn-info btn-sm btn-glass">
                             <i class="fas fa-eye"></i> Ver
                         </a>

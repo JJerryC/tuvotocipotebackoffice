@@ -18,8 +18,13 @@
         </x-adminlte-select>
 
         <x-adminlte-input name="name" label="Nombre" placeholder="Nombre de la nómina" required />
-        <x-adminlte-button type="submit" label="Guardar" theme="success" icon="fas fa-save" />
-        <a href="{{ route('nominas.index') }}" class="btn btn-default">Cancelar</a>
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('nominas.index') }}" class="btn btn-default">
+                <i class="fas fa-arrow-left mr-1"></i> Cancelar
+            </a>
+
+            <x-adminlte-button type="submit" label="Guardar" theme="success" icon="fas fa-save" />
+        </div>
     </form>
 </x-adminlte-card>
 @stop

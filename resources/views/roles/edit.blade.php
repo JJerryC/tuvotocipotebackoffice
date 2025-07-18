@@ -32,12 +32,14 @@
     @endforeach
 </div>
 
-        <div class="card-footer d-flex justify-content-between">
-            <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left mr-1"></i> Volver
-            </a>
-            <button class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
-        </div>
+            <div class="card-footer d-flex justify-content-between">
+                <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left mr-1"></i> Volver
+                </a>
+                <button class="btn btn-primary ml-auto">
+                    <i class="fas fa-save mr-1"></i> Guardar
+                </button>
+            </div>
     </div>
 </form>
 @stop
