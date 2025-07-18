@@ -209,7 +209,7 @@ $(function(){
         if (!pid) {
             $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/api/partidos/'+pid+'/entidades', function(data){
+            $.getJSON('/api/entidades/' + pid, function(data){
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, e){
                     opts += '<option value="'+e.id+'">'+e.name+'</option>';
@@ -224,7 +224,7 @@ $(function(){
         if (!did) {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/api/departamentos/'+did+'/municipios', function(data){
+            $.getJSON('/api/municipios/' + did, function(data){
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, m){
                     opts += '<option value="'+m.id+'">'+m.name+'</option>';

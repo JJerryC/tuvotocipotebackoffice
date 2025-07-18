@@ -162,18 +162,32 @@ class CandidateController extends Controller
             ->route('candidates.index')
             ->with('success', 'Candidato eliminado correctamente');
     }
-public function show(Candidate $candidate)
-{
-    $candidate->load([
-        'party',
-        'entidad',
-        'nomina',
-        'departamento',
-        'municipio',
-        'cargo',
-        'sexo',
-    ]);
 
-    return view('candidates.show', compact('candidate'));
-}
+    public function show(Candidate $candidate)
+    {
+        $candidate->load([
+            'party',
+            'entidad',
+            'nomina',
+            'departamento',
+            'municipio',
+            'cargo',
+            'sexo',
+        ]);
+
+        return view('candidates.show', compact('candidate'));
+    }
+
+    public function getEntidadesByParty($partyId)
+    {
+        $entidades = Entidad::where('party_id', $partyId)->orderBy('name')->get(['id', 'name']);
+        return response()->json($entidades);
+    }
+
+    public function getMunicipiosByDepartamento($departamentoId)
+    {
+        $municipios = Municipio::where('departamento_id', $departamentoId)->orderBy('name')->get(['id', 'name']);
+        return response()->json($municipios);
+    }
+
 }

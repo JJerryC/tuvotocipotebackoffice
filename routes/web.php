@@ -38,6 +38,16 @@ Route::prefix('dashboard')->name('dashboard.')
         Route::post('/api/actualizar-datos', [DashboardController::class, 'actualizarDatosAutomaticos'])->name('api.actualizar-datos');
     });
 
+    // Rutas AJAX para selects dependientes (entidades por partido, municipios por departamento)
+Route::middleware('auth')->group(function () {
+    Route::get('/api/entidades/{party}', [CandidateController::class, 'getEntidadesByParty'])
+        ->name('api.entidades.byParty');
+
+    Route::get('/api/municipios/{departamento}', [CandidateController::class, 'getMunicipiosByDepartamento'])
+        ->name('api.municipios.byDepartamento');
+});
+
+
     // Rutas para importación de candidatos
     Route::get('/candidates/import', [CandidateImportController::class, 'index'])->name('candidates.import');
     Route::post('/candidates/preview', [CandidateImportController::class, 'preview'])->name('candidates.preview');
