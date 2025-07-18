@@ -106,7 +106,7 @@
                 {{-- Posición --}}
                 <div class="col-md-6 form-group">
                     <label for="posicion"><i class="fas fa-sort-numeric-down mr-1"></i>Posición</label>
-                    <input type="number" name="posicion" id="posicion" min="1" step="1" class="form-control @error('posicion') is-invalid @enderror" value="{{ old('posicion') }}">
+                    <input type="number" name="posicion" id="posicion" step="1" class="form-control @error('posicion') is-invalid @enderror" value="{{ old('posicion') }}">
                     @error('posicion')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 

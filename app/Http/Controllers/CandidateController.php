@@ -52,7 +52,7 @@ class CandidateController extends Controller
             'municipio_id'     => 'required|exists:municipios,id',
             'cargo_id'         => 'required|exists:cargos,id',
             'sexo_id'          => 'required|exists:sexos,id',
-            'posicion'         => 'required|integer|min:1',
+            'posicion'         => 'required|integer|min:0',
             'numero_identidad' => 'required|string|max:25|unique:candidates,numero_identidad',
             'primer_nombre'    => 'required|string|max:60',
             'segundo_nombre'   => 'nullable|string|max:60',
@@ -111,7 +111,7 @@ class CandidateController extends Controller
             'municipio_id'     => 'required|exists:municipios,id',
             'cargo_id'         => 'required|exists:cargos,id',
             'sexo_id'          => 'required|exists:sexos,id',
-            'posicion'         => 'required|integer|min:1',
+            'posicion'         => 'required|integer|min:0',
             'numero_identidad' => [
                 'required', 'string', 'max:25',
                 Rule::unique('candidates', 'numero_identidad')->ignore($candidate->id),
