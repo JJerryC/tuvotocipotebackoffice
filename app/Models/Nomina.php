@@ -11,14 +11,8 @@ class Nomina extends Model
 
     protected $table = 'nominas';
     protected $fillable = [
-        'entidad_id',
         'name',
     ];
-
-    public function entidad()
-    {
-        return $this->belongsTo(Entidad::class);
-    }
 
     public function candidates()
     {

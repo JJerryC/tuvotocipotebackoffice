@@ -18,34 +18,32 @@
     @endcan
 
     <table id="nominasTable" class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Entidad</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($nominas as $nomina)
-            <tr>
-                <td>{{ $nomina->name }}</td>
-                <td>{{ $nomina->entidad->name ?? '—' }}</td>
-                <td class="text-right">
-                    <a href="{{ route('nominas.edit', $nomina) }}" class="btn btn-xs btn-primary" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <form action="{{ route('nominas.destroy', $nomina) }}" method="POST" class="d-inline"
-                        onsubmit="return confirm('¿Eliminar esta nómina?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($nominas as $nomina)
+                <tr>
+                    <td>{{ $nomina->name }}</td>
+                    <td class="text-right">
+                        <a href="{{ route('nominas.edit', $nomina) }}" class="btn btn-xs btn-primary" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form action="{{ route('nominas.destroy', $nomina) }}" method="POST" class="d-inline"
+                            onsubmit="return confirm('¿Eliminar esta nómina?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
     </table>
 
 </x-adminlte-card>

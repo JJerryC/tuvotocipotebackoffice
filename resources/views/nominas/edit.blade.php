@@ -12,16 +12,8 @@
         @csrf
         @method('PUT')
 
-        <x-adminlte-select name="entidad_id" label="Entidad" required>
-            <option value="">Seleccione una entidad</option>
-            @foreach($entidades as $entidad)
-                <option value="{{ $entidad->id }}" {{ $nomina->entidad_id == $entidad->id ? 'selected' : '' }}>
-                    {{ $entidad->name }}
-                </option>
-            @endforeach
-        </x-adminlte-select>
-
         <x-adminlte-input name="name" label="Nombre" value="{{ old('name', $nomina->name) }}" required />
+
         <div class="d-flex justify-content-between">
             <a href="{{ route('nominas.index') }}" class="btn btn-default">
                 <i class="fas fa-arrow-left mr-1"></i> Cancelar

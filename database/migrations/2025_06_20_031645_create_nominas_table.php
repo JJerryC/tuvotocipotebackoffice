@@ -13,10 +13,6 @@ return new class extends Migration
 {
     Schema::create('nominas', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('entidad_id')
-              ->constrained('entidades')
-              ->cascadeOnUpdate()
-              ->restrictOnDelete();
         $table->string('name');
         $table->timestamps();
     });
