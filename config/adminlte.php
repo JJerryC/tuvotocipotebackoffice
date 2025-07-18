@@ -63,13 +63,18 @@ return [
     |
     */
 
-    'logo' => '<b> &nbsp </b>',
-    'logo_img' => 'images/logoazul.webp',
-    'logo_img_class'  => 'brand-image elevation-0',
-    'logo_img_xl' => null,
-    'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Tu voto cipote',
+'logo'             => '<b>&nbsp;</b>',
 
+// ► Logo ancho (sidebar expandido)
+'logo_img'         => 'images/logoazul.webp',
+'logo_img_class'   => 'brand-image elevation-0',
+
+// ► Logo mini (sidebar colapsado)
+'logo_img_xl'      => 'images/logoazulmini.webp',
+'logo_img_xl_class'=> 'brand-image-xs elevation-0',
+
+// Texto alternativo
+'logo_img_alt'     => 'Tu voto cipote',
     /*
     |--------------------------------------------------------------------------
     | Authentication Logo
@@ -113,7 +118,7 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'images/logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,

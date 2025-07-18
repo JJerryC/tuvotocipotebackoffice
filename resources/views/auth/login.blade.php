@@ -63,7 +63,7 @@
             <div class="card text-center">
 
                 <div class="text-center mb-4">
-                <img src="{{ asset('images/logo2.png') }}"alt="Logo Tu Voto Cipote" width="125" class="d-block mx-auto mb-3">
+                <img src="{{ asset('images/Logo2.png') }}"alt="Logo Tu Voto Cipote" width="125" class="d-block mx-auto mb-3">
 
                 <h3 class="mb-4 text-primary fw-bold">Iniciar Sesión</h3>
 
