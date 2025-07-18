@@ -91,7 +91,10 @@
 @section('content')
 <div class="candidate-show-container">
     <div class="candidate-header">
-        <img src="{{ asset('storage/' . $candidate->fotografia) }}" alt="Foto del candidato" class="candidate-photo">
+        <img 
+        src="{{ $candidate->fotografia ? asset('storage/' . $candidate->fotografia) : asset('images/default-candidate.png') }}" 
+        alt="Foto del candidato" 
+        class="candidate-photo">
         <h2>{{ $candidate->primer_nombre }} {{ $candidate->segundo_nombre }} {{ $candidate->primer_apellido }} {{ $candidate->segundo_apellido }}</h2>
         <p class="text-secondary">
             @if($candidate->independiente)

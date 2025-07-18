@@ -51,8 +51,11 @@
             <div class="card bg-dark text-white glass-card">
                 <div class="card-body">
                     <div class="candidate-header d-flex align-items-center mb-3">
-                        <img src="{{ $candidato->fotografia_url }}" alt="{{ $candidato->nombre_completo }}" 
-                            class="candidate-photo rounded-circle me-3" style="width:80px; height:80px; object-fit:cover; border:3px solid var(--accent-blue);">
+                        <img 
+                        src="{{ $candidato->fotografia ? asset('storage/' . $candidato->fotografia) : asset('images/default-candidate.png') }}" 
+                        alt="{{ $candidato->nombre_completo }}" 
+                        class="candidate-photo rounded-circle me-3" 
+                        style="width:80px; height:80px; object-fit:cover; border:3px solid var(--accent-blue);">
                         <div>
                             <h4 class="candidate-name">{{ $candidato->nombre_completo }}</h4>
                             <div class="candidate-id text-secondary">ID: {{ $candidato->numero_identidad }}</div>
