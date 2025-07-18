@@ -79,9 +79,13 @@
             </div> {{-- /.row --}}
         </div>
 
-        <div class="card-footer d-flex justify-content-end">
-            <a href="{{ route('users.index') }}" class="btn btn-outline-secondary mr-2">Cancelar</a>
-            <button class="btn btn-primary"><i class="fas fa-save mr-1"></i> Guardar</button>
+        <div class="card-footer d-flex justify-content-between">
+            <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left mr-1"></i> Cancelar
+            </a>
+            <button class="btn btn-primary ml-auto">
+                <i class="fas fa-save mr-1"></i> Guardar
+            </button>
         </div>
     </div>
 </form>

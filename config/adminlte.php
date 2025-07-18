@@ -354,11 +354,11 @@ return [
                 'route' => 'candidates.import',
                 'icon'  => 'fas fa-fw fa-file-excel',
             ],
-            [
-                'text'  => 'Exportar Datos',
-                'url'   => '#', // cuando tengas route('candidates.export')
-                'icon'  => 'fas fa-fw fa-download',
-            ],
+            //[
+            //    'text'  => 'Exportar Datos',
+            //    'url'   => '#', // cuando tengas route('candidates.export')
+            //    'icon'  => 'fas fa-fw fa-download',
+            //],
         ],
     ],
 
