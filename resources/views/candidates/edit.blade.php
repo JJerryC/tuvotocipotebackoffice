@@ -125,7 +125,7 @@
                 {{-- Posición --}}
                 <div class="col-md-6 form-group">
                     <label for="posicion"><i class="fas fa-sort-numeric-down mr-1"></i>Posición</label>
-                    <input type="number" name="posicion" id="posicion" min="1" step="1"
+                    <input type="number" name="posicion" id="posicion" step="1"
                            class="form-control @error('posicion') is-invalid @enderror"
                            value="{{ old('posicion', $candidate->posicion) }}">
                     @error('posicion')<span class="invalid-feedback">{{ $message }}</span>@enderror
@@ -236,70 +236,96 @@
 
 @push('js')
 <script>
-$(function(){
-    const entidadSelect = $('#entidad_id');
-    const municipioSelect = $('#municipio_id');
-    const partySelect = $('#party_id');
+$(function() {
     const independienteCheckbox = $('#independiente');
+    const partySelect = $('#party_id');
+    const entidadSelect = $('#entidad_id');
+    const departamentoSelect = $('#departamento_id');
+    const municipioSelect = $('#municipio_id');
+    const fotografiaInput = $('#fotografia');
 
-    // Función para activar/desactivar selects party y entidad según independiente
     function toggleIndependiente() {
         const isIndependiente = independienteCheckbox.is(':checked');
         partySelect.prop('disabled', isIndependiente);
         entidadSelect.prop('disabled', isIndependiente);
         if (isIndependiente) {
-            entidadSelect.html('<option value="">Seleccione…</option>');
             partySelect.val('');
-            entidadSelect.val('');
+            entidadSelect.html('<option value="">Seleccione…</option>');
         }
     }
 
-    // Ejecutar al cargar la página
     toggleIndependiente();
 
-    // Cambiar cuando se marca o desmarca independiente
-    independienteCheckbox.on('change', function(){
+    independienteCheckbox.on('change', function() {
         toggleIndependiente();
     });
 
-    // Al cambiar partido, cargar entidades solo si no es independiente
-    partySelect.on('change', function(){
-        if (independienteCheckbox.is(':checked')) {
-            entidadSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+    // Cargar entidades segun partyId y seleccionar entidadSeleccionada si se da
+    function cargarEntidades(partyId, entidadSeleccionada = null) {
+        if (!partyId) {
+            entidadSelect.html('<option value="">Seleccione…</option>').prop('disabled', true);
             return;
         }
-        let pid = $(this).val();
-        if(!pid) {
-            entidadSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
-            return;
-        }
-        $.getJSON('/api/partidos/' + pid + '/entidades', function(data){
+        $.getJSON('/api/entidades/' + partyId, function(data) {
             let options = '<option value="">Seleccione…</option>';
-            $.each(data, (i, item) => {
-                options += `<option value="${item.id}">${item.name}</option>`;
+            $.each(data, function(_, entidad) {
+                const selected = entidadSeleccionada == entidad.id ? 'selected' : '';
+                options += `<option value="${entidad.id}" ${selected}>${entidad.name}</option>`;
             });
             entidadSelect.html(options).prop('disabled', false);
         });
-    });
+    }
 
-    // Al cambiar departamento, cargar municipios
-    $('#departamento_id').on('change', function(){
-        let did = $(this).val();
-        municipioSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
-
-        if(did) {
-            $.getJSON('/api/departamentos/' + did + '/municipios', function(data){
-                let options = '<option value="">Seleccione…</option>';
-                $.each(data, (i, item) => {
-                    options += `<option value="${item.id}">${item.name}</option>`;
-                });
-                municipioSelect.html(options).prop('disabled', false);
-            });
+    partySelect.on('change', function() {
+        if (independienteCheckbox.is(':checked')) {
+            entidadSelect.html('<option value="">Seleccione…</option>').prop('disabled', true);
+            return;
         }
+        const partyId = $(this).val();
+        cargarEntidades(partyId);
     });
+
+    // Cargar municipios segun departamentoId y seleccionar municipioSeleccionado si se da
+    function cargarMunicipios(departamentoId, municipioSeleccionado = null) {
+        if (!departamentoId) {
+            municipioSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+            return;
+        }
+        $.getJSON('/api/municipios/' + departamentoId, function(data) {
+            let options = '<option value="">Seleccione…</option>';
+            $.each(data, function(_, municipio) {
+                const selected = municipioSeleccionado == municipio.id ? 'selected' : '';
+                options += `<option value="${municipio.id}" ${selected}>${municipio.name}</option>`;
+            });
+            municipioSelect.html(options).prop('disabled', false);
+        });
+    }
+
+    departamentoSelect.on('change', function() {
+        const departamentoId = $(this).val();
+        cargarMunicipios(departamentoId);
+    });
+
+    // Carga inicial cuando abres el edit: cargar entidades y seleccionar la correcta
+    const partidoInicial = partySelect.val();
+    const entidadSeleccionada = '{{ old("entidad_id", $candidate->entidad_id ?? "") }}';
+    if (partidoInicial && !independienteCheckbox.is(':checked')) {
+        cargarEntidades(partidoInicial, entidadSeleccionada);
+    } else {
+        entidadSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+    }
+
+    // Carga inicial municipios
+    const departamentoInicial = departamentoSelect.val();
+    const municipioSeleccionado = '{{ old("municipio_id", $candidate->municipio_id ?? "") }}';
+    if (departamentoInicial) {
+        cargarMunicipios(departamentoInicial, municipioSeleccionado);
+    } else {
+        municipioSelect.prop('disabled', true).html('<option value="">Seleccione…</option>');
+    }
 
     // Actualizar label y vista previa imagen al seleccionar archivo
-    $('#fotografia').on('change', function() {
+    fotografiaInput.on('change', function() {
         const file = this.files[0];
         if (file) {
             $(this).next('.custom-file-label').html(file.name);
@@ -307,7 +333,7 @@ $(function(){
             const reader = new FileReader();
             reader.onload = function(e) {
                 $('#preview-image').attr('src', e.target.result);
-                $('#preview-filename small').text(file.name);
+                $('#preview-filename').text(file.name);
                 $('#preview-container').show();
             };
             reader.readAsDataURL(file);
