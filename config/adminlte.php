@@ -66,11 +66,11 @@ return [
 'logo'             => '<b>&nbsp;</b>',
 
 // ► Logo ancho (sidebar expandido)
-'logo_img'         => 'images/logoazul.webp',
+'logo_img'         => 'images/logoazulmini.webp',
 'logo_img_class'   => 'brand-image elevation-0',
 
 // ► Logo mini (sidebar colapsado)
-'logo_img_xl'      => 'images/logoazulmini.webp',
+'logo_img_xl'      => 'images/logoazul.webp',
 'logo_img_xl_class'=> 'brand-image-xs elevation-0',
 
 // Texto alternativo
@@ -118,11 +118,11 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'images/logo.png',
+            'path' => 'images/logoazul.webp',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 80,
+            'height' => null,
         ],
     ],
 
