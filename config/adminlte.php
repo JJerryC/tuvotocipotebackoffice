@@ -375,7 +375,7 @@ return [
             [
             'text' => 'Entidades',
             'url'  => 'entidades',
-                'icon' => 'fas fa-fw fa-map-marker-alt',
+                'icon' => 'fas fa-university',
             ],
             [
                 'text' => 'Nomina',
