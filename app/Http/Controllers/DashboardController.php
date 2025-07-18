@@ -80,9 +80,9 @@ public function candidatos(Request $r)
  public function reporteria()
 {
     // Totales por tipo de candidato
-$candidatosPresidenciales = Candidate::where('cargo_id', $this->cargoId('Presidente'))->count();
-$candidatosDiputados = Candidate::where('cargo_id', $this->cargoId('Diputado'))->count();
-$candidatosAlcaldes = Candidate::where('cargo_id', $this->cargoId('Alcalde'))->count();
+    $candidatosPresidenciales = Candidate::whereIn('cargo_id', $this->cargosIds('Presidente'))->count();
+    $candidatosDiputados = Candidate::whereIn('cargo_id', $this->cargosIds('Diputado'))->count();
+    $candidatosAlcaldes = Candidate::whereIn('cargo_id', $this->cargosIds('Alcalde'))->count();
     $totalCandidatos = $candidatosPresidenciales + $candidatosDiputados + $candidatosAlcaldes;
 
     // Estadísticas por departamento y tipo para Top Departamentos
@@ -154,27 +154,53 @@ $estadisticasPorDepartamento = Candidate::selectRaw('departamentos.name as depar
         return response()->json($this->estadisticasGenerales());
     }
 
- private function cargoId(string $nombre): ?int
+private function cargosIds(string $nombre): array
 {
-    return Cargo::where('name', 'like', "%$nombre%")->value('id');
+    $normalizar = function ($texto) {
+        $texto = strtolower($texto);
+        $texto = preg_replace('/\s+/', ' ', $texto); // elimina espacios extras
+        $texto = preg_replace('/[()]/', '', $texto); // elimina paréntesis
+        $texto = str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'ñ'],
+            ['a', 'e', 'i', 'o', 'u', 'n'],
+            $texto
+        );
+        return trim($texto);
+    };
+
+    $nombreNormalizado = $normalizar($nombre);
+
+    $cargos = \App\Models\Cargo::all();
+
+    $ids = [];
+
+    foreach ($cargos as $cargo) {
+        $nombreCargo = $normalizar($cargo->name);
+        if (str_contains($nombreCargo, $nombreNormalizado)) {
+            $ids[] = $cargo->id;
+        }
+    }
+
+    return $ids;
 }
 
     private function estadisticasGenerales(): array
     {
-        $pres = $this->cargoId('Presidente');
-        $dip  = $this->cargoId('Diputado');
-        $alc  = $this->cargoId('Alcalde');
+        $pres = $this->cargosIds('Presidente');
+        $dip  = $this->cargosIds('Diputado');
+        $alc  = $this->cargosIds('Alcalde');
         $total = Candidate::count();
         $completos = Candidate::whereNotNull('fotografia')
             ->whereNotNull('propuestas')
             ->count();
+
         return [
             'total_candidatos'          => $total,
-            'candidatos_presidenciales' => Candidate::where('cargo_id',$pres)->count(),
-            'candidatos_diputados'      => Candidate::where('cargo_id',$dip)->count(),
-            'candidatos_alcaldes'       => Candidate::where('cargo_id',$alc)->count(),
-            'hombres'                   => Candidate::whereHas('sexo',fn($q)=>$q->where('code','M'))->count(),
-            'mujeres'                   => Candidate::whereHas('sexo',fn($q)=>$q->where('code','F'))->count(),
+            'candidatos_presidenciales' => Candidate::whereIn('cargo_id', $pres)->count(),
+            'candidatos_diputados'      => Candidate::whereIn('cargo_id', $dip)->count(),
+            'candidatos_alcaldes'       => Candidate::whereIn('cargo_id', $alc)->count(),
+            'hombres'                   => Candidate::whereHas('sexo', fn($q) => $q->where('code', 'M'))->count(),
+            'mujeres'                   => Candidate::whereHas('sexo', fn($q) => $q->where('code', 'F'))->count(),
             'perfiles_completos'        => $completos,
             'perfiles_incompletos'      => $total - $completos,
             'total_partidos'            => Party::count(),
