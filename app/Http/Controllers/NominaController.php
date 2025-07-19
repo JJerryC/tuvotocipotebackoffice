@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Nomina;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class NominaController extends Controller
 {
@@ -56,8 +57,12 @@ class NominaController extends Controller
     public function destroy(string $id)
     {
         $nomina = Nomina::findOrFail($id);
-        $nomina->delete();
 
-        return redirect()->route('nominas.index')->with('success', 'Nómina eliminada correctamente');
+        try {
+            $nomina->delete();
+            return redirect()->route('nominas.index')->with('success', 'Nómina eliminada correctamente');
+        } catch (QueryException $e) {
+            return redirect()->route('nominas.index')->with('error', 'No se puede eliminar esta nómina porque tiene registros asociados.');
+        }
     }
 }

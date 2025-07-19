@@ -86,9 +86,13 @@ class EntidadController extends Controller
      */
     public function destroy(Entidad $entidad)
     {
-        $entidad->delete();
-
-        return redirect()->route('entidades.index')
-                         ->with('success', 'Entidad eliminada correctamente');
+        try {
+            $entidad->delete();
+            return redirect()->route('entidades.index')
+                            ->with('success', 'Entidad eliminada correctamente');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('entidades.index')
+                            ->with('error', 'No se puede eliminar esta entidad porque tiene registros asociados.');
+        }
     }
 }

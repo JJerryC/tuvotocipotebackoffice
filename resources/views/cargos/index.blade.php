@@ -7,6 +7,19 @@
 @stop
 
 @section('content')
+
+    @if (session('success'))
+        <x-adminlte-alert theme="success" title="Éxito">
+            {{ session('success') }}
+        </x-adminlte-alert>
+    @endif
+
+    @if (session('error'))
+        <x-adminlte-alert theme="danger" title="Error">
+            {{ session('error') }}
+        </x-adminlte-alert>
+    @endif
+
 <x-adminlte-card theme="primary" icon="fas fa-briefcase" title="Cargos">
 
     @can('manage candidates')
@@ -26,22 +39,22 @@
         </thead>
         <tbody>
             @foreach($cargos as $cargo)
-            <tr>
-                <td>{{ $cargo->name }}</td>
-                <td class="text-right">
-                    <a href="{{ route('cargos.edit', $cargo) }}" class="btn btn-xs btn-primary" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <form action="{{ route('cargos.destroy', $cargo) }}" method="POST" class="d-inline"
-                        onsubmit="return confirm('¿Eliminar este cargo?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                </td>
-            </tr>
+                    <tr>
+                        <td>{{ $cargo->name }}</td>
+                        <td class="text-right">
+                            <a href="{{ route('cargos.edit', $cargo) }}" class="btn btn-xs btn-primary" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('cargos.destroy', $cargo) }}" method="POST" class="d-inline"
+                                onsubmit="return confirm('¿Eliminar este cargo?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
             @endforeach
         </tbody>
     </table>

@@ -7,6 +7,19 @@
 @stop
 
 @section('content')
+
+    @if (session('success'))
+        <x-adminlte-alert theme="success" title="Éxito">
+            {{ session('success') }}
+        </x-adminlte-alert>
+    @endif
+
+    @if (session('error'))
+        <x-adminlte-alert theme="danger" title="Error">
+            {{ session('error') }}
+        </x-adminlte-alert>
+    @endif
+
 <x-adminlte-card theme="primary" icon="fas fa-flag" title="Partidos">
 
     @can('manage candidates')
@@ -26,22 +39,23 @@
         </thead>
         <tbody>
             @foreach($parties as $party)
-            <tr>
-                <td>{{ $party->name }}</td>
-                <td class="text-right">
-                    <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
-                        <i class="fas fa-edit"></i>
-                    </a>
-                    <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline"
-                        onsubmit="return confirm('¿Eliminar este partido?')">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-            </td>
-            </tr>
+                <tr>
+                    <td>{{ $party->name }}</td>
+                    <td class="text-right">
+                        <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline" 
+                            onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>

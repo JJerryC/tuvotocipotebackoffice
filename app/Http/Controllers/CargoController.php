@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cargo;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 
 class CargoController extends Controller
 {
@@ -77,8 +78,12 @@ class CargoController extends Controller
     public function destroy(string $id)
     {
         $cargo = Cargo::findOrFail($id);
-        $cargo->delete();
 
-        return redirect()->route('cargos.index')->with('success', 'Cargo eliminado correctamente');
+        try {
+            $cargo->delete();
+            return redirect()->route('cargos.index')->with('success', 'Cargo eliminada correctamente');
+        } catch (QueryException $e) {
+            return redirect()->route('cargos.index')->with('error', 'No se puede eliminar este cargo porque tiene registros asociados.');
+        }
     }
 }

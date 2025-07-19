@@ -57,8 +57,11 @@ class PartyController extends Controller
 
     public function destroy(Party $party)
     {
-        $party->delete();
-
-        return redirect()->route('parties.index')->with('success', 'Partido eliminado correctamente');
+        try {
+            $party->delete();
+            return redirect()->route('parties.index')->with('success', 'Partido eliminado correctamente');
+        } catch (\Illuminate\Database\QueryException $e) {
+            return redirect()->route('parties.index')->with('error', 'No se puede eliminar este partido porque tiene registros asociados.');
+        }
     }
 }

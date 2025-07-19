@@ -7,6 +7,19 @@
 @stop
 
 @section('content')
+
+    @if (session('success'))
+        <x-adminlte-alert theme="success" title="Éxito">
+            {{ session('success') }}
+        </x-adminlte-alert>
+    @endif
+
+    @if (session('error'))
+        <x-adminlte-alert theme="danger" title="Error">
+            {{ session('error') }}
+        </x-adminlte-alert>
+    @endif
+
 <x-adminlte-card theme="primary" icon="fas fa-list" title="Nóminas">
 
     @can('manage candidates')
@@ -26,22 +39,22 @@
             </thead>
             <tbody>
                 @foreach($nominas as $nomina)
-                <tr>
-                    <td>{{ $nomina->name }}</td>
-                    <td class="text-right">
-                        <a href="{{ route('nominas.edit', $nomina) }}" class="btn btn-xs btn-primary" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="{{ route('nominas.destroy', $nomina) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Eliminar esta nómina?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    </td>
-                </tr>
+                    <tr>
+                        <td>{{ $nomina->name }}</td>
+                        <td class="text-right">
+                            <a href="{{ route('nominas.edit', $nomina) }}" class="btn btn-xs btn-primary" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('nominas.destroy', $nomina) }}" method="POST" class="d-inline"
+                                onsubmit="return confirm('¿Eliminar esta nómina?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
     </table>
