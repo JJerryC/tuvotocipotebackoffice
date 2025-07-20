@@ -10,6 +10,9 @@
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
 
 <x-adminlte-card>
 
@@ -36,14 +39,38 @@
                 <td>{{ $u->name }}</td>
                 <td>{{ $u->email }}</td>
                 <td>
-                    @foreach($u->roles as $role)
-                        <span class="badge bg-info">{{ $role->name }}</span>
+                    @foreach($u->getRoleNames() as $role)
+                        <span class="badge badge-info">{{ $role }}</span>
                     @endforeach
                 </td>
                 <td style="text-align: right;">
-                    <a href="{{ route('users.edit', $u) }}" class="btn btn-sm btn-primary">
-                        <i class="fas fa-user-cog"></i>
-                    </a>
+                    @can('edit users')
+                        <a href="{{ route('users.edit', $u) }}" class="btn btn-sm btn-primary" title="Editar">
+                            <i class="fas fa-user-cog"></i>
+                        </a>
+                    @endcan
+
+                    @can('delete users')
+                        @php
+                            $semillaEmails = ['admin@example.com', 'test@example.com'];
+                        @endphp
+                        @if (!in_array($u->email, $semillaEmails))
+                            <form action="{{ route('users.destroy', $u) }}" method="POST" style="display:inline-block"
+                                onsubmit="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        @endif
+                    @endcan
+
+                    @cannot('edit users')
+                        @cannot('delete users')
+                            &nbsp;
+                        @endcannot
+                    @endcannot
                 </td>
             </tr>
         @endforeach

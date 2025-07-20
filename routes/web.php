@@ -117,6 +117,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
     });
 
+    Route::middleware('can:delete roles')->group(function () {
+    Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
     // CATÁLOGOS (Mantenimiento)
     Route::middleware('can:view maintenance')->group(function () {
         Route::get('/parties', [PartyController::class, 'index'])->name('parties.index');

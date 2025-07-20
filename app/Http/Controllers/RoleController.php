@@ -83,4 +83,20 @@ class RoleController extends Controller
         return redirect()->route('roles.index')
                          ->with('success', 'Permisos actualizados');
     }
+
+    public function destroy(Role $role)
+    {
+        // Impedir que se elimine el rol "admin"
+        if ($role->name === 'admin') {
+            return redirect()->route('roles.index')->with('error', 'No puedes eliminar el rol admin.');
+        }
+
+        // Autorización con permiso
+        $this->authorize('delete roles');
+
+        $role->delete();
+
+        return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
+    }
+
 }

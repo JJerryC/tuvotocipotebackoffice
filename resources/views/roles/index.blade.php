@@ -10,6 +10,9 @@
 @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
 @endif
+@if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+@endif
 
 <x-adminlte-card>
 
@@ -30,19 +33,33 @@
         <tbody>
         @foreach($roles as $role)
             <tr>
-                <td>{{ $role->name }}</td>
+                <td>{{ $role->name }}</td> <!-- Columna Rol -->
+
                 <td>
                     @forelse($role->permissions as $perm)
                         <span class="badge bg-info">{{ $perm->name }}</span>
                     @empty
                         <span class="text-muted">—</span>
                     @endforelse
-                </td>
+                </td> <!-- Columna Permisos -->
+
                 <td class="text-right">
                     <a href="{{ route('roles.edit',$role) }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-edit"></i>
                     </a>
-                </td>
+
+                    @can('delete roles')
+                        @if($role->name !== 'admin')
+                            <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este rol?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        @endif
+                    @endcan
+                </td> <!-- Columna Acciones -->
             </tr>
         @endforeach
         </tbody>

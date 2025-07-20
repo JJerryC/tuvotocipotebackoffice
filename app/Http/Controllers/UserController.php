@@ -93,4 +93,21 @@ class UserController extends Controller
             ->route('users.index')
             ->with('success', 'Roles y permisos actualizados');
     }
+
+    public function destroy(User $user)
+    {
+        // Bloquear eliminación de usuarios "semilla"
+        $semillaEmails = ['admin@example.com', 'test@example.com']; // Puedes agregar más correos si lo deseas
+
+        if (in_array($user->email, $semillaEmails)) {
+            return redirect()->route('users.index')
+                ->with('error', 'Este usuario no puede ser eliminado.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('users.index')
+            ->with('success', 'Usuario eliminado correctamente.');
+    }
+
 }
