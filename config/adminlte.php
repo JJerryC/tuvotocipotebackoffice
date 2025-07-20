@@ -373,7 +373,7 @@ return [
     ],
 
     ['header' => 'GESTIÓN DE CATÁLOGOS',
-     'can'    => 'view candidates',
+     'can'    => 'view maintenance',
     ],
     [
         'text'  => 'Catalogos',
