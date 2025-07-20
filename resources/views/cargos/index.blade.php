@@ -22,7 +22,7 @@
 
 <x-adminlte-card theme="primary" icon="fas fa-briefcase" title="Cargos">
 
-    @can('manage candidates')
+    @can('create maintenance')
         <div class="mb-3 text-right">
             <a href="{{ route('cargos.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus mr-1"></i> Nuevo
@@ -42,17 +42,21 @@
                     <tr>
                         <td>{{ $cargo->name }}</td>
                         <td class="text-right">
+                        @can('edit maintenance')
                             <a href="{{ route('cargos.edit', $cargo) }}" class="btn btn-xs btn-primary" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('cargos.destroy', $cargo) }}" method="POST" class="d-inline"
-                                onsubmit="return confirm('¿Eliminar este cargo?')">
+                        @endcan
+                        @can('delete maintenance')
+                            <form action="{{ route('cargos.destroy', $cargo) }}" method="POST" class="d-inline" 
+                                onsubmit="return confirm('¿Seguro que quieres eliminar este cargo?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                        @endcan
                         </td>
                     </tr>
             @endforeach

@@ -9,7 +9,7 @@
 @section('content')
 <x-adminlte-card theme="primary" icon="fas fa-users" title="Candidatos">
 
-    @can('manage candidates')
+    @can('create candidates')
         <div class="mb-3 text-right">
             <a href="{{ route('candidates.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus mr-1"></i> Nuevo
@@ -47,17 +47,22 @@
                     <td>{{ $c->municipio->name ?? '—' }}</td>
                     <td>{{ $c->cargo->name ?? '—' }}</td>
                     <td class="text-right">
-                        <a href="{{ route('candidates.edit', $c) }}" class="btn btn-xs btn-primary" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="{{ route('candidates.destroy', $c) }}" method="POST" class="d-inline"
-                            onsubmit="return confirm('¿Eliminar este candidato?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        @can('edit candidates')
+                            <a href="{{ route('candidates.edit', $c) }}" class="btn btn-xs btn-primary" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        @endcan
+
+                        @can('delete candidates')
+                            <form action="{{ route('candidates.destroy', $c) }}" method="POST" class="d-inline"
+                                onsubmit="return confirm('¿Eliminar este candidato?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        @endcan
                     </td>
                 </tr>
             @endforeach

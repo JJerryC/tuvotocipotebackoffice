@@ -22,7 +22,7 @@
 
 <x-adminlte-card theme="primary" icon="fas fa-list" title="Nóminas">
 
-    @can('manage candidates')
+    @can('create maintenance')
         <div class="mb-3 text-right">
             <a href="{{ route('nominas.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus mr-1"></i> Nuevo
@@ -42,9 +42,12 @@
                     <tr>
                         <td>{{ $nomina->name }}</td>
                         <td class="text-right">
+                        @can('edit maintenance')
                             <a href="{{ route('nominas.edit', $nomina) }}" class="btn btn-xs btn-primary" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </a>
+                        @endcan
+                        @can('delete maintenance')
                             <form action="{{ route('nominas.destroy', $nomina) }}" method="POST" class="d-inline"
                                 onsubmit="return confirm('¿Eliminar esta nómina?')">
                                 @csrf
@@ -53,6 +56,7 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                        @endcan
                         </td>
                     </tr>
                 @endforeach

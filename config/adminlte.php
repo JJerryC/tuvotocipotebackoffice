@@ -311,10 +311,15 @@ return [
     ],
 
     /* ---------- SIDEBAR ---------- */
-    ['header' => 'GESTIÓN DE DASHBOARD'],
+    ['header' => 'GESTIÓN DE DASHBOARD',
+     'can'    => 'view reports',
+    ],
+    
     [
     'text'  => 'Dashboard',
     'icon'  => 'fas fa-fw fa-tachometer-alt',
+    'can'   => 'view reports',
+    'can'    => 'view reports',
     'submenu' => [
         [
             'text'  => 'Principal',
@@ -333,26 +338,31 @@ return [
         ],
     ],
 ],
-    ['header' => 'GESTIÓN DE CANDIDATOS'],
+    ['header' => 'GESTIÓN DE CANDIDATOS',
+     'can'    => 'manage candidates',
+    ],
     [
         'text'  => 'Candidatos',
         'icon'  => 'fas fa-fw fa-users',
+        'can'    => 'manage candidates',
         'submenu' => [
             [
                 'text'  => 'Ver Todos',
                 'route' => 'candidates.index',
                 'icon'  => 'fas fa-fw fa-list',
+                'can'    => 'view candidates',
             ],
             [
                 'text'  => 'Crear Candidato',
                 'route' => 'candidates.create',
                 'icon'  => 'fas fa-fw fa-plus-circle',
-                'can'   => 'manage candidates',
+                'can'   => 'create candidates',
             ],
             [
                 'text'  => 'Importar Candidatos (Excel)',   // ← único ítem de importación
                 'route' => 'candidates.import',
                 'icon'  => 'fas fa-fw fa-file-excel',
+                'can'    => 'import candidates',
             ],
             //[
             //    'text'  => 'Exportar Datos',
@@ -362,10 +372,13 @@ return [
         ],
     ],
 
-    ['header' => 'GESTIÓN DE CATÁLOGOS'],
+    ['header' => 'GESTIÓN DE CATÁLOGOS',
+     'can'    => 'view candidates',
+    ],
     [
         'text'  => 'Catalogos',
         'icon'  => 'fas fa-folder-open',
+        'can'    => 'view maintenance',
         'submenu' => [
             [
                 'text' => 'Partidos Políticos',
@@ -391,18 +404,22 @@ return [
     ],
 
 
-    ['header' => 'CONFIGURACIÓN'],
+    ['header' => 'CONFIGURACIÓN',
+     'can'    => 'view confidential candidates',
+    ],
     [
         'text' => 'Usuarios',
         'route'=> 'users.index',
         'icon' => 'fas fa-fw fa-user-cog',
         'role' => 'admin',
+        'can'  => 'view users',
     ],
  [
     'text' => 'Roles & Permisos',          
     'route'=> 'roles.index',               
     'icon' => 'fas fa-fw fa-user-shield',  
-    'role' => 'admin',                   
+    'role' => 'admin',  
+    'can'  => 'view roles',                 
 ],
 ],
 

@@ -16,11 +16,13 @@
 
 <x-adminlte-card>
 
+    @can('create roles')
     <div class="mb-3 text-right">
         <a href="{{ route('roles.create') }}" class="btn btn-sm btn-success">
             <i class="fas fa-plus mr-1"></i> Nuevo rol
         </a>
     </div>
+    @endcan
 
     <table id="rolesTable" class="table table-hover table-bordered">
         <thead>
@@ -44,10 +46,12 @@
                 </td> <!-- Columna Permisos -->
 
                 <td class="text-right">
+                    @can('edit roles')
                     <a href="{{ route('roles.edit',$role) }}" class="btn btn-sm btn-primary">
                         <i class="fas fa-edit"></i>
                     </a>
-
+                    @endcan
+                    
                     @can('delete roles')
                         @if($role->name !== 'admin')
                             <form action="{{ route('roles.destroy', $role) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este rol?')">

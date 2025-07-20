@@ -16,11 +16,13 @@
 
 <x-adminlte-card>
 
-    <div class="mb-3 text-right">
-        <a href="{{ route('users.create') }}" class="btn btn-sm btn-success">
-            <i class="fas fa-user-plus mr-1"></i> Nuevo
-        </a>
-    </div>
+    @can('create users')
+        <div class="mb-3 text-right">
+            <a href="{{ route('users.create') }}" class="btn btn-sm btn-success">
+                <i class="fas fa-user-plus mr-1"></i> Nuevo
+            </a>
+        </div>
+    @endcan
 
     <table id="usersTable" class="table table-hover table-bordered">
         <thead>

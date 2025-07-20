@@ -22,7 +22,7 @@
 
 <x-adminlte-card theme="primary" icon="fas fa-building" title="Entidades">
 
-    @can('manage candidates')
+    @can('create maintenance')
         <div class="mb-3 text-right">
             <a href="{{ route('entidades.create') }}" class="btn btn-sm btn-success">
                 <i class="fas fa-plus mr-1"></i> Nuevo
@@ -44,16 +44,18 @@
                 <td>{{ $entidad->name }}</td>
                 <td>{{ $entidad->party->name ?? '—' }}</td>
                 <td class="text-right">
+                @can('edit maintenance')
                     <a href="{{ route('entidades.edit', $entidad) }}" class="btn btn-xs btn-primary" title="Editar">
                         <i class="fas fa-edit"></i>
                     </a>
-
+                @endcan
                     @php
                         $tieneParty = $entidad->party()->exists();
                     @endphp
 
                     @if ($tieneParty)
                         <!-- La entidad tiene partido, se puede eliminar -->
+                    @can('delete maintenance')
                         <form action="{{ route('entidades.destroy', $entidad) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar esta entidad?');">
                             @csrf
                             @method('DELETE')
@@ -61,6 +63,7 @@
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
+                    @endcan
                     @else
                         <!-- La entidad no tiene partido, bloqueo botón -->
                         <button class="btn btn-xs btn-secondary" title="Entidad sin partido asignado" disabled>
