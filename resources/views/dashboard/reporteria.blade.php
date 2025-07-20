@@ -72,7 +72,7 @@
                 <div class="stat-card glass-card">
                     <div class="stat-card-header d-flex align-items-center gap-2 mb-3">
                         <i class="fas fa-tasks"></i>
-                        <span class="stat-card-title">Completitud de Perfiles</span>
+                        <span class="stat-card-title">Perfiles Completados</span>
                     </div>
 
                     @foreach($estadisticas['completitud_perfiles'] as $estado)

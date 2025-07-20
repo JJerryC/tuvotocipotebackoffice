@@ -93,10 +93,6 @@
                         <button type="submit" class="btn btn-primary">Entrar</button>
                     </div>
                 </form>
-
-                <div class="text-link mt-2">
-                    ¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a>
-                </div>
             </div>
         </div>
     </div>

@@ -155,7 +155,7 @@ new Chart(document.getElementById('generoChart'), {
         {{-- Header --}}
         <div class="dashboard-header">
             <h1 class="dashboard-title"><i class="fas fa-vote-yea"></i> Dashboard Electoral</h1>
-            <p class="dashboard-subtitle">Sistema de Gestión Electoral – TuVoto Cipote</p>
+            <p class="dashboard-subtitle">Sistema De Gestión Electoral – TuVoto Cipote</p>
         </div>
 
         {{-- Stats --}}
@@ -188,7 +188,7 @@ new Chart(document.getElementById('generoChart'), {
                 <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                 <div class="stat-content">
                     <h3>{{ $estadisticas['total_candidatos'] ?? 0 }}</h3>
-                    <p>Total de Candidatos</p>
+                    <p>Total De Candidatos</p>
                 </div>
             </div>
         </div>
@@ -196,15 +196,15 @@ new Chart(document.getElementById('generoChart'), {
         {{-- Charts --}}
         <div class="charts-section">
             <div class="chart-container">
-                <div class="chart-header"><h3>Distribución por Género</h3></div>
+                <div class="chart-header"><h3>Distribución Por Género</h3></div>
                 <canvas id="generoChart"></canvas>
             </div>
             <div class="chart-container">
-                <div class="chart-header"><h3>Completitud de Perfiles</h3></div>
+                <div class="chart-header"><h3>Perfiles Completados</h3></div>
                 <canvas id="completitudChart"></canvas>
             </div>
             <div class="chart-container">
-                <div class="chart-header"><h3>Candidatos por Departamento</h3></div>
+                <div class="chart-header"><h3>Candidatos Por Departamento</h3></div>
                 <canvas id="departamentoChart"></canvas>
             </div>
         </div>
