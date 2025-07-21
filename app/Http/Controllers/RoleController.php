@@ -8,34 +8,37 @@ use Spatie\Permission\Models\{Role, Permission};
 
 class RoleController extends Controller
 {
+    // Permisos fijos que no pueden quitarse del rol admin
+    protected $adminFixedPermissions = [
+        'view roles',
+        'create roles',
+        'edit roles',
+        'delete roles',
+        'manage roles',
+    ];
+
     public function __construct()
     {
         $this->middleware(['auth', 'role:admin']);
     }
 
-    /* ---------- Exportar confidenciales ---------- */
     public function exportConfidential()
     {
         $this->authorize('view confidential candidates');
 
-        // Solo los usuarios con permiso acceden aquí
         $candidates = Candidate::where('is_confidential', true)->get();
 
-        // Lógica de exportación a Excel (implementa según tu librería, ej. Laravel Excel)
-        // return Excel::download(...);
+        // lógica exportación...
     }
 
-    /* ---------- LISTA ---------- */
     public function index()
     {
         $roles = Role::with('permissions')->orderBy('name')->get();
         return view('roles.index', compact('roles'));
     }
 
-    /* ---------- NUEVO ---------- */
     public function create()
     {
-        // Agrupar los permisos por el segundo término (ej. 'edit users' → 'users')
         $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
             return explode(' ', $perm->name)[1] ?? 'otros';
         });
@@ -60,14 +63,15 @@ class RoleController extends Controller
                          ->with('success', 'Rol creado y permisos asignados');
     }
 
-    /* ---------- EDITAR ---------- */
     public function edit(Role $role)
     {
         $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
             return explode(' ', $perm->name)[1] ?? 'otros';
         });
 
-        return view('roles.edit', compact('role', 'permissions'));
+        $adminFixed = $role->name === 'admin' ? $this->adminFixedPermissions : [];
+
+        return view('roles.edit', compact('role', 'permissions', 'adminFixed'));
     }
 
     public function update(Request $request, Role $role)
@@ -77,7 +81,14 @@ class RoleController extends Controller
             'permissions.*' => 'exists:permissions,id',
         ]);
 
-        $perms = Permission::whereIn('id', $data['permissions'] ?? [])->get();
+        $permsIds = $data['permissions'] ?? [];
+
+        if ($role->name === 'admin') {
+            $fixedPermIds = Permission::whereIn('name', $this->adminFixedPermissions)->pluck('id')->toArray();
+            $permsIds = array_unique(array_merge($permsIds, $fixedPermIds));
+        }
+
+        $perms = Permission::whereIn('id', $permsIds)->get();
         $role->syncPermissions($perms);
 
         return redirect()->route('roles.index')
@@ -86,17 +97,14 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        // Impedir que se elimine el rol "admin"
         if ($role->name === 'admin') {
             return redirect()->route('roles.index')->with('error', 'No puedes eliminar el rol admin.');
         }
 
-        // Autorización con permiso
         $this->authorize('delete roles');
 
         $role->delete();
 
         return redirect()->route('roles.index')->with('success', 'Rol eliminado correctamente.');
     }
-
 }

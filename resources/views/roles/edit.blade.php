@@ -26,8 +26,15 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
                                        name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}"
-                                       @checked($role->permissions->pluck('id')->contains($perm->id))>
+                                       @checked($role->permissions->pluck('id')->contains($perm->id))
+                                       @if(in_array($perm->name, $adminFixed ?? [])) disabled @endif
+                                >
                                 <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
+                                
+                                {{-- Input hidden para enviar permisos deshabilitados --}}
+                                @if(in_array($perm->name, $adminFixed ?? []))
+                                    <input type="hidden" name="permissions[]" value="{{ $perm->id }}">
+                                @endif
                             </div>
                         </div>
                     @endforeach
