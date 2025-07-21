@@ -19,9 +19,10 @@ class CandidateController extends Controller
 
     public function index()
     {
-        $candidates = Candidate::with(['entidad', 'party', 'municipio', 'cargo', 'departamento'])
-            ->orderByDesc('id')
-            ->paginate(15);
+$candidates = Candidate::with([
+    'party', 'entidad', 'nomina', 'cargo',
+    'departamento', 'municipio', 'sexo'
+])->orderByDesc('id')->get();
 
         return view('candidates.index', compact('candidates'));
     }

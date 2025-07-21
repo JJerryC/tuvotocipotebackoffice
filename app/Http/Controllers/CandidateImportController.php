@@ -88,7 +88,7 @@ class CandidateImportController extends Controller
         $dataStartRow = null;
 
         foreach ($sheet as $index => $row) {
-            if (isset($row[1]) && $row[1] === 'PARTIDO') {
+            if (isset($row[1]) && strtoupper(trim($row[1])) === 'PARTIDO') {
                 $headerRow = $row;
                 $dataStartRow = $index + 1;
                 break;
@@ -217,17 +217,21 @@ class CandidateImportController extends Controller
 
             $party = Party::firstOrCreate(['name' => $data['partido']]);
             $entidad = Entidad::firstOrCreate(['name' => $data['entidad']]);
-            $nomina = Nomina::firstOrCreate([
-                'entidad_id' => $entidad->id,
-                'name' => $data['nomina']
-            ]);
+            $nomina = Nomina::firstOrCreate(['name' => $data['nomina']]);
             $cargo = Cargo::firstOrCreate(['name' => $data['cargo']]);
-            $departamento = Departamento::where('name', 'LIKE', '%' . $data['departamento'] . '%')->first();
+
+            // Limpieza de departamento y municipio para búsqueda
+            $depName = preg_replace('/^\d+\s*/', '', $data['departamento']);
+            $depName = trim($depName);
+            $departamento = Departamento::where('name', 'LIKE', '%' . $depName . '%')->first();
+
+            $munName = preg_replace('/^\d+\s*/', '', $data['municipio']);
+            $munName = trim($munName);
             $municipio = Municipio::where('departamento_id', $departamento->id ?? null)
-                ->where('name', 'LIKE', '%' . $data['municipio'] . '%')
+                ->where('name', 'LIKE', '%' . $munName . '%')
                 ->first();
 
-            $sexo = $this->getSexo($data['sexo']) ?? Sexo::where('code', 'O')->first();
+            $sexo = $this->getSexo($data['sexo']) ?? Sexo::where('code', 'U')->first();
 
             if (!$party || !$entidad || !$nomina || !$cargo || !$departamento || !$municipio || !$sexo) {
                 Log::warning("Faltan datos relacionados para candidato: " . json_encode($data));
@@ -331,28 +335,11 @@ class CandidateImportController extends Controller
         return response()->json([
             'session_id' => $sessionId,
             'total' => $totalRecords,
-            'batch_size' => $batchSize
+            'batch_size' => $batchSize,
         ]);
     }
 
-    public function getImportProgress($sessionId)
-    {
-        $progress = session("import_{$sessionId}");
-
-        if (!$progress) {
-            return response()->json(['error' => 'Sesión no encontrada'], 404);
-        }
-
-        return response()->json([
-            'total' => $progress['total'],
-            'processed' => $progress['processed'],
-            'success' => $progress['success'],
-            'errors' => count($progress['errors']),
-            'status' => $progress['status'],
-            'percentage' => $progress['total'] > 0 ? round(($progress['processed'] / $progress['total']) * 100, 2) : 0
-        ]);
-    }
-
+    // **Este es el método que te faltaba, agregado completo:**
     public function importBatch($sessionId)
     {
         $progress = session("import_{$sessionId}");
@@ -403,6 +390,24 @@ class CandidateImportController extends Controller
             'success' => $progress['success'],
             'errors' => count($progress['errors']),
             'percentage' => round(($progress['processed'] / $progress['total']) * 100, 2)
+        ]);
+    }
+
+    public function getImportProgress($sessionId)
+    {
+        $progress = session("import_{$sessionId}");
+
+        if (!$progress) {
+            return response()->json(['error' => 'Sesión no encontrada'], 404);
+        }
+
+        return response()->json([
+            'total' => $progress['total'],
+            'processed' => $progress['processed'],
+            'success' => $progress['success'],
+            'errors' => count($progress['errors']),
+            'status' => $progress['status'],
+            'percentage' => $progress['total'] > 0 ? round(($progress['processed'] / $progress['total']) * 100, 2) : 0
         ]);
     }
 
