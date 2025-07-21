@@ -23,4 +23,14 @@ Route::middleware(['check-api-key', 'throttle:candidates-api'])->group(function 
     Route::get('candidates/{id}/cargo',           [CandidateApiController::class, 'cargo']);
     Route::get('candidates/{id}/partido',         [CandidateApiController::class, 'partido']);
     Route::get('candidates/{id}/entidad',         [CandidateApiController::class, 'entidad']);
+
+    Route::get('identidad/{numero}',               [CandidateApiController::class, 'showByNumeroIdentidad']);
+    Route::get('identidad/{numero}/propuestas',    [CandidateApiController::class, 'propuestasByNumeroIdentidad']);
+    Route::get('identidad/{numero}/fotografia',    [CandidateApiController::class, 'fotografiaByNumeroIdentidad']);
+    Route::get('identidad/{numero}/datos',         [CandidateApiController::class, 'datosGeneralesByNumeroIdentidad']);
+    Route::get('identidad/{numero}/ubicacion',     [CandidateApiController::class, 'ubicacionByNumeroIdentidad']);
+    Route::get('identidad/{numero}/sexo',          [CandidateApiController::class, 'sexoByNumeroIdentidad']);
+    Route::get('identidad/{numero}/cargo',         [CandidateApiController::class, 'cargoByNumeroIdentidad']);
+    Route::get('identidad/{numero}/partido',       [CandidateApiController::class, 'partidoByNumeroIdentidad']);
+    Route::get('identidad/{numero}/entidad',       [CandidateApiController::class, 'entidadByNumeroIdentidad']);
 });
