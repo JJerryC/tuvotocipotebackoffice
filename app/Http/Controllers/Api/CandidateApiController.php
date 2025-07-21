@@ -157,4 +157,154 @@ class CandidateApiController extends Controller
             ] : null,
         ]);
     }
+
+        /* ──────────────────── BLOQUES ESPECÍFICOS POR NÚMERO_IDENTIDAD ─────────────────── */
+
+    public function showByNumeroIdentidad(string $numero): JsonResponse
+    {
+        return response()->json(
+            Candidate::with([
+                'entidad','party','nomina',
+                'departamento','municipio',
+                'cargo','sexo'
+            ])
+            ->where('numero_identidad', $numero)
+            ->firstOrFail()
+        );
+    }
+
+    public function propuestasByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::select(['id','propuestas'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+        return response()->json($c);
+    }
+
+    public function fotografiaByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c   = Candidate::select(['id','fotografia','fotografia_original'])
+                ->where('numero_identidad', $numero)
+                ->firstOrFail();
+        $url = $c->fotografia
+            ? Storage::disk('public')->url($c->fotografia)
+            : null;
+
+        return response()->json([
+            'id'                 => $c->id,
+            'fotografia'         => $c->fotografia,
+            'fotografia_original'=> $c->fotografia_original,
+            'url'                => $url,
+        ]);
+    }
+
+    public function datosGeneralesByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with('sexo')
+              ->select([
+                  'id','numero_identidad','primer_nombre','segundo_nombre',
+                  'primer_apellido','segundo_apellido','posicion',
+                  'sexo_id','reeleccion','independiente'
+              ])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'               => $c->id,
+            'nombre_completo'  => $c->nombre_completo,
+            'numero_identidad' => $c->numero_identidad,
+            'posicion'         => $c->posicion,
+            'sexo'             => $c->sexo->description,
+            'reeleccion'       => $c->reeleccion,
+            'independiente'    => $c->independiente,
+        ]);
+    }
+
+    public function ubicacionByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with(['departamento','municipio'])
+              ->select(['id','departamento_id','municipio_id'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'          => $c->id,
+            'departamento'=> [
+                'id'   => $c->departamento->id,
+                'name' => $c->departamento->name,
+            ],
+            'municipio'   => [
+                'id'   => $c->municipio->id,
+                'name' => $c->municipio->name,
+            ],
+        ]);
+    }
+
+    public function sexoByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with('sexo')
+              ->select(['id','sexo_id'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'   => $c->id,
+            'sexo' => [
+                'id'         => $c->sexo->id,
+                'descripcion'=> $c->sexo->description,
+            ],
+        ]);
+    }
+
+    public function cargoByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with('cargo')
+              ->select(['id','cargo_id'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'    => $c->id,
+            'cargo' => [
+                'id'   => $c->cargo->id,
+                'name' => $c->cargo->name,
+            ],
+        ]);
+    }
+
+    public function partidoByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with('party')
+              ->select(['id','party_id','independiente'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'            => $c->id,
+            'independiente' => $c->independiente,
+            'partido'       => $c->party ? [
+                'id'   => $c->party->id,
+                'name' => $c->party->name,
+            ] : null,
+        ]);
+    }
+
+    public function entidadByNumeroIdentidad(string $numero): JsonResponse
+    {
+        $c = Candidate::with('entidad')
+              ->select(['id','entidad_id'])
+              ->where('numero_identidad', $numero)
+              ->firstOrFail();
+
+        return response()->json([
+            'id'      => $c->id,
+            'entidad' => $c->entidad ? [
+                'id'   => $c->entidad->id,
+                'name' => $c->entidad->name,
+            ] : null,
+        ]);
+    }
+
+
+
 }

@@ -164,4 +164,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/cargos/{cargo}', [CargoController::class, 'update'])->name('cargos.update');
         Route::delete('/cargos/{cargo}', [CargoController::class, 'destroy'])->name('cargos.destroy');
     });
+
+    
 });
