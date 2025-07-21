@@ -7,6 +7,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\{Candidate, Party, Nomina, Entidad, Departamento, Municipio, Cargo, Sexo};
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class CandidateImportController extends Controller
 {
@@ -18,8 +19,8 @@ class CandidateImportController extends Controller
             return response('La vista candidates.import no existe', 404);
         }
 
-        $previewData = session('preview_data', []);
-        $previewErrors = session('preview_errors', []);
+        $previewData = Cache::get('preview_data', []);
+        $previewErrors = Cache::get('preview_errors', []);
 
         return view('candidates.import', compact('previewData', 'previewErrors'));
     }
@@ -58,9 +59,9 @@ class CandidateImportController extends Controller
                 $completeData[$sheetName] = $this->processSheet($sheet, $sheetName);
             }
 
-            session(['preview_data' => $previewData]);
-            session(['complete_data' => $completeData]);
-            session(['preview_errors' => $errors]);
+            Cache::put('preview_data', $previewData, now()->addMinutes(30));
+            Cache::put('complete_data', $completeData, now()->addMinutes(30));
+            Cache::put('preview_errors', $errors, now()->addMinutes(30));
 
             return response()->json([
                 'success' => true,
@@ -161,7 +162,7 @@ class CandidateImportController extends Controller
 
     public function import(Request $request)
     {
-        $completeData = session('complete_data');
+        $completeData = Cache::get('complete_data');
 
         if (!$completeData) {
             return response()->json([
@@ -183,7 +184,9 @@ class CandidateImportController extends Controller
             }
 
             DB::commit();
-            session()->forget(['preview_data', 'complete_data', 'preview_errors']);
+            Cache::forget('preview_data');
+            Cache::forget('complete_data');
+            Cache::forget('preview_errors');
 
             return response()->json([
                 'success' => true,
@@ -297,7 +300,7 @@ class CandidateImportController extends Controller
 
     public function startImport(Request $request)
     {
-        $data = session('complete_data');
+        $data = Cache::get('complete_data');
 
         if (!$data) {
             return response()->json(['error' => 'No hay datos para importar'], 400);
@@ -314,18 +317,18 @@ class CandidateImportController extends Controller
         $batchSize = 50;
         $sessionId = uniqid('import_', true);
 
-        session([
-            "import_{$sessionId}" => [
-                'data' => $flatCandidates,
-                'total' => $totalRecords,
-                'processed' => 0,
-                'batch_size' => $batchSize,
-                'current_batch' => 0,
-                'success' => 0,
-                'errors' => [],
-                'status' => 'starting'
-            ]
-        ]);
+        $importState = [
+            'data' => $flatCandidates,
+            'total' => $totalRecords,
+            'processed' => 0,
+            'batch_size' => $batchSize,
+            'current_batch' => 0,
+            'success' => 0,
+            'errors' => [],
+            'status' => 'starting'
+        ];
+
+        Cache::put("import_{$sessionId}", $importState, now()->addMinutes(30));
 
         return response()->json([
             'session_id' => $sessionId,
@@ -334,10 +337,9 @@ class CandidateImportController extends Controller
         ]);
     }
 
-    // **Este es el método que te faltaba, agregado completo:**
     public function importBatch($sessionId)
     {
-        $progress = session("import_{$sessionId}");
+        $progress = Cache::get("import_{$sessionId}");
 
         if (!$progress) {
             return response()->json(['error' => 'Sesión no encontrada'], 404);
@@ -377,7 +379,7 @@ class CandidateImportController extends Controller
 
         $progress['status'] = $progress['processed'] >= $progress['total'] ? 'completed' : 'processing';
 
-        session(["import_{$sessionId}" => $progress]);
+        Cache::put("import_{$sessionId}", $progress, now()->addMinutes(30));
 
         return response()->json([
             'status' => $progress['status'],
@@ -390,7 +392,7 @@ class CandidateImportController extends Controller
 
     public function getImportProgress($sessionId)
     {
-        $progress = session("import_{$sessionId}");
+        $progress = Cache::get("import_{$sessionId}");
 
         if (!$progress) {
             return response()->json(['error' => 'Sesión no encontrada'], 404);
