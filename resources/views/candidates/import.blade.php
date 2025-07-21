@@ -55,7 +55,8 @@
                                 <button type="submit" class="btn btn-primary" id="previewBtn">
                                     <i class="fas fa-eye"></i> Procesar y Previsualizar
                                 </button>
-                                <button type="button" class="btn btn-danger ml-2" id="clearDatabaseBtn" title="Limpiar todas las tablas de candidatos">
+                                <button type="button" class="btn btn-danger ml-2" id="clearDatabaseBtn" title="Limpiar todos los 
+                                candidatos">
                                     <i class="fas fa-trash-alt"></i> Limpiar Base de Datos
                                 </button>
                                 <div class="spinner-border spinner-border-sm ml-2 d-none" id="loadingSpinner" role="status">
@@ -235,12 +236,6 @@
                 <p><strong>Se eliminarán TODOS los datos de las siguientes tablas:</strong></p>
                 <ul class="list-unstyled">
                     <li><i class="fas fa-users text-primary"></i> <strong>Candidatos</strong> - Todos los registros de candidatos</li>
-                    <li><i class="fas fa-flag text-success"></i> <strong>Partidos</strong> - Todos los partidos políticos</li>
-                    <li><i class="fas fa-building text-info"></i> <strong>Entidades</strong> - Todas las entidades</li>
-                    <li><i class="fas fa-list text-warning"></i> <strong>Nóminas</strong> - Todas las nóminas</li>
-                    <li><i class="fas fa-map text-secondary"></i> <strong>Departamentos</strong> - Todos los departamentos</li>
-                    <li><i class="fas fa-map-marker-alt text-danger"></i> <strong>Municipios</strong> - Todos los municipios</li>
-                    <li><i class="fas fa-briefcase text-dark"></i> <strong>Cargos</strong> - Todos los cargos</li>
                 </ul>
                 
                 <div class="alert alert-info">

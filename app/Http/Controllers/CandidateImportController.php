@@ -272,14 +272,9 @@ class CandidateImportController extends Controller
         $sexoText = strtoupper(trim($sexoText));
 
         $map = [
-            'HOMBRE' => 'M',
-            'MASCULINO' => 'M',
-            'M' => 'M',
-            'MUJER' => 'F',
-            'FEMENINO' => 'F',
-            'F' => 'F',
+            'HOMBRE' => 'H',
+            'MUJER' => 'M',
             'OTRO' => 'O',
-            'O' => 'O',
         ];
 
         $code = $map[$sexoText] ?? 'U';
@@ -293,8 +288,8 @@ class CandidateImportController extends Controller
     private function getSexoDescripcion($code)
     {
         return [
-            'M' => 'Masculino',
-            'F' => 'Femenino',
+            'H' => 'HOMBRE',
+            'M' => 'MUJER',
             'O' => 'Otro',
             'U' => 'Indefinido'
         ][$code] ?? 'Indefinido';
@@ -414,52 +409,20 @@ class CandidateImportController extends Controller
     public function clearDatabase(Request $request)
     {
         try {
-            DB::beginTransaction();
+            $countCandidates = Candidate::count();
 
-            $counts = [
-                'candidates' => Candidate::count(),
-                'parties' => Party::count(),
-                'nominas' => Nomina::count(),
-                'entidades' => Entidad::count(),
-                'departamentos' => Departamento::count(),
-                'municipios' => Municipio::count(),
-                'cargos' => Cargo::count()
-            ];
-
-            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-            DB::table('candidates')->delete();
-            DB::table('parties')->delete();
-            DB::table('nominas')->delete();
-            DB::table('entidades')->delete();
-            DB::table('cargos')->delete();
-            DB::table('municipios')->delete();
-            DB::table('departamentos')->delete();
-            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-            DB::statement('ALTER TABLE candidates AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE parties AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE nominas AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE entidades AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE cargos AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE municipios AUTO_INCREMENT = 1;');
-            DB::statement('ALTER TABLE departamentos AUTO_INCREMENT = 1;');
-
-            $this->createDefaultData();
-
-            DB::commit();
+            Candidate::truncate();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Base de datos limpiada y datos predeterminados creados',
-                'counts' => $counts
+                'message' => "Se eliminaron {$countCandidates} candidatos de la base de datos.",
             ]);
 
         } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Error al limpiar base de datos: ' . $e->getMessage());
+            Log::error('Error al limpiar candidatos: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Error al limpiar base de datos: ' . $e->getMessage()
+                'message' => 'Error al limpiar candidatos: ' . $e->getMessage()
             ], 500);
         }
     }
