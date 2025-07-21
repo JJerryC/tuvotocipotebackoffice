@@ -10,31 +10,29 @@
     <div class="filters-section mb-4">
         <form method="GET" action="{{ route('dashboard.candidatos') }}" class="filters-form">
             <div class="filter-grid">
-                <!-- Ejemplo filtro de búsqueda general -->
                 <div class="filter-group">
                     <label for="search">Búsqueda General</label>
                     <input type="text" name="search" id="search" class="form-control"
                         placeholder="Nombre, apellido o identidad..."
                         value="{{ request('search') }}">
                 </div>
-                <!-- Añade aquí el resto de tus filtros -->
             </div>
 
-    <div class="filter-actions mt-3 d-flex justify-content-end">
-        @can('create candidates')
-            <a href="{{ route('candidates.create') }}" class="btn btn-success mr-2">
-                <i class="fas fa-plus"></i> Nuevo Candidato
-            </a>
-        @endcan
+            <div class="filter-actions mt-3 d-flex justify-content-end">
+                @can('create candidates')
+                    <a href="{{ route('candidates.create') }}" class="btn btn-success mr-2">
+                        <i class="fas fa-plus"></i> Nuevo Candidato
+                    </a>
+                @endcan
 
-        <a href="{{ route('dashboard.candidatos') }}" class="btn btn-secondary mr-2">
-            <i class="fas fa-times"></i> Limpiar
-        </a>
+                <a href="{{ route('dashboard.candidatos') }}" class="btn btn-secondary mr-2">
+                    <i class="fas fa-times"></i> Limpiar
+                </a>
 
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-search"></i> Filtrar
-        </button>
-    </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+            </div>
         </form>
     </div>
 
@@ -114,7 +112,27 @@
 
     @if($candidatos->hasPages())
     <div class="pagination-wrapper d-flex justify-content-center mt-4">
-        {{ $candidatos->appends(request()->query())->links() }}
+        <ul class="pagination glass-pagination">
+            @if ($candidatos->onFirstPage())
+                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            @else
+                <li class="page-item"><a class="page-link" href="{{ $candidatos->previousPageUrl() }}" rel="prev">&laquo;</a></li>
+            @endif
+
+            @foreach ($candidatos->getUrlRange(1, $candidatos->lastPage()) as $page => $url)
+                @if ($page == $candidatos->currentPage())
+                    <li class="page-item active"><span class="page-link">{{ $page }}</span></li>
+                @else
+                    <li class="page-item"><a class="page-link" href="{{ $url }}">{{ $page }}</a></li>
+                @endif
+            @endforeach
+
+            @if ($candidatos->hasMorePages())
+                <li class="page-item"><a class="page-link" href="{{ $candidatos->nextPageUrl() }}" rel="next">&raquo;</a></li>
+            @else
+                <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            @endif
+        </ul>
     </div>
     @endif
 
@@ -175,25 +193,24 @@
         --glass-border: rgba(255,255,255,0.1);
     }
 
-body, html, .content-wrapper, .wrapper {
-    background: var(--dark-gradient) !important;
-    min-height: 100vh !important;
-    color: var(--text-primary) !important;
-    position: relative !important;
-}
+    body, html, .content-wrapper, .wrapper {
+        background: var(--dark-gradient) !important;
+        min-height: 100vh !important;
+        color: var(--text-primary) !important;
+        position: relative !important;
+    }
 
-body::before {
-    content: '';
-    position: fixed !important;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%) !important;
-    pointer-events: none !important;
-    z-index: -1 !important;
-}
+    body::before {
+        content: '';
+        position: fixed !important;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%) !important;
+        pointer-events: none !important;
+        z-index: -1 !important;
+    }
 
-    /* Glassmorphism general */
     .glass-card {
         background: rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(25px);
@@ -244,7 +261,6 @@ body::before {
         color: var(--text-primary);
     }
 
-    /* Botones */
     .btn-primary {
         background: var(--primary-gradient);
         border: none;
@@ -288,7 +304,6 @@ body::before {
         box-shadow: 0 8px 25px var(--primary-gradient);
     }
 
-    /* Badges */
     .badge {
         font-weight: 600;
         padding: 0.3em 0.8em;
@@ -313,7 +328,6 @@ body::before {
         box-shadow: 0 4px 10px rgba(139,92,246,0.7);
     }
 
-    /* Candidate name */
     .candidate-name {
         background: var(--primary-gradient);
         -webkit-background-clip: text;
@@ -321,20 +335,63 @@ body::before {
         font-weight: 700;
     }
 
-    /* Candidate location icon */
     .candidate-location i {
         margin-right: 6px;
         color: var(--accent-blue);
     }
 
-    /* Progress bar */
     .progress-bar.bg-primary {
         background: var(--primary-gradient) !important;
     }
 
-    /* Empty state */
     .empty-state {
         color: var(--text-secondary);
+    }
+
+    .glass-pagination {
+        background: var(--glass-bg);
+        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        list-style: none;
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .glass-pagination .page-item {
+        display: inline-block;
+    }
+
+    .glass-pagination .page-link {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--text-primary);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        transition: 0.2s;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .glass-pagination .page-link:hover {
+        background: var(--primary-gradient);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+    }
+
+    .glass-pagination .page-item.active .page-link {
+        background: var(--primary-gradient);
+        color: #fff;
+        pointer-events: none;
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.8);
+    }
+
+    .glass-pagination .page-item.disabled .page-link {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 </style>
 @stop
