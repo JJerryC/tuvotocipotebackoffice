@@ -400,6 +400,12 @@ return [
                 'url'  => 'cargos',
                 'icon' => 'fas fa-fw fa-briefcase',
             ],
+            [
+            'text' => 'Planillas',
+            'url'  => 'planillas',
+            'icon' => 'fas fa-id-card-alt',
+            'can'  => 'view maintenance',
+            ],
         ],
     ],
 

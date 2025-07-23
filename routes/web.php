@@ -11,6 +11,8 @@ use App\Http\Controllers\PartyController;
 use App\Http\Controllers\CargoController;
 use App\Http\Controllers\NominaController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PlanillaController;
+use App\Models\Municipio;
 
 // Redirige la ruta raíz al login
 Route::redirect('/', '/login');
@@ -127,6 +129,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/entidades', [EntidadController::class, 'index'])->name('entidades.index');
         Route::get('/nominas', [NominaController::class, 'index'])->name('nominas.index');
         Route::get('/cargos', [CargoController::class, 'index'])->name('cargos.index');
+        Route::get('/planillas', [PlanillaController::class, 'index'])->name('planillas.index');
     });
 
     Route::middleware('can:create maintenance')->group(function () {
@@ -141,6 +144,9 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/cargos/create', [CargoController::class, 'create'])->name('cargos.create');
         Route::post('/cargos', [CargoController::class, 'store'])->name('cargos.store');
+
+        Route::get('/planillas/create', [PlanillaController::class, 'create'])->name('planillas.create');
+        Route::post('/planillas', [PlanillaController::class, 'store'])->name('planillas.store');
     });
 
     Route::middleware('can:edit maintenance')->group(function () {
@@ -163,6 +169,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/cargos/{cargo}/edit', [CargoController::class, 'edit'])->name('cargos.edit');
         Route::put('/cargos/{cargo}', [CargoController::class, 'update'])->name('cargos.update');
         Route::delete('/cargos/{cargo}', [CargoController::class, 'destroy'])->name('cargos.destroy');
+
+        // Planillas
+        Route::get('/planillas/{planilla}/edit', [PlanillaController::class, 'edit'])->name('planillas.edit');
+        Route::put('/planillas/{planilla}', [PlanillaController::class, 'update'])->name('planillas.update');
+        Route::delete('/planillas/{planilla}', [PlanillaController::class, 'destroy'])->name('planillas.destroy');
     });
 
     
