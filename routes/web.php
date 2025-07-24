@@ -47,6 +47,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/api/municipios/{departamento}', [CandidateController::class, 'getMunicipiosByDepartamento'])
         ->name('api.municipios.byDepartamento');
+
+            // ✅ Nueva ruta para filtrar planillas
+    Route::get('/api/planillas/filtrar', [PlanillaController::class, 'filtrar'])
+        ->name('api.planillas.filtrar');
 });
 
 

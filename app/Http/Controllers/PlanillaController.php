@@ -91,4 +91,26 @@ class PlanillaController extends Controller
 
         return redirect()->route('planillas.index')->with('success', 'Planilla eliminada correctamente.');
     }
+
+    public function filtrar(Request $request)
+    {
+        $query = Planilla::query();
+
+        if ($request->filled('cargo_id')) {
+            $query->where('cargo_id', $request->cargo_id);
+        }
+
+        if ($request->filled('departamento_id')) {
+            $query->where('departamento_id', $request->departamento_id);
+        }
+
+        if ($request->filled('municipio_id')) {
+            $query->where('municipio_id', $request->municipio_id);
+        }
+
+        $planillas = $query->orderBy('nombre')->get(['id', 'nombre', 'foto']);
+
+        return response()->json($planillas);
+    }
+
 }

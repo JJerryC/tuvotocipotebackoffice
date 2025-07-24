@@ -211,10 +211,15 @@
             </div>
         </div>
 
-        <div class="card-footer text-right">
-            <a href="{{ route('candidates.index') }}" class="btn btn-outline-secondary mr-2"><i class="fas fa-arrow-left mr-1"></i>Cancelar</a>
-            <button type="submit" class="btn btn-success"><i class="fas fa-save mr-1"></i>Actualizar candidato</button>
-        </div>
+<div class="card-footer">
+    <div class="d-flex justify-content-between">
+        <a href="{{ route('candidates.index') }}" class="btn btn-default">
+            <i class="fas fa-arrow-left mr-1"></i>Cancelar
+        </a>
+
+        <x-adminlte-button type="submit" label="Actualizar candidato" theme="primary" icon="fas fa-save" />
+    </div>
+</div>
     </form>
 </div>
 @stop
@@ -245,25 +250,44 @@ $(function(){
                     opts += '<option value="'+e.id+'">'+e.name+'</option>';
                 });
                 $('#entidad_id').html(opts).prop('disabled', false);
+
+                // Si en edición hay entidad guardada que no coincide, re-seleccionarla
+                var entidad_id_actual = "{{ old('entidad_id', $candidate->entidad_id) }}";
+                if(entidad_id_actual) {
+                    $('#entidad_id').val(entidad_id_actual);
+                }
             });
         }
     });
 
     // Cargar municipios según departamento seleccionado
-    $('#departamento_id').on('change', function(){
-        var did = $(this).val();
-        if (!did) {
+    function cargarMunicipios(departamento_id, selectedMunicipioId = null) {
+        if (!departamento_id) {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/api/municipios/' + did, function(data){
+            $.getJSON('/api/municipios/' + departamento_id, function(data){
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, m){
                     opts += '<option value="'+m.id+'">'+m.name+'</option>';
                 });
                 $('#municipio_id').html(opts).prop('disabled', false);
+
+                if(selectedMunicipioId) {
+                    $('#municipio_id').val(selectedMunicipioId);
+                }
             });
         }
+    }
+
+    // Al cambiar departamento, cargar municipios y filtrar planillas
+    $('#departamento_id').on('change', function(){
+        var departamentoId = $(this).val();
+        cargarMunicipios(departamentoId);
+        filtrarPlanillas();
     });
+
+    // Al cambiar municipio o cargo, filtrar planillas
+    $('#municipio_id, #cargo_id').on('change', filtrarPlanillas);
 
     // Vista previa fotografía candidato
     $('#fotografia').on('change', function(){
@@ -287,10 +311,54 @@ $(function(){
         }
     });
 
+    // Función para filtrar planillas según filtros seleccionados
+    function filtrarPlanillas() {
+        var cargo_id = $('#cargo_id').val();
+        var departamento_id = $('#departamento_id').val();
+        var municipio_id = $('#municipio_id').val();
+
+        $.ajax({
+            url: "{{ route('api.planillas.filtrar') }}",
+            data: {
+                cargo_id: cargo_id,
+                departamento_id: departamento_id,
+                municipio_id: municipio_id
+            },
+            success: function(planillas) {
+                var $select = $('#planilla_id');
+                $select.empty().append('<option value="">Seleccione…</option>');
+
+                $.each(planillas, function(_, planilla) {
+                    var fotoUrl = planilla.foto ? "{{ asset('storage') }}/" + planilla.foto : '';
+                    var $option = $('<option></option>')
+                        .val(planilla.id)
+                        .text(planilla.nombre)
+                        .attr('data-foto', fotoUrl);
+                    $select.append($option);
+                });
+
+                // Intentar seleccionar la planilla guardada si está disponible
+                var planillaGuardada = "{{ old('planilla_id', $candidate->planilla_id) }}";
+                if(planillaGuardada && $select.find('option[value="' + planillaGuardada + '"]').length) {
+                    $select.val(planillaGuardada);
+                } else {
+                    $select.val('');
+                }
+
+                $select.trigger('change');
+            },
+            error: function() {
+                $('#planilla_id').html('<option value="">Seleccione…</option>');
+                $('#planilla-preview-image').attr('src', '#');
+                $('#planilla-preview-container').hide();
+            }
+        });
+    }
+
     // Vista previa foto planilla
     function updatePlanillaPreview() {
         var selectedOption = $('#planilla_id option:selected');
-        var fotoUrl = selectedOption.attr('data-foto'); // Usar attr para obtener valor string exacto
+        var fotoUrl = selectedOption.attr('data-foto');
         if (fotoUrl && fotoUrl.trim() !== '') {
             $('#planilla-preview-image').attr('src', fotoUrl);
             $('#planilla-preview-container').show();
@@ -300,8 +368,44 @@ $(function(){
         }
     }
 
-    updatePlanillaPreview();
     $('#planilla_id').on('change', updatePlanillaPreview);
+
+    // AL CARGAR LA PÁGINA: cargar municipios y filtrar planillas con valores actuales del candidato
+
+    // 1. cargar municipios del departamento guardado y seleccionar municipio guardado
+    var departamento_id_actual = "{{ old('departamento_id', $candidate->departamento_id) }}";
+    var municipio_id_actual = "{{ old('municipio_id', $candidate->municipio_id) }}";
+
+    if(departamento_id_actual) {
+        cargarMunicipios(departamento_id_actual, municipio_id_actual);
+    } else {
+        $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
+    }
+
+    // 2. cargar entidades si hay party seleccionado y entidad guardada
+    var party_id_actual = "{{ old('party_id', $candidate->party_id) }}";
+    var entidad_id_actual = "{{ old('entidad_id', $candidate->entidad_id) }}";
+    if(party_id_actual) {
+        $.getJSON('/api/entidades/' + party_id_actual, function(data){
+            var opts = '<option value="">Seleccione…</option>';
+            $.each(data, function(_, e){
+                opts += '<option value="'+e.id+'">'+e.name+'</option>';
+            });
+            $('#entidad_id').html(opts).prop('disabled', false);
+            if(entidad_id_actual) {
+                $('#entidad_id').val(entidad_id_actual);
+            }
+        });
+    } else {
+        $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
+    }
+
+    // 3. finalmente filtrar planillas con los valores actuales
+    filtrarPlanillas();
+
+    // También actualizar preview planilla al cargar
+    updatePlanillaPreview();
+
 });
 </script>
 @endpush

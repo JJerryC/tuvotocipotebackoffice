@@ -196,60 +196,128 @@
             </div>
         </div>
 
-        <div class="card-footer text-right">
-            <button type="submit" class="btn btn-primary">Guardar candidato</button>
-        </div>
+<div class="card-footer">
+    <div class="d-flex justify-content-between">
+        <a href="{{ route('candidates.index') }}" class="btn btn-default">
+            <i class="fas fa-arrow-left mr-1"></i>Cancelar
+        </a>
+
+        <x-adminlte-button type="submit" label="Guardar Candidato" theme="success" icon="fas fa-save" />
+    </div>
+</div>
     </form>
 </div>
 @stop
 
 @push('js')
 <script>
-$(function(){
+$(function() {
+    // Controla habilitación/deshabilitación de party y entidad según checkbox independiente
     function toggleIndependienteFields() {
         let independiente = $('#independiente').is(':checked');
         $('#party_id').prop('disabled', independiente);
-        if(independiente) $('#party_id').val('');
+        if (independiente) $('#party_id').val('');
         $('#entidad_id').prop('disabled', independiente);
-        if(independiente) $('#entidad_id').val('');
+        if (independiente) $('#entidad_id').val('');
     }
-
     toggleIndependienteFields();
     $('#independiente').on('change', toggleIndependienteFields);
+
+    // Inicialmente deshabilita entidad y municipio
     $('#entidad_id, #municipio_id').prop('disabled', true);
 
-    $('#party_id').on('change', function(){
+    // Carga entidades según party seleccionado
+    $('#party_id').on('change', function() {
         var pid = $(this).val();
         if (!pid) {
             $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/api/entidades/' + pid, function(data){
+            $.getJSON('/api/entidades/' + pid, function(data) {
                 var opts = '<option value="">Seleccione…</option>';
-                $.each(data, function(_, e){
-                    opts += '<option value="'+e.id+'">'+e.name+'</option>';
+                $.each(data, function(_, e) {
+                    opts += '<option value="' + e.id + '">' + e.name + '</option>';
                 });
                 $('#entidad_id').html(opts).prop('disabled', false);
             });
         }
     });
 
-    $('#departamento_id').on('change', function(){
-        var did = $(this).val();
-        if (!did) {
+    // Carga municipios según departamento seleccionado
+    $('#departamento_id').on('change', function() {
+        var departamentoId = $(this).val();
+        if (!departamentoId) {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
+            filtrarPlanillas(); // refresca planillas sin municipio
         } else {
-            $.getJSON('/api/municipios/' + did, function(data){
-                var opts = '<option value="">Seleccione…</option>';
-                $.each(data, function(_, m){
-                    opts += '<option value="'+m.id+'">'+m.name+'</option>';
+            $.getJSON('/api/municipios/' + departamentoId, function(data) {
+                var options = '<option value="">Seleccione…</option>';
+                $.each(data, function(_, municipio) {
+                    options += '<option value="' + municipio.id + '">' + municipio.name + '</option>';
                 });
-                $('#municipio_id').html(opts).prop('disabled', false);
+                $('#municipio_id').html(options).prop('disabled', false);
+                filtrarPlanillas();
             });
         }
     });
 
-    // Vista previa fotografía candidato
-    $('#fotografia').on('change', function(){
+    // Cuando cambie municipio o cargo, filtra planillas
+    $('#municipio_id, #cargo_id').on('change', filtrarPlanillas);
+
+    // Función para filtrar planillas según filtros seleccionados
+    function filtrarPlanillas() {
+        var cargo_id = $('#cargo_id').val();
+        var departamento_id = $('#departamento_id').val();
+        var municipio_id = $('#municipio_id').val();
+
+        $.ajax({
+            url: "{{ route('api.planillas.filtrar') }}",
+            data: {
+                cargo_id: cargo_id,
+                departamento_id: departamento_id,
+                municipio_id: municipio_id
+            },
+            success: function(planillas) {
+                var $select = $('#planilla_id');
+                $select.empty().append('<option value="">Seleccione…</option>');
+
+                $.each(planillas, function(_, planilla) {
+                    var fotoUrl = planilla.foto ? "{{ asset('storage') }}/" + planilla.foto : '';
+                    var $option = $('<option></option>')
+                        .val(planilla.id)
+                        .text(planilla.nombre)
+                        .data('foto', fotoUrl);
+                    $select.append($option);
+                });
+
+                // Limpia selección y actualiza vista previa
+                $select.val('');
+                $select.trigger('change');
+            },
+            error: function() {
+                $('#planilla_id').html('<option value="">Seleccione…</option>');
+                $('#planilla-preview-image').attr('src', '#');
+                $('#planilla-preview-container').hide();
+            }
+        });
+    }
+
+    // Actualiza vista previa de la planilla seleccionada
+    function updatePlanillaPreview() {
+        var selectedOption = $('#planilla_id option:selected');
+        var fotoUrl = selectedOption.data('foto');
+        if (fotoUrl) {
+            $('#planilla-preview-image').attr('src', fotoUrl);
+            $('#planilla-preview-container').show();
+        } else {
+            $('#planilla-preview-image').attr('src', '#');
+            $('#planilla-preview-container').hide();
+        }
+    }
+
+    $('#planilla_id').on('change', updatePlanillaPreview);
+
+    // Vista previa de la foto del candidato al seleccionar archivo
+    $('#fotografia').on('change', function() {
         const input = this;
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -264,21 +332,8 @@ $(function(){
         }
     });
 
-    // Vista previa foto planilla
-    function updatePlanillaPreview() {
-        var selectedOption = $('#planilla_id option:selected');
-        var fotoUrl = selectedOption.data('foto');
-        if (fotoUrl) {
-            $('#planilla-preview-image').attr('src', fotoUrl);
-            $('#planilla-preview-container').show();
-        } else {
-            $('#planilla-preview-image').attr('src', '#');
-            $('#planilla-preview-container').hide();
-        }
-    }
-
-    updatePlanillaPreview();
-    $('#planilla_id').on('change', updatePlanillaPreview);
+    // Ejecuta filtrado al cargar página para precargar planillas
+    filtrarPlanillas();
 });
 </script>
 @endpush
