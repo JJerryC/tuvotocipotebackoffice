@@ -162,7 +162,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => True,
+    'layout_dark_mode' => False,
 
     /*
     |--------------------------------------------------------------------------
