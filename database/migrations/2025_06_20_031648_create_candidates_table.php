@@ -49,6 +49,12 @@ return new class extends Migration
                   ->cascadeOnUpdate()
                   ->restrictOnDelete();
 
+            $table->foreignId('planilla_id')
+                  ->nullable()
+                  ->constrained('planillas')
+                  ->cascadeOnUpdate()
+                  ->restrictOnDelete();
+
             $table->unsignedInteger('posicion')->comment('Posición en la papeleta/lista');
             $table->string('numero_identidad', 25)->unique();
 
@@ -62,6 +68,7 @@ return new class extends Migration
             $table->text('propuestas')->nullable()->comment('Planes y propuestas del candidato');
             $table->boolean('independiente')->default(false)->comment('Indica si el candidato es independiente');
             $table->string('fotografia_original')->nullable();
+            $table->string('ocupacion', 100)->nullable()->comment('Ocupación del candidato');
 
             $table->timestamps();
         });

@@ -17,6 +17,7 @@ class Candidate extends Model
         'municipio_id',
         'cargo_id',
         'sexo_id',
+        'planilla_id',
         'posicion',
         'numero_identidad',
         'primer_nombre',
@@ -32,6 +33,7 @@ class Candidate extends Model
         'independiente',
         'porcentaje_completado',
         'perfil_completo',
+        'ocupacion',
     ];
 
     protected $casts = [
@@ -75,6 +77,11 @@ class Candidate extends Model
     public function sexo()
     {
         return $this->belongsTo(Sexo::class);
+    }
+
+    public function planilla()
+    {
+    return $this->belongsTo(Planilla::class);
     }
 
     /* Accessor para nombre completo - YA EXISTE */

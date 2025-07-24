@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{
     Candidate, Entidad, Party, Nomina,
-    Departamento, Municipio, Cargo, Sexo
+    Departamento, Municipio, Cargo, Sexo, Planilla
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,10 +19,11 @@ class CandidateController extends Controller
 
     public function index()
     {
-$candidates = Candidate::with([
-    'party', 'entidad', 'nomina', 'cargo',
-    'departamento', 'municipio', 'sexo'
-])->orderByDesc('id')->get();
+        $candidates = Candidate::with([
+            'party', 'entidad', 'nomina', 'cargo',
+            'departamento', 'municipio', 'sexo',
+            'planilla'   // agregada la relación planilla
+        ])->orderByDesc('id')->get();
 
         return view('candidates.index', compact('candidates'));
     }
@@ -37,6 +38,7 @@ $candidates = Candidate::with([
             'municipios'    => Municipio::orderBy('name')->pluck('name', 'id'),
             'cargos'        => Cargo::orderBy('name')->pluck('name', 'id'),
             'sexos'         => Sexo::orderBy('description')->pluck('description', 'id'),
+            'planillas'     => \App\Models\Planilla::orderBy('nombre')->get(),
         ]);
     }
 
@@ -59,9 +61,11 @@ $candidates = Candidate::with([
             'segundo_nombre'   => 'nullable|string|max:60',
             'primer_apellido'  => 'required|string|max:60',
             'segundo_apellido' => 'nullable|string|max:60',
-            'fotografia'       => 'nullable|image|max:2048',
+            'fotografia'       => 'nullable|image|max:2048',   // foto candidato sigue aquí
             'reeleccion'       => 'nullable|boolean',
-            'propuestas'       => 'nullable|string|max:5000',
+            'propuestas'       => 'nullable|string|max:10000',
+
+            'planilla_id'      => 'nullable|exists:planillas,id',   // validación planilla
         ]);
 
         if ($request->hasFile('fotografia')) {
@@ -87,6 +91,9 @@ $candidates = Candidate::with([
 
     public function edit(Candidate $candidate)
     {
+        // Carga la relación planilla para el candidato (eager load)
+        $candidate->load('planilla');
+
         return view('candidates.edit', [
             'candidate'     => $candidate,
             'entidades'     => Entidad::orderBy('name')->pluck('name', 'id'),
@@ -96,6 +103,8 @@ $candidates = Candidate::with([
             'municipios'    => Municipio::orderBy('name')->pluck('name', 'id'),
             'cargos'        => Cargo::orderBy('name')->pluck('name', 'id'),
             'sexos'         => Sexo::orderBy('description')->pluck('description', 'id'),
+            // Cargar planillas con foto para el select y preview
+            'planillas' => Planilla::orderBy('nombre')->get(['id', 'nombre', 'foto']),
         ]);
     }
 
@@ -121,9 +130,11 @@ $candidates = Candidate::with([
             'segundo_nombre'   => 'nullable|string|max:60',
             'primer_apellido'  => 'required|string|max:60',
             'segundo_apellido' => 'nullable|string|max:60',
-            'fotografia'       => 'nullable|image|max:2048',
+            'fotografia'       => 'nullable|image|max:2048',   // foto candidato sigue aquí
             'reeleccion'       => 'nullable|boolean',
-            'propuestas'       => 'nullable|string|max:5000',
+            'propuestas'       => 'nullable|string|max:10000',
+
+            'planilla_id'      => 'nullable|exists:planillas,id',   // validación planilla
         ]);
 
         if ($request->hasFile('fotografia')) {
@@ -174,6 +185,7 @@ $candidates = Candidate::with([
             'municipio',
             'cargo',
             'sexo',
+            'planilla',   // cargar planilla en show
         ]);
 
         return view('candidates.show', compact('candidate'));
@@ -190,5 +202,4 @@ $candidates = Candidate::with([
         $municipios = Municipio::where('departamento_id', $departamentoId)->orderBy('name')->get(['id', 'name']);
         return response()->json($municipios);
     }
-
 }
