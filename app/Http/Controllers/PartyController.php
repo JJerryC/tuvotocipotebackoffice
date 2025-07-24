@@ -29,10 +29,14 @@ class PartyController extends Controller
             'name' => 'required|string|max:100|unique:parties,name',
         ]);
 
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
         Party::create($data);
 
         return redirect()->route('parties.index')->with('success', 'Partido creado correctamente');
     }
+
 
     public function show(Party $party)
     {
@@ -49,6 +53,9 @@ class PartyController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:100|unique:parties,name,' . $party->id,
         ]);
+
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
 
         $party->update($data);
 

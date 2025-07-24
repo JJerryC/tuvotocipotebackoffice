@@ -3,7 +3,7 @@
 @section('title', 'Entidades')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Listado de Entidades</h1>
+    <h1 class="m-0 text-dark">Listado de Movimientos</h1>
 @stop
 
 @section('content')
@@ -20,7 +20,7 @@
     </x-adminlte-alert>
 @endif
 
-<x-adminlte-card theme="primary" icon="fas fa-building" title="Entidades">
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Moviminetos">
 
     @can('create maintenance')
         <div class="mb-3 text-right">
@@ -56,7 +56,7 @@
                     @if ($tieneParty)
                         <!-- La entidad tiene partido, se puede eliminar -->
                     @can('delete maintenance')
-                        <form action="{{ route('entidades.destroy', $entidad) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar esta entidad?');">
+                        <form action="{{ route('entidades.destroy', $entidad) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Seguro que quieres eliminar este movimiento?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
@@ -66,7 +66,7 @@
                     @endcan
                     @else
                         <!-- La entidad no tiene partido, bloqueo botón -->
-                        <button class="btn btn-xs btn-secondary" title="Entidad sin partido asignado" disabled>
+                        <button class="btn btn-xs btn-secondary" title="Movimiento sin partido asignado" disabled>
                             <i class="fas fa-ban"></i>
                         </button>
                     @endif

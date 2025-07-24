@@ -42,6 +42,9 @@ class EntidadController extends Controller
             'party_id' => 'required|exists:parties,id',
         ]);
 
+        // Convertir a mayúsculas el nombre
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
         Entidad::create($data);
 
         return redirect()->route('entidades.index')
@@ -74,6 +77,9 @@ class EntidadController extends Controller
             'name' => 'required|string|max:100|unique:entidades,name,' . $entidad->id,
             'party_id' => 'required|exists:parties,id',
         ]);
+
+        // Convertir a mayúsculas el nombre
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
 
         $entidad->update($data);
 

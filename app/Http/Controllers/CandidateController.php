@@ -68,6 +68,21 @@ class CandidateController extends Controller
             'planilla_id'      => 'nullable|exists:planillas,id',   // validación planilla
         ]);
 
+        // Convertir a mayúsculas los campos de texto
+        $fieldsToUpper = [
+            'primer_nombre',
+            'segundo_nombre',
+            'primer_apellido',
+            'segundo_apellido',
+        ];
+
+                // Después de validar
+        foreach ($fieldsToUpper as $field) {
+            if (isset($data[$field]) && $data[$field] !== null) {
+                $data[$field] = mb_strtoupper($data[$field], 'UTF-8');
+            }
+        }
+
         if ($request->hasFile('fotografia')) {
             $file = $request->file('fotografia');
             $data['fotografia'] = $file->store('candidatos', 'public');
@@ -106,6 +121,22 @@ class CandidateController extends Controller
             // Cargar planillas con foto para el select y preview
             'planillas' => Planilla::orderBy('nombre')->get(['id', 'nombre', 'foto']),
         ]);
+
+        // Convertir a mayúsculas los campos de texto
+        $fieldsToUpper = [
+            'primer_nombre',
+            'segundo_nombre',
+            'primer_apellido',
+            'segundo_apellido',
+        ];
+
+                // Después de validar
+        foreach ($fieldsToUpper as $field) {
+            if (isset($data[$field]) && $data[$field] !== null) {
+                $data[$field] = mb_strtoupper($data[$field], 'UTF-8');
+            }
+        }
+
     }
 
     public function update(Request $request, Candidate $candidate)
@@ -136,6 +167,20 @@ class CandidateController extends Controller
 
             'planilla_id'      => 'nullable|exists:planillas,id',   // validación planilla
         ]);
+
+        // Al final de validación en update()
+        $fieldsToUpper = [
+            'primer_nombre',
+            'segundo_nombre',
+            'primer_apellido',
+            'segundo_apellido',
+        ];
+
+        foreach ($fieldsToUpper as $field) {
+            if (isset($data[$field]) && $data[$field] !== null) {
+                $data[$field] = mb_strtoupper($data[$field], 'UTF-8');
+            }
+        }
 
         if ($request->hasFile('fotografia')) {
             if ($candidate->fotografia && Storage::disk('public')->exists($candidate->fotografia)) {

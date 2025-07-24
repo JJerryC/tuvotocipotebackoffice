@@ -30,11 +30,14 @@ class CargoController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255|unique:cargos,name',
         ]);
 
-        Cargo::create($request->all());
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
+        Cargo::create($data);
 
         return redirect()->route('cargos.index')->with('success', 'Cargo creado correctamente');
     }
@@ -62,16 +65,18 @@ class CargoController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255|unique:cargos,name,' . $id,
         ]);
 
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
         $cargo = Cargo::findOrFail($id);
-        $cargo->update($request->all());
+        $cargo->update($data);
 
         return redirect()->route('cargos.index')->with('success', 'Cargo actualizado correctamente');
     }
-
     /**
      * Remove the specified resource from storage.
      */

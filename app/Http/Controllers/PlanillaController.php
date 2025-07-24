@@ -24,6 +24,7 @@ class PlanillaController extends Controller
         return view('planillas.create', compact('cargos', 'departamentos'));
     }
 
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -33,6 +34,9 @@ class PlanillaController extends Controller
             'municipio_id' => 'nullable|exists:municipios,id',
             'foto' => 'nullable|image|max:2048',
         ]);
+
+        // Convertir nombre a mayúsculas
+        $data['nombre'] = strtoupper($data['nombre']);
 
         if ($request->hasFile('foto')) {
             $data['foto'] = $request->file('foto')->store('planillas', 'public');
@@ -66,8 +70,13 @@ class PlanillaController extends Controller
             'foto' => 'nullable|image|max:2048',
         ]);
 
+        // Convertir nombre a mayúsculas
+        $data['nombre'] = strtoupper($data['nombre']);
+
         if ($request->hasFile('foto')) {
-            if ($planilla->foto) Storage::disk('public')->delete($planilla->foto);
+            if ($planilla->foto) {
+                Storage::disk('public')->delete($planilla->foto);
+            }
             $data['foto'] = $request->file('foto')->store('planillas', 'public');
         }
 
@@ -75,7 +84,6 @@ class PlanillaController extends Controller
 
         return redirect()->route('planillas.index')->with('success', 'Planilla actualizada correctamente.');
     }
-
     public function destroy(Planilla $planilla)
     {
         if ($planilla->foto) Storage::disk('public')->delete($planilla->foto);

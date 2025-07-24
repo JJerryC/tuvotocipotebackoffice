@@ -1,19 +1,19 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Entidad')
+@section('title', 'Editar Movimiento')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Editar Entidad</h1>
+    <h1 class="m-0 text-dark">Editar Movimiento</h1>
 @stop
 
 @section('content')
-<x-adminlte-card theme="primary" icon="fas fa-building" title="Editar Entidad" class="col-md-6">
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Editar Movimiento" class="col-md-6">
     <form action="{{ route('entidades.update', $entidad->id) }}" method="POST">
         @csrf
         @method('PUT')
 
         {{-- Campo: Nombre --}}
-        <x-adminlte-input name="name" label="Nombre de la Entidad" value="{{ old('name', $entidad->name) }}" required />
+        <x-adminlte-input name="name" label="Nombre del Movimiento" value="{{ old('name', $entidad->name) }}" required />
 
         {{-- Campo: Partido --}}
         <x-adminlte-select name="party_id" label="Partido" required>

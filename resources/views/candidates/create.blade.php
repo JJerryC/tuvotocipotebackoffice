@@ -81,7 +81,7 @@
 
                 {{-- Entidad --}}
                 <div class="col-md-6 form-group">
-                    <label for="entidad_id"><i class="fas fa-building mr-1"></i>Entidad</label>
+                    <label for="entidad_id"><i class="fas fa-building mr-1"></i>Movimiento</label>
                     <select name="entidad_id" id="entidad_id" class="form-control @error('entidad_id') is-invalid @enderror" disabled>
                         <option value="">Seleccione…</option>
                     </select>
@@ -98,7 +98,7 @@
                 {{-- Número de Identidad --}}
                 <div class="col-md-6 form-group">
                     <label for="numero_identidad"><i class="fas fa-id-card mr-1"></i>Número de Identidad</label>
-                    <input type="text" name="numero_identidad" id="numero_identidad" maxlength="25" class="form-control @error('numero_identidad') is-invalid @enderror" value="{{ old('numero_identidad') }}">
+                    <input type="text" name="numero_identidad" id="numero_identidad" maxlength="13" class="form-control @error('numero_identidad') is-invalid @enderror" value="{{ old('numero_identidad') }}">
                     @error('numero_identidad')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 

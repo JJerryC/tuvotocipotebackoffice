@@ -21,11 +21,14 @@ class NominaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        Nomina::create($request->only('name'));
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
+        Nomina::create($data);
 
         return redirect()->route('nominas.index')->with('success', 'Nómina creada correctamente');
     }
@@ -44,12 +47,15 @@ class NominaController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
+        // Convertir a mayúsculas
+        $data['name'] = mb_strtoupper($data['name'], 'UTF-8');
+
         $nomina = Nomina::findOrFail($id);
-        $nomina->update($request->only('name'));
+        $nomina->update($data);
 
         return redirect()->route('nominas.index')->with('success', 'Nómina actualizada correctamente');
     }

@@ -1,17 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Crear Entidad')
+@section('title', 'Crear Movimiento Politico')
 
 @section('content_header')
-    <h1 class="m-0 text-dark">Crear Entidad</h1>
+    <h1 class="m-0 text-dark">Crear Movimiento</h1>
 @stop
 
 @section('content')
-<x-adminlte-card theme="primary" icon="fas fa-building" title="Nueva Entidad" class="col-md-6">
+<x-adminlte-card theme="primary" icon="fas fa-building" title="Nuevo Movimiento Politico" class="col-md-6">
     <form action="{{ route('entidades.store') }}" method="POST">
         @csrf
 
-        <x-adminlte-input name="name" label="Nombre de la Entidad" placeholder="Ingrese el nombre" required />
+        <x-adminlte-input name="name" label="Nombre del Movimiento" placeholder="Ingrese el nombre" required />
 
         <x-adminlte-select name="party_id" label="Partido" required>
             <option value="">Seleccione…</option>

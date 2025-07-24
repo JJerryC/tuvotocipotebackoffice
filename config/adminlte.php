@@ -386,12 +386,12 @@ return [
                 'icon' => 'fas fa-fw fa-flag',
             ],
             [
-            'text' => 'Entidades',
+            'text' => 'Movimientos Politicos',
             'url'  => 'entidades',
                 'icon' => 'fas fa-university',
             ],
             [
-                'text' => 'Nomina',
+                'text' => 'Nominas',
                 'url'  => 'nominas',
                 'icon' => '	fas fa-clipboard-list',
             ],
