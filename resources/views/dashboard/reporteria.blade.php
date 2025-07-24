@@ -10,39 +10,39 @@
 <div class="filters-section mb-4 glass-card">
     <div class="container-fluid px-0">
         <!-- Summary Cards -->
-        <div class="summary-grid mb-4">
-            <div class="summary-card presidencial">
-                <div class="summary-icon">
-                    <i class="fas fa-crown"></i>
-                </div>
-                <div class="summary-number">{{ $estadisticas['candidatos_presidenciales'] ?? 0 }}</div>
-                <div class="summary-label">Candidatos Presidenciales</div>
-            </div>
-
-            <div class="summary-card diputados">
-                <div class="summary-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="summary-number">{{ $estadisticas['candidatos_diputados'] ?? 0 }}</div>
-                <div class="summary-label">Candidatos a Diputados</div>
-            </div>
-
-            <div class="summary-card alcaldes">
-                <div class="summary-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div class="summary-number">{{ $estadisticas['candidatos_alcaldes'] ?? 0 }}</div>
-                <div class="summary-label">Candidatos a Alcaldes</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-icon">
-                    <i class="fas fa-chart-pie"></i>
-                </div>
-                <div class="summary-number">{{ $estadisticas['total_candidatos'] ?? 0 }}</div>
-                <div class="summary-label">Total de Candidatos</div>
-            </div>
+<div class="summary-grid mb-4">
+    <div class="summary-card presidencial">
+        <div class="summary-icon">
+            <i class="fas fa-user-tie"></i>
         </div>
+        <div class="summary-number">{{ $estadisticas['candidatos_presidenciales'] ?? 0 }}</div>
+        <div class="summary-label">Candidatos Presidenciales</div>
+    </div>
+
+<div class="summary-card diputados">
+    <div class="summary-icon">
+        <i class="fas fa-building"></i>  <!-- Balanza de justicia para diputados -->
+    </div>
+    <div class="summary-number">{{ $estadisticas['candidatos_diputados'] ?? 0 }}</div>
+    <div class="summary-label">Candidatos a Diputados</div>
+</div>
+
+    <div class="summary-card alcaldes">
+        <div class="summary-icon" >
+            <i class="fas fa-landmark"></i>  <!-- Edificio tipo parlamento para alcaldes -->
+        </div>
+        <div class="summary-number">{{ $estadisticas['candidatos_alcaldes'] ?? 0 }}</div>
+        <div class="summary-label">Candidatos a Alcaldes</div>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-icon">
+            <i class="fas fa-chart-bar"></i>
+        </div>
+        <div class="summary-number">{{ $estadisticas['total_candidatos'] ?? 0 }}</div>
+        <div class="summary-label">Total de Candidatos</div>
+    </div>
+</div>
 
         <!-- Time Period Selector -->
         <div class="time-selector mb-4">

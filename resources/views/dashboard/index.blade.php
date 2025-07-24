@@ -161,7 +161,7 @@ new Chart(document.getElementById('generoChart'), {
         {{-- Stats --}}
         <div class="stats-grid">
             <div class="stat-card presidencial">
-                <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
                 <div class="stat-content">
                     <h3>{{ $estadisticas['candidatos_presidenciales'] ?? 0 }}</h3>
                     <p>Candidatos Presidenciales</p>
@@ -169,7 +169,7 @@ new Chart(document.getElementById('generoChart'), {
             </div>
 
             <div class="stat-card diputados">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-icon"><i class="fas fa-building"></i></div>
                 <div class="stat-content">
                     <h3>{{ $estadisticas['candidatos_diputados'] ?? 0 }}</h3>
                     <p>Candidatos a Diputados</p>
@@ -177,7 +177,7 @@ new Chart(document.getElementById('generoChart'), {
             </div>
 
             <div class="stat-card alcaldes">
-                <div class="stat-icon"><i class="fas fa-building"></i></div>
+                <div class="stat-icon"><i class="fas fa-landmark"></i></div>
                 <div class="stat-content">
                     <h3>{{ $estadisticas['candidatos_alcaldes'] ?? 0 }}</h3>
                     <p>Candidatos a Alcaldes</p>
