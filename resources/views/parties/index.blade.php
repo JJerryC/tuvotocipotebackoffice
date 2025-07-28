@@ -20,50 +20,59 @@
         </x-adminlte-alert>
     @endif
 
-<x-adminlte-card theme="primary" icon="fas fa-flag" title="Partidos">
+    <x-adminlte-card theme="primary" icon="fas fa-flag" title="Partidos">
 
-    @can('create maintenance')
-        <div class="mb-3 text-right">
-            <a href="{{ route('parties.create') }}" class="btn btn-sm btn-success">
-                <i class="fas fa-plus mr-1"></i> Nuevo
-            </a>
-        </div>
-    @endcan
+        @can('create maintenance')
+            <div class="mb-3 text-right">
+                <a href="{{ route('parties.create') }}" class="btn btn-sm btn-success">
+                    <i class="fas fa-plus mr-1"></i> Nuevo
+                </a>
+            </div>
+        @endcan
 
-    <table id="partiesTable" class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($parties as $party)
+        <table id="partiesTable" class="table table-bordered table-hover">
+            <thead>
                 <tr>
-                    <td>{{ $party->name }}</td>
-                    <td class="text-right">
-                    @can('edit maintenance')
-                        <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    @endcan
-                    @can('delete maintenance')
-                        <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline" 
-                            onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    @endcan
-                    </td>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach($parties as $party)
+                    <tr>
+                        <td>
+                            @if($party->foto_partido)
+                                <img src="{{ asset('storage/' . $party->foto_partido) }}" alt="Foto del partido" 
+                                    style="max-width: 100px; max-height: 60px;" class="img-thumbnail">
+                            @else
+                                <i class="fas fa-image text-muted" style="font-size: 2rem;" title="Sin foto"></i>
+                            @endif
+                        </td>
+                        <td>{{ $party->name }}</td>
+                        <td class="text-right">
+                            @can('edit maintenance')
+                                <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            @endcan
+                            @can('delete maintenance')
+                                <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline" 
+                                    onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @endcan
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-</x-adminlte-card>
+    </x-adminlte-card>
 @stop
 
 @push('css')

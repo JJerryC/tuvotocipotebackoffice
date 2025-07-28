@@ -63,10 +63,21 @@
                             </span>
                         @endif
 
-                        @if($candidato->independiente)
-                            <span class="badge badge-independent">Independiente</span>
+                        @if($candidato->tipo_candidato)
+                            <span class="badge badge-type badge-{{ strtolower($candidato->tipo_candidato) }}">
+                                {{ ucfirst($candidato->tipo_candidato) }}
+                            </span>
                         @elseif($candidato->party)
-                            <span class="badge badge-party">{{ $candidato->party->name }}</span>
+                        <span class="badge badge-party d-flex align-items-center gap-2" style="white-space: nowrap;">
+                            @if($candidato->party->foto_partido)
+                                <img src="{{ asset('storage/' . $candidato->party->foto_partido) }}" 
+                                    alt="Bandera {{ $candidato->party->name }}" 
+                                    class="img-thumbnail img-party-large">
+                            @endif
+                            <span style="margin-left: 0.5rem;"> <!-- Ajusta el valor a tu gusto -->
+                                {{ $candidato->party->name }}
+                            </span>
+                        </span>
                         @endif
                     </div>
 
@@ -187,7 +198,10 @@
         --glass-bg: rgba(255, 255, 255, 0.8);  /* Fondo glass más claro */
         --glass-border: rgba(209, 213, 219, 0.6); /* Borde glass claro */
     }
-
+.img-party-large {
+    max-width: 60px;
+    max-height: 36px;
+}
     /* Fondos claros en body y contenido */
     body, html, .content-wrapper, .wrapper {
         background: var(--dark-gradient) !important;
@@ -317,10 +331,10 @@
         color: var(--text-primary);
         transition: all 0.3s ease;
     }
-    .btn-glass:hover {
-        background: var(--primary-gradient);
-        color: #fff;
-        box-shadow: 0 8px 25px var(--primary-gradient);
+    .btn-info.btn-glass:hover {
+        background: #3b82f6 !important; /* Azul sólido */
+        color: white !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.7) !important;
     }
 
     /* Badges con colores vivos y texto blanco */
@@ -456,6 +470,15 @@
     /* Para que el área de acciones quede siempre abajo */
     .candidate-actions {
         margin-top: auto;
+    }
+
+    .party-flag-img {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 0 3px rgba(0,0,0,0.1);
     }
 
 </style>
