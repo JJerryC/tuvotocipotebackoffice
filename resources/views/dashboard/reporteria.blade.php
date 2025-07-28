@@ -91,8 +91,8 @@
                 <!-- Top Departments -->
                 <div class="stat-card glass-card">
                     <div class="stat-card-header d-flex align-items-center gap-2 mb-3">
-                        <i class="fas fa-trophy"></i>
-                        <span class="stat-card-title">Top Departamentos</span>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span class="stat-card-title">Candidatos Por Departamento</span>
                     </div>
 
                     @foreach($estadisticas['por_departamento']->groupBy('departamento')->map(fn($dept) => $dept->sum('total'))->sortDesc()->take(5) as $departamento => $total)
