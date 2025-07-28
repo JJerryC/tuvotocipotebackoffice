@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Candidate;
+use App\Models\Planilla;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 class CandidateApiController extends Controller
 {
@@ -16,6 +20,25 @@ class CandidateApiController extends Controller
 
     /* ─────────────────────────  BLOQUES COMPLETOS  ───────────────────────── */
 
+public function render($request, Throwable $e)
+{
+    // Si es una petición API (route prefix /api)
+    if ($request->is('api/*')) {
+        if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+            return response()->json([
+                'error'   => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
+
+        return response()->json([
+            'error'   => 'Internal Error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+
+    return parent::render($request, $e);
+}
     public function all(): JsonResponse
     {
         return response()->json(
@@ -49,7 +72,7 @@ class CandidateApiController extends Controller
     public function fotografia(int $id): JsonResponse
     {
         $c   = Candidate::select(['id','fotografia','fotografia_original'])->findOrFail($id);
-        $url = $c->fotografia ? Storage::disk('public')->url($c->fotografia) : null;
+        $url = $c->fotografia ? Storage::url($c->fotografia) : null;
 
         return response()->json([
             'id'                 => $c->id,
@@ -187,7 +210,7 @@ class CandidateApiController extends Controller
                 ->where('numero_identidad', $numero)
                 ->firstOrFail();
         $url = $c->fotografia
-            ? Storage::disk('public')->url($c->fotografia)
+            ? Storage::url($c->fotografia)
             : null;
 
         return response()->json([
@@ -304,6 +327,184 @@ class CandidateApiController extends Controller
             ] : null,
         ]);
     }
+
+    /* ── FOTO POR ID ── */
+public function foto(int $id): JsonResponse
+{
+    $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
+    $url = $p->foto && Storage::disk('public')->exists($p->foto)
+        ? Storage::url($p->foto)
+        : null;
+
+    return response()->json([
+        'id'     => $p->id,
+        'nombre' => $p->nombre,
+        'foto'   => $p->foto,
+        'url'    => $url,
+    ]);
+}
+
+/* ── FOTO POR NOMBRE DE PLANILLA ── */
+public function fotoByNombre(string $nombre): JsonResponse
+{
+    $p = Planilla::select(['id','nombre','foto'])
+        ->where('nombre', 'like', strtoupper($nombre))
+        ->firstOrFail();
+
+    $url = $p->foto && Storage::disk('public')->exists($p->foto)
+        ? Storage::url($p->foto)
+        : null;
+
+    return response()->json([
+        'id'     => $p->id,
+        'nombre' => $p->nombre,
+        'foto'   => $p->foto,
+        'url'    => $url,
+    ]);
+}
+
+/* ──────────────────── BLOQUES ESPECÍFICOS POR NOMBRE (LIKE) ─────────────────── */
+
+public function showByNombre(string $nombre): JsonResponse
+{
+    return response()->json(
+        Candidate::with(['entidad','party','nomina','departamento','municipio','cargo','sexo'])
+            ->whereRaw("CONCAT(primer_nombre,' ',segundo_nombre,' ',primer_apellido,' ',segundo_apellido) LIKE ?", ["%{$nombre}%"])
+            ->orWhere('primer_nombre', 'like', "%{$nombre}%")
+            ->orWhere('primer_apellido', 'like', "%{$nombre}%")
+            ->get()
+    );
+}
+
+public function propuestasByNombre(string $nombre): JsonResponse
+{
+    $c = Candidate::select(['id','propuestas'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($c);
+}
+
+public function fotografiaByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::select(['id','primer_nombre','primer_apellido','fotografia','fotografia_original'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    $candidatos->transform(function($c) {
+        $c->url = $c->fotografia && Storage::disk('public')->exists($c->fotografia)
+            ? Storage::url($c->fotografia)
+            : null;
+        return $c;
+    });
+
+    return response()->json($candidatos);
+}
+
+public function datosGeneralesByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with('sexo')
+        ->select(['id','numero_identidad','primer_nombre','segundo_nombre','primer_apellido','segundo_apellido','posicion','sexo_id','reeleccion','independiente'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'               => $c->id,
+            'nombre_completo'  => $c->nombre_completo,
+            'numero_identidad' => $c->numero_identidad,
+            'posicion'         => $c->posicion,
+            'sexo'             => $c->sexo->description,
+            'reeleccion'       => $c->reeleccion,
+            'independiente'    => $c->independiente,
+        ];
+    }));
+}
+
+public function ubicacionByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with(['departamento','municipio'])
+        ->select(['id','departamento_id','municipio_id'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'          => $c->id,
+            'departamento'=> $c->departamento ? ['id'=>$c->departamento->id,'name'=>$c->departamento->name] : null,
+            'municipio'   => $c->municipio ? ['id'=>$c->municipio->id,'name'=>$c->municipio->name] : null,
+        ];
+    }));
+}
+
+public function sexoByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with('sexo')
+        ->select(['id','sexo_id'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'   => $c->id,
+            'sexo' => ['id'=>$c->sexo->id,'descripcion'=>$c->sexo->description],
+        ];
+    }));
+}
+
+public function cargoByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with('cargo')
+        ->select(['id','cargo_id'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'    => $c->id,
+            'cargo' => ['id'=>$c->cargo->id,'name'=>$c->cargo->name],
+        ];
+    }));
+}
+
+public function partidoByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with('party')
+        ->select(['id','party_id','independiente'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'            => $c->id,
+            'independiente' => $c->independiente,
+            'partido'       => $c->party ? ['id'=>$c->party->id,'name'=>$c->party->name] : null,
+        ];
+    }));
+}
+
+public function entidadByNombre(string $nombre): JsonResponse
+{
+    $candidatos = Candidate::with('entidad')
+        ->select(['id','entidad_id'])
+        ->where('primer_nombre','like',"%{$nombre}%")
+        ->orWhere('primer_apellido','like',"%{$nombre}%")
+        ->get();
+
+    return response()->json($candidatos->map(function($c){
+        return [
+            'id'      => $c->id,
+            'entidad' => $c->entidad ? ['id'=>$c->entidad->id,'name'=>$c->entidad->name] : null,
+        ];
+    }));
+}
 
 
 
