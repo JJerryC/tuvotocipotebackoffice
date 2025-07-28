@@ -67,12 +67,21 @@
                 {{-- Partido --}}
                 <div class="col-md-6 form-group">
                     <label for="party_id"><i class="fas fa-flag mr-1"></i>Partido</label>
-                    <select name="party_id" id="party_id" class="form-control @error('party_id') is-invalid @enderror">
-                        <option value="">Seleccione…</option>
-                        @foreach($parties as $id => $name)
-                            <option value="{{ $id }}" @selected(old('party_id', $candidate->party_id) == $id)>{{ $name }}</option>
-                        @endforeach
-                    </select>
+<select name="party_id" id="party_id" class="form-control @error('party_id') is-invalid @enderror">
+    <option value="">Seleccione…</option>
+    @foreach($parties as $party)
+        <option 
+            value="{{ $party->id }}" 
+            data-foto="{{ $party->foto_partido ? asset('storage/'.$party->foto_partido) : '' }}"
+            @selected(old('party_id', $candidate->party_id) == $party->id)>
+            {{ $party->name }}
+        </option>
+    @endforeach
+</select>
+
+<div id="party-photo-container" class="mt-2" style="display:none;">
+    <img id="party-photo" src="#" alt="Foto del partido" style="max-width: 150px; max-height: 150px; border-radius: 5px; border: 1px solid #ccc;">
+</div>
                     @error('party_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
 
@@ -405,6 +414,42 @@ $(function(){
 
     // También actualizar preview planilla al cargar
     updatePlanillaPreview();
+
+
+    function updatePartyPhoto() {
+    var selectedOption = $('#party_id option:selected');
+    var fotoUrl = selectedOption.data('foto');
+
+    if (fotoUrl && fotoUrl.trim() !== '') {
+        $('#party-photo').attr('src', fotoUrl);
+        $('#party-photo-container').show();
+    } else {
+        $('#party-photo').attr('src', '#');
+        $('#party-photo-container').hide();
+    }
+}
+
+// Ejecutar al cargar la página para mostrar la foto si hay partido seleccionado
+updatePartyPhoto();
+
+// Ejecutar cada vez que cambia el select de partido
+$('#party_id').on('change', function() {
+    updatePartyPhoto();
+
+    // También limpiar o actualizar las entidades (como ya tienes)
+    var pid = $(this).val();
+    if (!pid) {
+        $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
+    } else {
+        $.getJSON('/api/entidades/' + pid, function(data){
+            var opts = '<option value="">Seleccione…</option>';
+            $.each(data, function(_, e){
+                opts += '<option value="'+e.id+'">'+e.name+'</option>';
+            });
+            $('#entidad_id').html(opts).prop('disabled', false);
+        });
+    }
+});
 
 });
 </script>

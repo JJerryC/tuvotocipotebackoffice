@@ -23,6 +23,7 @@
                 {{-- <th>ID</th> --}} {{-- ID oculto --}}
                 <th>Foto</th>
                 <th>Nombre Completo</th>
+                <th>Bandera</th>
                 <th>Partido</th>
                 <th>Departamento</th>
                 <th>Municipio</th>
@@ -42,7 +43,23 @@
                         @endif
                     </td>
                     <td>{{ $c->nombre_completo }}</td>
-                    <td>{{ $c->party->name ?? '—' }}</td>
+<!-- Logo -->
+<td class="text-center align-middle">
+    @if($c->party && $c->party->foto_partido)
+        <img 
+            src="{{ asset('storage/' . $c->party->foto_partido) }}" 
+            alt="Logo {{ $c->party->name }}" 
+            title="{{ $c->party->name }}"
+            style="height: 30px; width: auto; border-radius: 4px;">
+    @else
+        —
+    @endif
+</td>
+
+<!-- Nombre del Partido -->
+<td class="align-middle">
+    {{ $c->party->name ?? '—' }}
+</td>
                     <td>{{ $c->departamento->name ?? '—' }}</td>
                     <td>{{ $c->municipio->name ?? '—' }}</td>
                     <td>{{ $c->cargo->name ?? '—' }}</td>

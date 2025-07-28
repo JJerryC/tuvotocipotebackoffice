@@ -59,18 +59,27 @@
                     <input type="text" name="primer_apellido" id="primer_apellido" class="form-control @error('primer_apellido') is-invalid @enderror" value="{{ old('primer_apellido') }}">
                     @error('primer_apellido')<span class="invalid-feedback">{{ $message }}</span>@enderror
                 </div>
+{{-- Partido --}}
+<div class="form-group col-md-6" id="party-group">
+    <label for="party_id">Partido</label>
+    <select name="party_id" id="party_id" class="form-control">
+        <option value="">Seleccione un partido</option>
+        @foreach($parties as $party)
+            <option value="{{ $party->id }}"
+                data-logo="{{ $party->foto_partido ? asset('storage/' . $party->foto_partido) : '' }}"
+                {{ old('party_id') == $party->id ? 'selected' : '' }}>
+                {{ $party->name }}
+            </option>
+        @endforeach
+    </select>
+    @error('party_id')
+        <small class="text-danger">{{ $message }}</small>
+    @enderror
 
-                {{-- Partido --}}
-                <div class="col-md-6 form-group">
-                    <label for="party_id"><i class="fas fa-flag mr-1"></i>Partido</label>
-                    <select name="party_id" id="party_id" class="form-control @error('party_id') is-invalid @enderror">
-                        <option value="">Seleccione…</option>
-                        @foreach($parties as $id => $name)
-                            <option value="{{ $id }}" @selected(old('party_id') == $id)>{{ $name }}</option>
-                        @endforeach
-                    </select>
-                    @error('party_id')<span class="invalid-feedback">{{ $message }}</span>@enderror
-                </div>
+<div id="party-logo-preview" class="mt-2" style="display:none;">
+    {{-- Aquí se mostrará dinámicamente el logo del partido --}}
+</div>
+</div>
 
                 {{-- Segundo Apellido --}}
                 <div class="col-md-6 form-group">
@@ -240,6 +249,7 @@ $(function() {
                 $('#entidad_id').html(opts).prop('disabled', false);
             });
         }
+        updateLogoPreview();  // Actualiza logo cuando cambia partido
     });
 
     // Carga municipios según departamento seleccionado
@@ -334,6 +344,21 @@ $(function() {
 
     // Ejecuta filtrado al cargar página para precargar planillas
     filtrarPlanillas();
+
+    // --- NUEVO: actualización dinámica del logo del partido ---
+    function updateLogoPreview() {
+        const selectedOption = $('#party_id option:selected');
+        const logoUrl = selectedOption.data('logo');
+        const $logoPreview = $('#party-logo-preview');
+        if (logoUrl) {
+            $logoPreview.html(`<img src="${logoUrl}" alt="Logo del partido" style="max-height: 100px;">`).show();
+        } else {
+            $logoPreview.empty().hide();
+        }
+    }
+
+    // Actualiza logo partido al cargar la página (en caso de old() con error)
+    updateLogoPreview();
 });
 </script>
 @endpush

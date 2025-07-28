@@ -104,27 +104,34 @@
                 </div>
 
                 <!-- Partidos Stats -->
-@foreach($estadisticas['por_partido']->take(5) as $partidoData)
-    @php
-        $partido = data_get($partidoData, 'partido');
-        $totalCandidatos = data_get($partidoData, 'estadisticas.total_candidatos', 0);
-    @endphp
+                <div class="stat-card glass-card">
+                    <div class="stat-card-header d-flex align-items-center gap-2 mb-3">
+                        <i class="fas fa-flag"></i>
+                        <span class="stat-card-title">Candidatos Por Partido</span>
+                    </div>
 
-    <div class="progress-item mb-3">
-        <div class="progress-header d-flex justify-content-between mb-1">
-            <span class="progress-label">{{ $partido ? $partido->name : 'Partido no definido' }}</span>
-            <span class="progress-value">{{ $totalCandidatos }}</span>
-        </div>
-        <div class="progress" style="height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1);">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $totalCandidatos > 0 ? ($totalCandidatos / $estadisticas['por_departamento']->sum('total')) * 100 : 0 }}%"></div>
-        </div>
-    </div>
-@endforeach
+                    @foreach($estadisticas['por_partido']->take(5) as $partidoData)
+                        @php
+                            $partido = data_get($partidoData, 'partido');
+                            $totalCandidatos = data_get($partidoData, 'estadisticas.total_candidatos', 0);
+                        @endphp
+
+                        <div class="progress-item mb-3">
+                            <div class="progress-header d-flex justify-content-between mb-1">
+                                <span class="progress-label">{{ $partido ? $partido->name : 'Partido no definido' }}</span>
+                                <span class="progress-value">{{ $totalCandidatos }}</span>
+                            </div>
+                            <div class="progress" style="height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1);">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $totalCandidatos > 0 ? ($totalCandidatos / $estadisticas['por_departamento']->sum('total')) * 100 : 0 }}%"></div>
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
-            </div>
-        </div>
-    </div>
-@stop
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @stop
 
 @section('css')
 <style>
