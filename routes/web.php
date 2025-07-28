@@ -63,9 +63,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/candidates/start-import', [CandidateImportController::class, 'startImport'])->name('candidates.start-import');
     Route::get('/candidates/import-progress/{sessionId}', [CandidateImportController::class, 'getImportProgress'])->name('candidates.import-progress');
     Route::post('/candidates/import-batch/{sessionId}', [CandidateImportController::class, 'importBatch'])->name('candidates.import-batch');
-    
-    // Ruta para limpiar base de datos
-    Route::post('/candidates/clear-database', [CandidateImportController::class, 'clearDatabase'])->name('candidates.clear-database');
 
       Route::get('/candidates', [CandidateController::class, 'index'])
         ->middleware('can:view candidates')
