@@ -21,7 +21,7 @@
                 <label class="custom-file-label" for="foto_partido">Seleccionar archivo</label>
             </div>
             <small id="fileName" class="form-text text-muted"></small>
-            <img id="previewImg" src="#" alt="Vista previa" class="img-thumbnail mt-2 d-none" style="max-width: 300px;" />
+            <img id="previewImg" src="#" alt="Vista previa" class="img-thumbnail mt-2" style="max-width: 300px; display: none;" />
         </div>
 
         {{-- Botones alineados a izquierda y derecha --}}
@@ -47,14 +47,14 @@ document.getElementById('foto_partido').addEventListener('change', function () {
         let reader = new FileReader();
         reader.onload = function (e) {
             preview.src = e.target.result;
-            preview.classList.remove('d-none');
+            preview.style.display = 'block'; // Mostrar imagen
         }
         reader.readAsDataURL(file);
     } else {
         label.textContent = 'Seleccionar archivo';
         fileName.textContent = '';
         preview.src = '#';
-        preview.classList.add('d-none');
+        preview.style.display = 'none'; // Ocultar imagen
     }
 });
 </script>
