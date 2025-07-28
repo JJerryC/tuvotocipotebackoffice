@@ -4,15 +4,24 @@
 
 @push('css')
     <style>
+        :root {
+            --light-bg: #f9f9f9;
+            --light-card: #ffffff;
+            --light-border: #e0e0e0;
+            --light-text: #333;
+            --light-muted: #777;
+            --accent-blue: #007bff;
+        }
+
         .candidate-show-container {
             max-width: 1000px;
             margin: 2rem auto;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 25px;
+            background: var(--light-card);
+            border: 1px solid var(--light-border);
+            border-radius: 20px;
             padding: 2rem;
-            color: #fff;
+            color: var(--light-text);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
         .candidate-header {
@@ -25,9 +34,14 @@
             height: 150px;
             object-fit: cover;
             border-radius: 50%;
-            border: 5px solid var(--accent-blue);
-            margin: 0 auto 1rem;
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            border: 4px solid var(--accent-blue);
+            margin-bottom: 1rem;
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
+        }
+
+        .candidate-header h2 {
+            font-size: 1.8rem;
+            color: var(--light-text);
         }
 
         .candidate-info {
@@ -38,67 +52,64 @@
         }
 
         .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem 1.5rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
         }
 
         .info-card h5 {
             font-size: 0.9rem;
-            color: var(--text-secondary);
+            color: var(--light-muted);
             margin-bottom: 0.2rem;
         }
 
         .info-card p {
             font-weight: 600;
             font-size: 1rem;
+            color: var(--light-text);
         }
 
-        /* Planilla block - aparte */
         .candidate-planilla {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
             border-radius: 15px;
-            padding: 1rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
             margin-top: 2rem;
-            max-width: 350px;
-            /* centrar */
-            margin-left: auto;
-            margin-right: auto;
+        }
+
+        .planilla-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            text-align: center;
         }
 
         .planilla-image {
-            max-width: 100%;
             max-height: 150px;
-            border-radius: 10px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
             object-fit: contain;
-            display: block;
-        }
-        .planilla-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--accent-blue);
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            box-shadow: 0 5px 10px rgba(0, 123, 255, 0.1);
         }
 
         .candidate-propuestas {
             margin-top: 2rem;
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--light-bg);
+            border: 1px solid var(--light-border);
             border-radius: 15px;
             padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
             max-height: 400px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-wrap: break-word;
             line-height: 1.6;
             font-size: 1rem;
-            color: #f1f1f1;
+            color: var(--light-text);
         }
 
         .candidate-propuestas h4 {
@@ -111,7 +122,7 @@
         }
 
         .candidate-propuestas::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.3);
+            background: #ccc;
             border-radius: 10px;
         }
 
@@ -120,17 +131,20 @@
             margin-top: 2rem;
             padding: 0.8rem 2rem;
             border-radius: 50px;
-            border: 1px solid var(--glass-border);
-            background: transparent;
-            color: #fff;
+            border: 1px solid var(--light-border);
+            background: #f0f0f0;
+            color: var(--light-text);
             text-decoration: none;
-            transition: 0.3s;
+            transition: 0.3s ease;
         }
 
         .back-button:hover {
-            background: var(--primary-gradient);
-            color: #fff;
-            transform: translateY(-3px);
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .text-secondary {
+            color: var(--light-muted);
         }
     </style>
 @endpush

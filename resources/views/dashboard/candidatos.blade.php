@@ -13,18 +13,12 @@
                 <div class="filter-group">
                     <label for="search">Búsqueda General</label>
                     <input type="text" name="search" id="search" class="form-control"
-                        placeholder="Nombre, apellido o identidad..."
+                        placeholder="Nombre, Identidad, Partido ..."
                         value="{{ request('search') }}">
                 </div>
             </div>
 
             <div class="filter-actions mt-3 d-flex justify-content-end">
-                @can('create candidates')
-                    <a href="{{ route('candidates.create') }}" class="btn btn-success mr-2">
-                        <i class="fas fa-plus"></i> Nuevo Candidato
-                    </a>
-                @endcan
-
                 <a href="{{ route('dashboard.candidatos') }}" class="btn btn-secondary mr-2">
                     <i class="fas fa-times"></i> Limpiar
                 </a>
@@ -36,7 +30,7 @@
         </form>
     </div>
 
-    <div class="results-summary d-flex justify-content-between mb-4 text-white">
+    <div class="results-summary d-flex justify-content-between mb-4">
         <div>
             <i class="fas fa-users"></i> {{ $candidatos->total() }} candidatos encontrados
         </div>
@@ -48,7 +42,7 @@
     <div class="candidates-grid row">
         @forelse($candidatos as $candidato)
         <div class="candidate-card col-md-4 mb-4 p-3">
-            <div class="card bg-dark text-white glass-card">
+            <div class="card glass-card">
                 <div class="card-body">
                     <div class="candidate-header d-flex align-items-center mb-3">
                         <img 
@@ -179,20 +173,22 @@
 @section('css')
 <style>
     :root {
-        --primary-gradient: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
-        --secondary-gradient: linear-gradient(135deg,#f093fb 0%,#f5576c 100%);
-        --dark-gradient: linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-        --accent-blue: #00d4ff;
+        /* Gradientes y colores para modo claro */
+        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+        --secondary-gradient: linear-gradient(135deg, #a5b4fc 0%, #818cf8 100%);
+        --dark-gradient: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%); /* Fondo claro */
+        --accent-blue: #3b82f6;
         --accent-purple: #8b5cf6;
         --accent-pink: #ec4899;
         --accent-green: #10b981;
         --accent-yellow: #f59e0b;
-        --text-primary: #ffffff;
-        --text-secondary: #b0b7c3;
-        --glass-bg: rgba(255,255,255,0.05);
-        --glass-border: rgba(255,255,255,0.1);
+        --text-primary: #1f2937;   /* Texto oscuro para legibilidad */
+        --text-secondary: #4b5563; /* Texto secundario gris oscuro */
+        --glass-bg: rgba(255, 255, 255, 0.8);  /* Fondo glass más claro */
+        --glass-border: rgba(209, 213, 219, 0.6); /* Borde glass claro */
     }
 
+    /* Fondos claros en body y contenido */
     body, html, .content-wrapper, .wrapper {
         background: var(--dark-gradient) !important;
         min-height: 100vh !important;
@@ -205,22 +201,26 @@
         position: fixed !important;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%) !important;
+        background:
+            radial-gradient(circle at 20% 80%, rgba(147, 197, 253, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(244, 114, 182, 0.3) 0%, transparent 50%);
         pointer-events: none !important;
         z-index: -1 !important;
     }
 
+    /* Tarjetas con efecto vidrio claro */
     .glass-card {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
         transition: 0.3s;
+        color: var(--text-primary);
     }
 
+    /* Sección filtros con glass claro */
     .filters-section {
         background: var(--glass-bg);
         backdrop-filter: blur(20px);
@@ -230,71 +230,90 @@
         margin-bottom: 2rem;
         color: var(--text-primary);
     }
+
+    /* Grid para filtros */
     .filter-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
         gap: 1.5rem;
     }
+
+    /* Etiquetas con texto secundario oscuro */
     .filter-group label {
         color: var(--text-secondary);
         font-weight: 500;
     }
+
+    /* Inputs y selects con fondo claro y texto oscuro */
     .filter-group input.form-control,
     .filter-group select.form-control {
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.25);
+        background: rgba(255,255,255,0.9);
+        border: 1px solid rgba(209, 213, 219, 0.6);
         color: var(--text-primary);
         border-radius: 8px;
         padding: 0.4rem 0.75rem;
         transition: border-color 0.3s;
+        box-shadow: none;
     }
+
     .filter-group input.form-control::placeholder {
         color: var(--text-secondary);
         opacity: 0.8;
     }
+
     .filter-group input.form-control:focus,
     .filter-group select.form-control:focus {
         outline: none;
         border-color: var(--accent-blue);
         box-shadow: 0 0 8px var(--accent-blue);
-        background: rgba(255,255,255,0.18);
+        background: #fff;
         color: var(--text-primary);
     }
 
+    /* Botones con gradientes y colores claros */
     .btn-primary {
-        background: var(--primary-gradient);
+        background: var(--accent-blue);
         border: none;
-        box-shadow: 0 4px 15px rgba(102,126,234,0.7);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.7);
         transition: background 0.3s ease;
+        color: white;
     }
     .btn-primary:hover {
-        background: var(--secondary-gradient);
-        box-shadow: 0 6px 20px rgba(240,147,251,0.8);
+        background: #2563eb; /* azul más oscuro al pasar el mouse */
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.8);
+        color: white;
     }
+
     .btn-secondary {
         background: transparent;
         border: 1px solid var(--glass-border);
         color: var(--text-primary);
     }
     .btn-secondary:hover {
-        background: var(--glass-bg);
-        color: var(--accent-purple);
-        border-color: var(--accent-purple);
+        background: var(--accent-blue);
+        color: #fff;
+        border-color: var(--accent-blue);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
     }
+
     .btn-success {
         background: var(--accent-green);
         border: none;
-        box-shadow: 0 4px 15px rgba(16,185,129,0.7);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.7);
+        color: white;
     }
     .btn-success:hover {
         background: #0f9e69;
-        box-shadow: 0 6px 20px rgba(16,185,129,0.9);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.9);
+        color: white;
     }
+
+    /* Botones glass con texto oscuro */
     .btn-glass {
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(15px);
         border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.2);
+        border: 1px solid rgba(209, 213, 219, 0.6);
         color: var(--text-primary);
         transition: all 0.3s ease;
     }
@@ -304,6 +323,7 @@
         box-shadow: 0 8px 25px var(--primary-gradient);
     }
 
+    /* Badges con colores vivos y texto blanco */
     .badge {
         font-weight: 600;
         padding: 0.3em 0.8em;
@@ -317,37 +337,56 @@
     }
     .badge-type {
         background: var(--primary-gradient);
-        box-shadow: 0 4px 10px rgba(102,126,234,0.7);
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.7);
     }
     .badge-independent {
         background: var(--accent-pink);
-        box-shadow: 0 4px 10px rgba(236,72,153,0.7);
+        box-shadow: 0 4px 10px rgba(236, 72, 153, 0.7);
     }
     .badge-party {
-        background: var(--accent-purple);
-        box-shadow: 0 4px 10px rgba(139,92,246,0.7);
+        background: var(--accent-blue);
+        color: #000 !important;
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); /* sombra suave azul */
     }
 
+    /* Nombre de candidato con gradiente y texto transparente para efecto */
     .candidate-name {
-        background: var(--primary-gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: var(--text-primary);
         font-weight: 700;
     }
 
+    /* Iconos de ubicación con acento azul */
     .candidate-location i {
         margin-right: 6px;
         color: var(--accent-blue);
     }
 
+    /* Barra de progreso (si la usas) con gradiente primario */
     .progress-bar.bg-primary {
         background: var(--primary-gradient) !important;
     }
 
+    /* Texto en estado vacío con color secundario */
     .empty-state {
         color: var(--text-secondary);
     }
 
+    /* Estilo para resumen de resultados (número de candidatos y página) */
+    .results-summary {
+        background: var(--glass-bg);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+    .results-summary i {
+        color: var(--accent-blue);
+        margin-right: 0.5rem;
+    }
+
+    /* Paginación con estilo glass claro */
     .glass-pagination {
         background: var(--glass-bg);
         border-radius: 12px;
@@ -365,8 +404,8 @@
     }
 
     .glass-pagination .page-link {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(209, 213, 219, 0.6);
         color: var(--text-primary);
         padding: 0.4rem 0.8rem;
         border-radius: 8px;
@@ -377,21 +416,47 @@
     }
 
     .glass-pagination .page-link:hover {
-        background: var(--primary-gradient);
+        background: var(--accent-blue);
         color: #fff;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
     }
 
     .glass-pagination .page-item.active .page-link {
-        background: var(--primary-gradient);
+        background: var(--accent-blue); /* azul sólido */
         color: #fff;
         pointer-events: none;
-        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.8);
+        box-shadow: 0 4px 10px rgba(59, 130, 246, 0.8);
     }
 
     .glass-pagination .page-item.disabled .page-link {
         opacity: 0.5;
         cursor: not-allowed;
     }
+
+    .candidate-card .card {
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .candidate-header {
+        /* Evita que el header crezca demasiado */
+        flex-shrink: 0;
+    }
+
+    /* Opcional: limita altura del nombre para evitar que sea muy alto */
+    .candidate-name {
+        max-height: 3em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+    }
+
+    /* Para que el área de acciones quede siempre abajo */
+    .candidate-actions {
+        margin-top: auto;
+    }
+
 </style>
 @stop
