@@ -22,6 +22,7 @@
             padding: 2rem;
             color: var(--light-text);
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .candidate-header {
@@ -146,11 +147,33 @@
         .text-secondary {
             color: var(--light-muted);
         }
+
+.party-logo-topright {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    max-width: 100px;
+    max-height: 80px;
+    border-radius: 10px;
+    border: 2px solid var(--accent-blue);
+    background-color: #fff;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+
+
     </style>
 @endpush
 
 @section('content')
 <div class="candidate-show-container">
+    @if($candidate->party && $candidate->party->foto_partido)
+    <img 
+        src="{{ asset('storage/' . $candidate->party->foto_partido) }}" 
+        alt="Logo del partido {{ $candidate->party->name }}" 
+        class="party-logo-topright">
+@endif
     <div class="candidate-header">
         <img 
             src="{{ $candidate->fotografia ? asset('storage/' . $candidate->fotografia) : asset('images/default-candidate.png') }}" 

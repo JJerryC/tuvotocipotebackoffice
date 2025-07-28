@@ -55,10 +55,6 @@
                                 <button type="submit" class="btn btn-primary" id="previewBtn">
                                     <i class="fas fa-eye"></i> Procesar y Previsualizar
                                 </button>
-                                <button type="button" class="btn btn-danger ml-2" id="clearDatabaseBtn" title="Limpiar todos los 
-                                candidatos">
-                                    <i class="fas fa-trash-alt"></i> Limpiar Base de Datos
-                                </button>
                                 <div class="spinner-border spinner-border-sm ml-2 d-none" id="loadingSpinner" role="status">
                                     <span class="sr-only">Procesando...</span>
                                 </div>
@@ -214,48 +210,6 @@
     }
 </style>
 @stop
-
-<!-- Modal de Confirmación para Limpiar Base de Datos -->
-<div class="modal fade" id="clearDatabaseModal" tabindex="-1" role="dialog" aria-labelledby="clearDatabaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title text-white" id="clearDatabaseModalLabel">
-                    <i class="fas fa-exclamation-triangle"></i> ⚠️ Confirmar Limpieza de Base de Datos
-                </h5>
-                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-danger">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>¡ATENCIÓN! Esta acción es IRREVERSIBLE</strong>
-                </div>
-                
-                <p><strong>Se eliminarán TODOS los datos de las siguientes tablas:</strong></p>
-                <ul class="list-unstyled">
-                    <li><i class="fas fa-users text-primary"></i> <strong>Candidatos</strong> - Todos los registros de candidatos</li>
-                </ul>
-                
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>Nota:</strong> Se mantendrán los datos básicos de sexos (M, F, O) y se recrearán los registros "Sin asignación" por defecto.
-                </div>
-                
-                <p><strong>¿Está completamente seguro de que desea continuar?</strong></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmClearBtn">
-                    <i class="fas fa-trash-alt"></i> Sí, Limpiar Todo
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- Modal de Progreso de Importación -->
 <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -511,56 +465,6 @@
     $('#closeProgressBtn').on('click', function() {
         $('#progressModal').modal('hide');
         location.reload();
-    });
-
-    // Manejar botón de limpiar base de datos
-    $('#clearDatabaseBtn').on('click', function() {
-        $('#clearDatabaseModal').modal('show');
-    });
-
-    // Confirmar limpieza de base de datos
-    $('#confirmClearBtn').on('click', function() {
-        const btn = $(this);
-        const originalText = btn.html();
-        
-        // Deshabilitar botón y mostrar loading
-        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Limpiando...');
-        
-        $.ajax({
-            url: '{{ route("candidates.clear-database") }}',
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#clearDatabaseModal').modal('hide');
-                    
-                    // Mostrar mensaje de éxito
-                    let message = '✅ Base de datos limpiada exitosamente!\n\n';
-                    message += 'Registros eliminados:\n';
-                    for (const [table, count] of Object.entries(response.cleared_counts)) {
-                        message += `• ${table}: ${count} registros\n`;
-                    }
-                    
-                    alert(message);
-                    location.reload();
-                } else {
-                    alert('Error: ' + response.message);
-                }
-            },
-            error: function(xhr) {
-                let message = 'Error al limpiar la base de datos';
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                    message = xhr.responseJSON.message;
-                }
-                alert(message);
-            },
-            complete: function() {
-                // Restaurar botón
-                btn.prop('disabled', false).html(originalText);
-            }
-        });
     });
 </script>
 @stop

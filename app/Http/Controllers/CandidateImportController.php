@@ -408,27 +408,6 @@ class CandidateImportController extends Controller
         ]);
     }
 
-    public function clearDatabase(Request $request)
-    {
-        try {
-            $countCandidates = Candidate::count();
-
-            Candidate::truncate();
-
-            return response()->json([
-                'success' => true,
-                'message' => "Se eliminaron {$countCandidates} candidatos de la base de datos.",
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Error al limpiar candidatos: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al limpiar candidatos: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
     private function createDefaultData()
     {
         Party::firstOrCreate(['name' => 'Sin asignación']);

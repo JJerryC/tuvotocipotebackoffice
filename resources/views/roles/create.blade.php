@@ -27,24 +27,34 @@
                        placeholder="ej: editor">
             </div>
 
+            {{-- Checkbox para marcar todos --}}
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="checkAll"> Marcar / Desmarcar todos
+                </label>
+            </div>
+
             {{-- permisos --}}
-<div class="form-group">
-    <label>Permisos</label>
-    @foreach($permissions as $group => $perms)
-        <h5 class="mt-3">{{ ucfirst($group) }}</h5>
-        <div class="row">
-            @foreach($perms as $perm)
-                <div class="col-md-4">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox"
-                               name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}">
-                        <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
-                    </div>
-                </div>
-            @endforeach
+            <div class="form-group">
+                <label>Permisos</label>
+                @foreach($permissions as $group => $perms)
+                    @if($perms->count() > 0)
+                        <h5 class="mt-3">{{ ucfirst($group) }}</h5>
+                        <div class="row">
+                            @foreach($perms as $perm)
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}">
+                                        <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                @endforeach
+            </div>
         </div>
-    @endforeach
-</div>
 
         <div class="card-footer d-flex justify-content-between">
             <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary">
@@ -56,4 +66,15 @@
         </div>
     </div>
 </form>
+@stop
+
+@section('js')
+<script>
+    document.getElementById('checkAll').addEventListener('change', function () {
+        const checked = this.checked;
+        document.querySelectorAll('input[name="permissions[]"]').forEach(cb => {
+            cb.checked = checked;
+        });
+    });
+</script>
 @stop

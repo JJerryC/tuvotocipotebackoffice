@@ -17,28 +17,36 @@
         @method('PUT')
 
         <div class="form-group">
+            <label>
+                <input type="checkbox" id="checkAll"> Marcar / Desmarcar todos
+            </label>
+        </div>
+
+        <div class="form-group">
             <label>Permisos</label>
             @foreach($permissions as $group => $perms)
-                <h5 class="mt-3">{{ ucfirst($group) }}</h5>
-                <div class="row">
-                    @foreach($perms as $perm)
-                        <div class="col-md-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
-                                       name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}"
-                                       @checked($role->permissions->pluck('id')->contains($perm->id))
-                                       @if(in_array($perm->name, $adminFixed ?? [])) disabled @endif
-                                >
-                                <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
-                                
-                                {{-- Input hidden para enviar permisos deshabilitados --}}
-                                @if(in_array($perm->name, $adminFixed ?? []))
-                                    <input type="hidden" name="permissions[]" value="{{ $perm->id }}">
-                                @endif
+                @if($perms->count() > 0)  {{-- Mostrar solo si hay permisos visibles --}}
+                    <h5 class="mt-3">{{ ucfirst($group) }}</h5>
+                    <div class="row">
+                        @foreach($perms as $perm)
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="permissions[]" id="p{{ $perm->id }}" value="{{ $perm->id }}"
+                                           @checked($role->permissions->pluck('id')->contains($perm->id))
+                                           @if(in_array($perm->name, $adminFixed ?? [])) disabled @endif
+                                    >
+                                    <label class="form-check-label" for="p{{ $perm->id }}">{{ $perm->name }}</label>
+
+                                    {{-- Input hidden para enviar permisos deshabilitados --}}
+                                    @if(in_array($perm->name, $adminFixed ?? []))
+                                        <input type="hidden" name="permissions[]" value="{{ $perm->id }}">
+                                    @endif
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                @endif
             @endforeach
         </div>
 
@@ -52,4 +60,17 @@
         </div>
     </form>
 </x-adminlte-card>
+@stop
+
+@section('js')
+<script>
+    document.getElementById('checkAll').addEventListener('change', function () {
+        const checked = this.checked;
+        document.querySelectorAll('input.form-check-input[type="checkbox"]').forEach(cb => {
+            if (!cb.disabled) {
+                cb.checked = checked;
+            }
+        });
+    });
+</script>
 @stop

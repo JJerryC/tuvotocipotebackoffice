@@ -20,65 +20,135 @@
         </x-adminlte-alert>
     @endif
 
-<x-adminlte-card theme="primary" icon="fas fa-flag" title="Partidos">
+    <x-adminlte-card theme="primary" icon="fas fa-flag" title="Partidos">
 
-    @can('create maintenance')
-        <div class="mb-3 text-right">
-            <a href="{{ route('parties.create') }}" class="btn btn-sm btn-success">
-                <i class="fas fa-plus mr-1"></i> Nuevo
-            </a>
-        </div>
-    @endcan
+        @can('create maintenance')
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div id="buttons-container"></div> {{-- Contenedor botones export --}}
+                <a href="{{ route('parties.create') }}" class="btn btn-sm btn-success">
+                    <i class="fas fa-plus mr-1"></i> Nuevo
+                </a>
+            </div>
+        @endcan
 
-    <table id="partiesTable" class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($parties as $party)
+        <table id="partiesTable" class="table table-bordered table-hover">
+            <thead>
                 <tr>
-                    <td>{{ $party->name }}</td>
-                    <td class="text-right">
-                    @can('edit maintenance')
-                        <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                    @endcan
-                    @can('delete maintenance')
-                        <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline" 
-                            onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
-                    @endcan
-                    </td>
+                    <th>Foto</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach($parties as $party)
+                    <tr>
+                        <td>
+                            @if($party->foto_partido)
+                                <img src="{{ asset('storage/' . $party->foto_partido) }}" alt="Foto del partido" 
+                                    style="max-width: 100px; max-height: 60px;" class="img-thumbnail">
+                            @else
+                                <i class="fas fa-image text-muted" style="font-size: 2rem;" title="Sin foto"></i>
+                            @endif
+                        </td>
+                        <td>{{ $party->name }}</td>
+                        <td class="text-right">
+                            @can('edit maintenance')
+                                <a href="{{ route('parties.edit', $party) }}" class="btn btn-xs btn-primary" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            @endcan
+                            @can('delete maintenance')
+                                <form action="{{ route('parties.destroy', $party) }}" method="POST" class="d-inline" 
+                                    onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-xs btn-danger" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @endcan
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
 
-</x-adminlte-card>
+    </x-adminlte-card>
 @stop
 
 @push('css')
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    {{-- Estilos DataTables y Buttons --}}
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <style>
+        /* Estilos para botones export Excel y PDF */
+        #buttons-container .dt-button.buttons-excel {
+            background-color: #198754 !important; /* Verde Bootstrap */
+            color: #fff !important;
+            border: none !important;
+            padding: 5px 10px !important;
+            border-radius: 4px !important;
+            margin-right: 8px;
+        }
+
+        #buttons-container .dt-button.buttons-pdf {
+            background-color: #dc3545 !important; /* Rojo Bootstrap */
+            color: #fff !important;
+            border: none !important;
+            padding: 5px 10px !important;
+            border-radius: 4px !important;
+        }
+
+        #buttons-container .dt-button:hover {
+            opacity: 0.9 !important;
+        }
+    </style>
 @endpush
 
 @push('js')
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script>
-$(document).ready(function () {
-    $('#partiesTable').DataTable({
-        responsive: true,
-        pageLength: 10,
-        language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
-    });
-});
-</script>
+    {{-- Scripts DataTables y Buttons --}}
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const table = $('#partiesTable').DataTable({
+                responsive: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fas fa-file-excel mr-1"></i> Excel',
+                        className: 'btn btn-success btn-sm',
+                        exportOptions: {
+                            columns: [1]  // Exporta solo columna Nombre
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf mr-1"></i> PDF',
+                        className: 'btn btn-danger btn-sm',
+                        exportOptions: {
+                            columns: [1]  // Exporta solo columna Nombre
+                        },
+                        orientation: 'landscape',
+                        pageSize: 'A4'
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                }
+            });
+
+            // Mueve los botones al contenedor personalizado
+            table.buttons().container().appendTo('#buttons-container');
+        });
+    </script>
 @endpush

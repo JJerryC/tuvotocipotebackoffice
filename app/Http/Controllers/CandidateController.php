@@ -32,7 +32,7 @@ class CandidateController extends Controller
     {
         return view('candidates.create', [
             'entidades'     => Entidad::orderBy('name')->pluck('name', 'id'),
-            'parties'       => Party::orderBy('name')->pluck('name', 'id'),
+            'parties' => Party::orderBy('name')->get(['id', 'name', 'foto_partido']),
             'nominas'       => Nomina::orderBy('name')->pluck('name', 'id'),
             'departamentos' => Departamento::orderBy('name')->pluck('name', 'id'),
             'municipios'    => Municipio::orderBy('name')->pluck('name', 'id'),
@@ -112,7 +112,7 @@ class CandidateController extends Controller
         return view('candidates.edit', [
             'candidate'     => $candidate,
             'entidades'     => Entidad::orderBy('name')->pluck('name', 'id'),
-            'parties'       => Party::orderBy('name')->pluck('name', 'id'),
+            'parties' => Party::orderBy('name')->get(['id', 'name', 'foto_partido']),
             'nominas'       => Nomina::orderBy('name')->pluck('name', 'id'),
             'departamentos' => Departamento::orderBy('name')->pluck('name', 'id'),
             'municipios'    => Municipio::orderBy('name')->pluck('name', 'id'),

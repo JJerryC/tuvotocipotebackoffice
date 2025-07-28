@@ -62,8 +62,17 @@ public function candidatos(Request $r)
         $s = $r->search;
         $q->where(function ($w) use ($s) {
             $w->where('primer_nombre', 'like', "%$s%")
-              ->orWhere('primer_apellido', 'like', "%$s%")
-              ->orWhere('numero_identidad', 'like', "%$s%");
+            ->orWhere('primer_apellido', 'like', "%$s%")
+            ->orWhere('numero_identidad', 'like', "%$s%")
+            ->orWhereHas('departamento', function ($q) use ($s) {
+                $q->where('name', 'like', "%$s%");
+            })
+            ->orWhereHas('municipio', function ($q) use ($s) {
+                $q->where('name', 'like', "%$s%");
+            })
+            ->orWhereHas('party', function ($q) use ($s) {
+                $q->where('name', 'like', "%$s%");
+            });
         });
     }
 
