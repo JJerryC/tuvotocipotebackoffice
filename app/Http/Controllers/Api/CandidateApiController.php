@@ -506,6 +506,102 @@ public function entidadByNombre(string $nombre): JsonResponse
     }));
 }
 
+// Lista todas las planillas con relaciones
+public function planillas(): JsonResponse
+{
+    return response()->json(
+        Planilla::with(['cargo','departamento','municipio'])
+                ->get()
+    );
+}
+
+// Planilla completa por ID
+public function planilla(int $id): JsonResponse
+{
+    return response()->json(
+        Planilla::with(['cargo','departamento','municipio'])
+                ->findOrFail($id)
+    );
+}
+
+// Solo foto + URL pública de una planilla por ID
+public function planillaFoto(int $id): JsonResponse
+{
+    $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
+    $url = $p->foto && Storage::disk('public')->exists($p->foto)
+         ? Storage::url($p->foto)
+         : null;
+
+    return response()->json([
+        'id'     => $p->id,
+        'nombre' => $p->nombre,
+        'foto'   => $p->foto,
+        'url'    => $url,
+    ]);
+}
+
+// Datos generales (nombre + cargo) por ID
+public function planillaDatosGenerales(int $id): JsonResponse
+{
+    $p = Planilla::with('cargo')
+           ->select(['id','nombre','cargo_id'])
+           ->findOrFail($id);
+
+    return response()->json([
+        'id'     => $p->id,
+        'nombre' => $p->nombre,
+        'cargo'  => [
+            'id'   => $p->cargo->id,
+            'name' => $p->cargo->name,
+        ],
+    ]);
+}
+
+// Ubicación (departamento + municipio) por ID
+public function planillaUbicacion(int $id): JsonResponse
+{
+    $p = Planilla::with(['departamento','municipio'])
+           ->select(['id','departamento_id','municipio_id'])
+           ->findOrFail($id);
+
+    return response()->json([
+        'id'          => $p->id,
+        'departamento'=> $p->departamento
+                           ? ['id'=>$p->departamento->id,'name'=>$p->departamento->name]
+                           : null,
+        'municipio'   => $p->municipio
+                           ? ['id'=>$p->municipio->id,'name'=>$p->municipio->name]
+                           : null,
+    ]);
+}
+
+// Búsqueda LIKE por nombre: todas las planillas que contengan $texto
+public function planillasByNombre(string $texto): JsonResponse
+{
+    return response()->json(
+        Planilla::with(['cargo','departamento','municipio'])
+                ->where('nombre', 'like', "%{$texto}%")
+                ->orderBy('nombre')
+                ->get()
+    );
+}
+
+// Fotos + URLs de planillas buscadas por nombre
+public function planillasFotosByNombre(string $texto): JsonResponse
+{
+    $list = Planilla::select(['id','nombre','foto'])
+             ->where('nombre','like',"%{$texto}%")
+             ->orderBy('nombre')
+             ->get()
+             ->transform(function($p){
+                 $p->url = $p->foto && Storage::disk('public')->exists($p->foto)
+                     ? Storage::url($p->foto)
+                     : null;
+                 return $p;
+             });
+
+    return response()->json($list);
+}
 
 
 }
