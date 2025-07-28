@@ -303,6 +303,9 @@ return [
     |
     */
 
+'classes_submenu_nav' => 'nav nav-treeview',
+
+
 'menu' => [
 
     [
@@ -311,9 +314,9 @@ return [
     ],
 
     /* ---------- SIDEBAR ---------- */
-    ['header' => 'GESTIÓN DE DASHBOARD',
-     'can'    => 'view reports',
-    ],
+    //['header' => 'GESTIÓN DE DASHBOARD',
+    //'can'    => 'view reports',
+    //],
     
     [
     'text'  => 'Dashboard',
@@ -325,22 +328,26 @@ return [
             'text'  => 'Principal',
             'route' => 'home',
             'icon'  => 'fas fa-home',
+            'classes' => 'border-left pl-2 ml-4',
         ],
         [
             'text'  => 'Candidatos',
             'route' => 'dashboard.candidatos',
             'icon'  => 'fas fa-users',
+            'classes' => 'border-left pl-2 ml-4',
         ],
         [
             'text'  => 'Reportería',
             'route' => 'dashboard.reporteria',
             'icon'  => 'fas fa-chart-bar',
+            'classes' => 'border-left pl-2 ml-4',
         ],
+        
     ],
 ],
-    ['header' => 'GESTIÓN DE CANDIDATOS',
-     'can'    => 'manage candidates',
-    ],
+    //['header' => 'GESTIÓN DE CANDIDATOS',
+    // 'can'    => 'manage candidates',
+    //],
     [
         'text'  => 'Candidatos',
         'icon'  => 'fas fa-fw fa-users',
@@ -351,18 +358,21 @@ return [
                 'route' => 'candidates.index',
                 'icon'  => 'fas fa-fw fa-list',
                 'can'    => 'view candidates',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
                 'text'  => 'Crear Candidato',
                 'route' => 'candidates.create',
                 'icon'  => 'fas fa-fw fa-plus-circle',
                 'can'   => 'create candidates',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
                 'text'  => 'Importar Candidatos (Excel)',   // ← único ítem de importación
                 'route' => 'candidates.import',
                 'icon'  => 'fas fa-fw fa-file-excel',
                 'can'    => 'import candidates',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             //[
             //    'text'  => 'Exportar Datos',
@@ -372,9 +382,9 @@ return [
         ],
     ],
 
-    ['header' => 'GESTIÓN DE CATÁLOGOS',
-     'can'    => 'view maintenance',
-    ],
+    //['header' => 'GESTIÓN DE CATÁLOGOS',
+    //'can'    => 'view maintenance',
+    //],
     [
         'text'  => 'Catalogos',
         'icon'  => 'fas fa-folder-open',
@@ -384,35 +394,40 @@ return [
                 'text' => 'Partidos Políticos',
                 'url'  => 'parties',
                 'icon' => 'fas fa-fw fa-flag',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
-            'text' => 'Movimientos Politicos',
-            'url'  => 'entidades',
+                'text' => 'Movimientos Politicos',
+                'url'  => 'entidades',
                 'icon' => 'fas fa-university',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
                 'text' => 'Nominas',
                 'url'  => 'nominas',
                 'icon' => '	fas fa-clipboard-list',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
                 'text' => 'Cargos',
                 'url'  => 'cargos',
                 'icon' => 'fas fa-fw fa-briefcase',
+                'classes' => 'border-left pl-2 ml-4',
             ],
             [
-            'text' => 'Planillas',
-            'url'  => 'planillas',
-            'icon' => 'fas fa-id-card-alt',
-            'can'  => 'view maintenance',
+                'text' => 'Planillas',
+                'url'  => 'planillas',
+                'icon' => 'fas fa-id-card-alt',
+                'can'  => 'view maintenance',
+                'classes' => 'border-left pl-2 ml-4',
             ],
         ],
     ],
 
 
-    ['header' => 'CONFIGURACIÓN',
-     'can'    => 'view confidential candidates',
-    ],
+    //['header' => 'CONFIGURACIÓN',
+    // 'can'    => 'view confidential candidates',
+    //],
     [
         'text' => 'Usuarios',
         'route'=> 'users.index',
@@ -420,13 +435,13 @@ return [
         'role' => 'admin',
         'can'  => 'view users',
     ],
- [
-    'text' => 'Roles & Permisos',          
-    'route'=> 'roles.index',               
-    'icon' => 'fas fa-fw fa-user-shield',  
-    'role' => 'admin',  
-    'can'  => 'view roles',                 
-],
+    [
+        'text' => 'Roles & Permisos',          
+        'route'=> 'roles.index',               
+        'icon' => 'fas fa-fw fa-user-shield',  
+        'role' => 'admin',  
+        'can'  => 'view roles',                 
+    ],
 ],
 
 

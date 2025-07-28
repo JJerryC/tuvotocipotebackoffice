@@ -42,9 +42,26 @@ class RoleController extends Controller
         $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
             return explode(' ', $perm->name)[1] ?? 'otros';
         });
+        
+            // Permisos que quieres ocultar
+    $hidden = $this->hiddenPermissions ?? [];
+
+    // Filtrar los permisos ocultos en cada grupo
+    foreach ($permissions as $group => $perms) {
+        $permissions[$group] = $perms->reject(function ($perm) use ($hidden) {
+            return in_array($perm->name, $hidden);
+        })->values();
+    }
+
 
         return view('roles.create', compact('permissions'));
     }
+
+    protected $hiddenPermissions = [
+    'view confidential candidates',
+    'manage maintenance',
+    'manage roles',  // ejemplo: no quieres que aparezca este permiso
+    ];
 
     public function store(Request $request)
     {
@@ -68,6 +85,16 @@ class RoleController extends Controller
         $permissions = Permission::orderBy('name')->get()->groupBy(function ($perm) {
             return explode(' ', $perm->name)[1] ?? 'otros';
         });
+
+    // Permisos que quieres ocultar
+    $hidden = $this->hiddenPermissions ?? [];
+
+    // Filtrar los permisos ocultos en cada grupo
+    foreach ($permissions as $group => $perms) {
+        $permissions[$group] = $perms->reject(function ($perm) use ($hidden) {
+            return in_array($perm->name, $hidden);
+        })->values();
+    }
 
         $adminFixed = $role->name === 'admin' ? $this->adminFixedPermissions : [];
 
