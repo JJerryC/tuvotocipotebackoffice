@@ -55,10 +55,12 @@ Route::get('planillas/{id}/ubicacion',          [CandidateApiController::class,'
 Route::get('planillas/nombre/{texto}',          [CandidateApiController::class,'planillasByNombre']);
 Route::get('planillas/nombre/{texto}/fotos',    [CandidateApiController::class,'planillasFotosByNombre']);
 
+
+});
+
 Route::fallback(function(){
     return response()->json([
         'error'   => 'Not Found',
         'message' => 'Recurso no encontrado'
     ], 404);
-});
 });
