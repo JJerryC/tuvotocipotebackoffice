@@ -12,6 +12,7 @@ use App\Http\Controllers\CargoController;
 use App\Http\Controllers\NominaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanillaController;
+use App\Http\Controllers\Api\CandidateApiController;
 use App\Models\Municipio;
 
 // Redirige la ruta raíz al login
@@ -177,5 +178,51 @@ Route::middleware('auth')->group(function () {
         Route::delete('/planillas/{planilla}', [PlanillaController::class, 'destroy'])->name('planillas.destroy');
     });
 
+    Route::middleware('check-api-key')->prefix('candidates')->group(function() {
+    // CRUD básicos
+    Route::get('/',                           [CandidateApiController::class,'all']);
+    Route::get('/{id}',                       [CandidateApiController::class,'show']);
+    // Bloques específicos por ID
+    Route::get('/{id}/propuestas',            [CandidateApiController::class,'propuestas']);
+    Route::get('/{id}/fotografia',            [CandidateApiController::class,'fotografia']);
+    Route::get('/{id}/datos-generales',       [CandidateApiController::class,'datosGenerales']);
+    Route::get('/{id}/ubicacion',             [CandidateApiController::class,'ubicacion']);
+    Route::get('/{id}/sexo',                  [CandidateApiController::class,'sexo']);
+    Route::get('/{id}/cargo',                 [CandidateApiController::class,'cargo']);
+    Route::get('/{id}/partido',               [CandidateApiController::class,'partido']);
+    Route::get('/{id}/entidad',               [CandidateApiController::class,'entidad']);
+
+    // Por número de identidad
+    Route::get('/numero/{numero}',                    [CandidateApiController::class,'showByNumeroIdentidad']);
+    Route::get('/numero/{numero}/propuestas',         [CandidateApiController::class,'propuestasByNumeroIdentidad']);
+    Route::get('/numero/{numero}/fotografia',         [CandidateApiController::class,'fotografiaByNumeroIdentidad']);
+    Route::get('/numero/{numero}/datos-generales',    [CandidateApiController::class,'datosGeneralesByNumeroIdentidad']);
+    Route::get('/numero/{numero}/ubicacion',          [CandidateApiController::class,'ubicacionByNumeroIdentidad']);
+    Route::get('/numero/{numero}/sexo',               [CandidateApiController::class,'sexoByNumeroIdentidad']);
+    Route::get('/numero/{numero}/cargo',              [CandidateApiController::class,'cargoByNumeroIdentidad']);
+    Route::get('/numero/{numero}/partido',            [CandidateApiController::class,'partidoByNumeroIdentidad']);
+    Route::get('/numero/{numero}/entidad',            [CandidateApiController::class,'entidadByNumeroIdentidad']);
+
+    // Por nombre
+    Route::get('/nombre/{nombre}',                    [CandidateApiController::class,'showByNombre']);
+    Route::get('/nombre/{nombre}/propuestas',         [CandidateApiController::class,'propuestasByNombre']);
+    Route::get('/nombre/{nombre}/fotografia',         [CandidateApiController::class,'fotografiaByNombre']);
+    Route::get('/nombre/{nombre}/datos-generales',    [CandidateApiController::class,'datosGeneralesByNombre']);
+    Route::get('/nombre/{nombre}/ubicacion',          [CandidateApiController::class,'ubicacionByNombre']);
+    Route::get('/nombre/{nombre}/sexo',               [CandidateApiController::class,'sexoByNombre']);
+    Route::get('/nombre/{nombre}/cargo',              [CandidateApiController::class,'cargoByNombre']);
+    Route::get('/nombre/{nombre}/partido',            [CandidateApiController::class,'partidoByNombre']);
+    Route::get('/nombre/{nombre}/entidad',            [CandidateApiController::class,'entidadByNombre']);
+    });
+
+    Route::middleware('check-api-key')->prefix('planillas')->group(function() {
+    Route::get('/',                           [CandidateApiController::class,'planillas']);
+    Route::get('/{id}',                       [CandidateApiController::class,'planilla']);
+    Route::get('/{id}/foto',                  [CandidateApiController::class,'planillaFoto']);
+    Route::get('/{id}/datos-generales',       [CandidateApiController::class,'planillaDatosGenerales']);
+    Route::get('/{id}/ubicacion',             [CandidateApiController::class,'planillaUbicacion']);
+    Route::get('/nombre/{texto}',             [CandidateApiController::class,'planillasByNombre']);
+    Route::get('/nombre/{texto}/fotos',       [CandidateApiController::class,'planillasFotosByNombre']);
+});
     
 });
