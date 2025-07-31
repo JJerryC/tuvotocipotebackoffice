@@ -15,13 +15,21 @@ class Handler extends ExceptionHandler
 {
     public function render($request, Throwable $e)
     {
-        if ($request->is('api/*')) {
+        // Si la petición es API espera JSON
+        if ($request->is('api/*') || $request->expectsJson()) {
+
             if ($e instanceof AuthenticationException) {
-                return response()->json(['error'=>'Unauthorized','message'=>'No autenticado'], 401);
+                return response()->json([
+                    'error'   => 'Unauthorized',
+                    'message' => 'No autenticado'
+                ], 401);
             }
 
             if ($e instanceof AuthorizationException) {
-                return response()->json(['error'=>'Forbidden','message'=>'Sin permisos'], 403);
+                return response()->json([
+                    'error'   => 'Forbidden',
+                    'message' => 'Sin permisos'
+                ], 403);
             }
 
             if ($e instanceof ValidationException) {
@@ -33,18 +41,31 @@ class Handler extends ExceptionHandler
             }
 
             if ($e instanceof ModelNotFoundException) {
-                return response()->json(['error'=>'Not Found','message'=>'Recurso no encontrado'], 404);
+                return response()->json([
+                    'error'   => 'Not Found',
+                    'message' => 'Recurso no encontrado'
+                ], 404);
             }
 
             if ($e instanceof NotFoundHttpException) {
-                return response()->json(['error'=>'Not Found','message'=>'Endpoint no existe'], 404);
+                return response()->json([
+                    'error'   => 'Not Found',
+                    'message' => 'Endpoint no existe'
+                ], 404);
             }
 
             if ($e instanceof MethodNotAllowedHttpException) {
-                return response()->json(['error'=>'Method Not Allowed','message'=>'Método HTTP no permitido'], 405);
+                return response()->json([
+                    'error'   => 'Method Not Allowed',
+                    'message' => 'Método HTTP no permitido'
+                ], 405);
             }
 
-            return response()->json(['error'=>'Internal Server Error','message'=>$e->getMessage()], 500);
+            // Cualquier otro error
+            return response()->json([
+                'error'   => 'Internal Server Error',
+                'message' => $e->getMessage()
+            ], 500);
         }
 
         return parent::render($request, $e);
