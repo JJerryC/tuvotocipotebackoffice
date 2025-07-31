@@ -42,15 +42,9 @@ Route::prefix('dashboard')->name('dashboard.')
 
     // Rutas AJAX para selects dependientes (entidades por partido, municipios por departamento)
 Route::middleware('auth')->group(function () {
-    Route::get('/api/entidades/{party}', [CandidateController::class, 'getEntidadesByParty'])
-        ->name('api.entidades.byParty');
-
-    Route::get('/api/municipios/{departamento}', [CandidateController::class, 'getMunicipiosByDepartamento'])
-        ->name('api.municipios.byDepartamento');
-
-            // ✅ Nueva ruta para filtrar planillas
-    Route::get('/api/planillas/filtrar', [PlanillaController::class, 'filtrar'])
-        ->name('api.planillas.filtrar');
+    Route::get('/entidades/{party}', [CandidateController::class, 'getEntidadesByParty'])->name('entidades.byParty');
+    Route::get('/municipios/{departamento}', [CandidateController::class, 'getMunicipiosByDepartamento'])->name('municipios.byDepartamento');
+    Route::get('/planillas/filtrar', [PlanillaController::class, 'filtrar'])->name('planillas.filtrar');
 });
 
 

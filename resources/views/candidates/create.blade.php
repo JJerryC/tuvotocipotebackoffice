@@ -241,7 +241,7 @@ $(function() {
         if (!pid) {
             $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/api/entidades/' + pid, function(data) {
+            $.getJSON('/entidades/' + pid, function(data) {
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, e) {
                     opts += '<option value="' + e.id + '">' + e.name + '</option>';
@@ -259,7 +259,7 @@ $(function() {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
             filtrarPlanillas(); // refresca planillas sin municipio
         } else {
-            $.getJSON('/api/municipios/' + departamentoId, function(data) {
+            $.getJSON('/municipios/' + departamentoId, function(data) {
                 var options = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, municipio) {
                     options += '<option value="' + municipio.id + '">' + municipio.name + '</option>';
@@ -280,7 +280,7 @@ $(function() {
         var municipio_id = $('#municipio_id').val();
 
         $.ajax({
-            url: "{{ route('api.planillas.filtrar') }}",
+            url: "{{ route('planillas.filtrar') }}",
             data: {
                 cargo_id: cargo_id,
                 departamento_id: departamento_id,
