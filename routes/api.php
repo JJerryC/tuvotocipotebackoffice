@@ -61,5 +61,4 @@ Route::fallback(function(){
         'message' => 'Recurso no encontrado'
     ], 404);
 });
-
 });
