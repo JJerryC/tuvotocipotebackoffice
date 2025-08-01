@@ -132,7 +132,7 @@ document.getElementById('departamento_id').addEventListener('change', function (
     municipioSelect.innerHTML = '<option value="">-- seleccione un municipio --</option>';
 
     if (departamentoId) {
-        fetch(`/api/municipios/${departamentoId}`)
+        fetch(`/municipios/por-departamento/${departamentoId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.length > 0) {
