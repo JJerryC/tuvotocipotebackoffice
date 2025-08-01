@@ -19,6 +19,15 @@ class Planilla extends Model
         'municipio_id',
     ];
 
+
+    protected $appends = ['foto_url'];
+    protected $hidden = ['foto'];
+
+    public function getFotoUrlAttribute()
+    {
+        return $this->foto ? asset('storage/' . $this->foto) : asset('images/default-avatar.png');
+    }
+
     public function cargo()
     {
         return $this->belongsTo(Cargo::class);
