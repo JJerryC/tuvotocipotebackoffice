@@ -45,6 +45,10 @@ class Party extends Model
         return $this->candidates()->where('tipo_candidato', 'alcalde');
     }
 
+
+    protected $appends = ['foto_partido_url'];
+    protected $hidden = ['foto_partido'];
+
     // Accessor para obtener la URL de la foto del partido
     public function getFotoPartidoUrlAttribute()
     {
