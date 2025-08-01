@@ -21,7 +21,6 @@ class Planilla extends Model
 
 
     protected $appends = ['foto_url'];
-    protected $hidden = ['foto'];
 
     public function getFotoUrlAttribute()
     {
