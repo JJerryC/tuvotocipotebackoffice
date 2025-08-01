@@ -253,7 +253,7 @@ $(function(){
         if (!pid) {
             $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/entidades/' + pid, function(data){
+            $.getJSON('/entidades/por-partido/' + pid, function(data){
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, e){
                     opts += '<option value="'+e.id+'">'+e.name+'</option>';
@@ -274,7 +274,7 @@ $(function(){
         if (!departamento_id) {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/municipios/' + departamento_id, function(data){
+            $.getJSON('/municipios/por-departamento/' + departamento_id, function(data){
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, m){
                     opts += '<option value="'+m.id+'">'+m.name+'</option>';
@@ -395,7 +395,7 @@ $(function(){
     var party_id_actual = "{{ old('party_id', $candidate->party_id) }}";
     var entidad_id_actual = "{{ old('entidad_id', $candidate->entidad_id) }}";
     if(party_id_actual) {
-        $.getJSON('/entidades/' + party_id_actual, function(data){
+        $.getJSON('/entidades/por-partido/' + party_id_actual, function(data){
             var opts = '<option value="">Seleccione…</option>';
             $.each(data, function(_, e){
                 opts += '<option value="'+e.id+'">'+e.name+'</option>';
@@ -441,7 +441,7 @@ $('#party_id').on('change', function() {
     if (!pid) {
         $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
     } else {
-        $.getJSON('/entidades/' + pid, function(data){
+        $.getJSON('/entidades/por-partido/' + pid, function(data){
             var opts = '<option value="">Seleccione…</option>';
             $.each(data, function(_, e){
                 opts += '<option value="'+e.id+'">'+e.name+'</option>';

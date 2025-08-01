@@ -106,11 +106,6 @@
             <i class="fas fa-users-slash fa-4x mb-3"></i>
             <h3>No se encontraron candidatos</h3>
             <p>No hay candidatos que coincidan con los filtros aplicados.</p>
-            @can('create candidates')
-                <a href="{{ route('candidates.create') }}" class="btn btn-primary mt-3">
-                    <i class="fas fa-plus"></i> Agregar Primer Candidato
-                </a>
-            @endcan
         </div>
         @endforelse
     </div>

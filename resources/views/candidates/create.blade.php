@@ -241,7 +241,7 @@ $(function() {
         if (!pid) {
             $('#entidad_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
         } else {
-            $.getJSON('/entidades/' + pid, function(data) {
+            $.getJSON('/entidades/por-partido/' + pid, function(data) {
                 var opts = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, e) {
                     opts += '<option value="' + e.id + '">' + e.name + '</option>';
@@ -259,7 +259,7 @@ $(function() {
             $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
             filtrarPlanillas(); // refresca planillas sin municipio
         } else {
-            $.getJSON('/municipios/' + departamentoId, function(data) {
+            $.getJSON('/municipios/por-departamento/' + departamentoId, function(data) {
                 var options = '<option value="">Seleccione…</option>';
                 $.each(data, function(_, municipio) {
                     options += '<option value="' + municipio.id + '">' + municipio.name + '</option>';
