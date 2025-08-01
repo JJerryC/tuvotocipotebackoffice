@@ -72,13 +72,12 @@ public function render($request, Throwable $e)
     public function fotografia(int $id): JsonResponse
     {
         $c   = Candidate::select(['id','fotografia','fotografia_original'])->findOrFail($id);
-    $url = $c->foto ? asset('storage/' . $c->foto) : null;
 
         return response()->json([
             'id'                 => $c->id,
             'fotografia'         => $c->fotografia,
             'fotografia_original'=> $c->fotografia_original,
-            'url'                => $url,
+            'url'    => $c->foto ? asset('storage/' . $c->foto) : null,
         ]);
     }
 
@@ -209,13 +208,12 @@ public function render($request, Throwable $e)
         $c   = Candidate::select(['id','fotografia','fotografia_original'])
                 ->where('numero_identidad', $numero)
                 ->firstOrFail();
-    $url = $c->foto ? asset('storage/' . $c->foto) : null;
 
         return response()->json([
             'id'                 => $c->id,
             'fotografia'         => $c->fotografia,
             'fotografia_original'=> $c->fotografia_original,
-            'url'                => $url,
+            'url'    => $c->foto ? asset('storage/' . $c->foto) : null,
         ]);
     }
 
@@ -330,13 +328,12 @@ public function render($request, Throwable $e)
 public function foto(int $id): JsonResponse
 {
     $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-    $url = $p->foto ? asset('storage/' . $p->foto) : null;
 
     return response()->json([
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $url,
+        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
     ]);
 }
 
@@ -347,13 +344,11 @@ public function fotoByNombre(string $nombre): JsonResponse
         ->where('nombre', 'like', strtoupper($nombre))
         ->firstOrFail();
 
-    $url = $p->foto ? asset('storage/' . $p->foto) : null;
-
     return response()->json([
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $url,
+        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
     ]);
 }
 
@@ -388,7 +383,7 @@ public function fotografiaByNombre(string $nombre): JsonResponse
         ->get();
 
         $candidatos->transform(function($c) {
-            $c->url = $c->fotografia ? Storage::url($c->fotografia) : null;
+            $c->url = $c->fotografia ? asset('storage/' . $c->fotografia) : null;
             return $c;
         });
 
@@ -520,13 +515,12 @@ public function planilla(int $id): JsonResponse
 public function planillaFoto(int $id): JsonResponse
 {
     $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-    $url = $p->foto ? asset('storage/' . $p->foto) : null;
 
     return response()->json([
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $url,
+        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
     ]);
 }
 
@@ -583,8 +577,9 @@ public function planillasFotosByNombre(string $texto): JsonResponse
              ->where('nombre','like',"%{$texto}%")
              ->orderBy('nombre')
              ->get()
+             
             ->transform(function($p) {
-                $p->url = $p->foto ? Storage::url($p->foto) : null;
+                $p->url = $p->foto ? asset('storage/' . $p->foto) : null;
                 return $p;
             });
 
