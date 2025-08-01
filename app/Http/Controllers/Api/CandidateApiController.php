@@ -75,9 +75,8 @@ public function render($request, Throwable $e)
 
         return response()->json([
             'id'                 => $c->id,
-            'fotografia'         => $c->fotografia,
+            'fotografia'         => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
             'fotografia_original'=> $c->fotografia_original,
-            'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
         ]);
     }
 
