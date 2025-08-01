@@ -98,7 +98,11 @@ class Candidate extends Model
     /* NUEVOS ACCESSORS PARA EL DASHBOARD */
 
     // Accessor para obtener la URL de la fotografía
-    public function getFotografiaUrlAttribute()
+    protected $hidden = ['fotografia'];
+
+    protected $appends = ['url'];
+
+    public function getUrlAttribute()
     {
         return $this->fotografia ? asset('storage/' . $this->fotografia) : asset('images/default-avatar.png');
     }

@@ -348,7 +348,7 @@ public function fotoByNombre(string $nombre): JsonResponse
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
+        'url'                => $c->foto ? asset('storage/' . $c->foto) : null,
     ]);
 }
 
@@ -520,7 +520,7 @@ public function planillaFoto(int $id): JsonResponse
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'                => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
+        'url'                => $p->foto ? asset('storage/' . $p->foto) : null,
     ]);
 }
 
@@ -579,7 +579,7 @@ public function planillasFotosByNombre(string $texto): JsonResponse
              ->get()
              
             ->transform(function($p) {
-                $p->url = $p->fotografia ? asset('storage/' . $p->fotografia) : null;
+                $p->url = $p->foto ? asset('storage/' . $p->foto) : null;
                 return $p;
             });
 
