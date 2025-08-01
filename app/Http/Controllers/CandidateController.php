@@ -51,7 +51,7 @@ class CandidateController extends Controller
             'entidad_id'       => 'required_if:independiente,false|nullable|exists:entidades,id',
 
             'nomina_id'        => 'required|exists:nominas,id',
-            'departamento_id'  => 'required|exists:departamentos,id',
+            'departamento_id'  => 'nullable|exists:departamentos,id',
             'municipio_id'     => 'nullable|exists:municipios,id',
             'cargo_id'         => 'required|exists:cargos,id',
             'sexo_id'          => 'required|exists:sexos,id',
@@ -148,7 +148,7 @@ class CandidateController extends Controller
             'entidad_id'       => 'required_if:independiente,false|nullable|exists:entidades,id',
 
             'nomina_id'        => 'required|exists:nominas,id',
-            'departamento_id'  => 'required|exists:departamentos,id',
+            'departamento_id'  => 'nullable|exists:departamentos,id',
             'municipio_id'     => 'nullable|exists:municipios,id',
             'cargo_id'         => 'required|exists:cargos,id',
             'sexo_id'          => 'required|exists:sexos,id',

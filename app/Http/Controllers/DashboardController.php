@@ -86,7 +86,7 @@ public function candidatos(Request $r)
     ]);
 }
 
- public function reporteria()
+public function reporteria()
 {
     // Totales por tipo de candidato
     $candidatosPresidenciales = Candidate::whereIn('cargo_id', $this->cargosIds('Presidente'))->count();
@@ -94,11 +94,20 @@ public function candidatos(Request $r)
     $candidatosAlcaldes = Candidate::whereIn('cargo_id', $this->cargosIds('Alcalde'))->count();
     $totalCandidatos = $candidatosPresidenciales + $candidatosDiputados + $candidatosAlcaldes;
 
-    // Estadísticas por departamento y tipo para Top Departamentos
-$estadisticasPorDepartamento = Candidate::selectRaw('departamentos.name as departamento, tipo_candidato, COUNT(*) as total')
-    ->join('departamentos', 'candidates.departamento_id', '=', 'departamentos.id')
-    ->groupBy('departamentos.name', 'tipo_candidato')
-    ->get();
+    $estadisticasPorDepartamento = Candidate::selectRaw('departamentos.name as departamento, tipo_candidato, COUNT(*) as total')
+        ->join('departamentos', 'candidates.departamento_id', '=', 'departamentos.id')
+        ->groupBy('departamentos.name', 'tipo_candidato')
+        ->get();
+
+    if ($estadisticasPorDepartamento->isEmpty()) {
+        $estadisticasPorDepartamento = collect([
+            (object)[
+                'departamento' => 'N/A',
+                'tipo_candidato' => 'N/A',
+                'total' => 1
+            ]
+        ]);
+    }
 
     // Completitud de perfiles
     $completitud = Candidate::selectRaw("CASE 

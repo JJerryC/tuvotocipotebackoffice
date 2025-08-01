@@ -75,14 +75,24 @@
                         <span class="stat-card-title">Perfiles Completados</span>
                     </div>
 
-                    @foreach($estadisticas['completitud_perfiles'] as $estado)
+@php
+    $totalDepartamentos = $estadisticas['por_departamento']->sum('total');
+@endphp
+
+@foreach($estadisticas['por_partido']->take(5) as $partidoData)
+    @php
+        $partido = data_get($partidoData, 'partido');
+        $totalCandidatos = data_get($partidoData, 'estadisticas.total_candidatos', 0);
+        $width = ($totalDepartamentos > 0 && $totalCandidatos > 0) ? ($totalCandidatos / $totalDepartamentos) * 100 : 0;
+    @endphp
+
     <div class="progress-item mb-3">
         <div class="progress-header d-flex justify-content-between mb-1">
-            <span class="progress-label">{{ $estado['estado'] }}</span>
-            <span class="progress-value">{{ $estado['total'] }}</span>
+            <span class="progress-label">{{ $partido ? $partido->name : 'Partido no definido' }}</span>
+            <span class="progress-value">{{ $totalCandidatos }}</span>
         </div>
         <div class="progress" style="height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1);">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ ($estado['total'] / $estadisticas['por_departamento']->sum('total')) * 100 }}%"></div>
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $width }}%"></div>
         </div>
     </div>
 @endforeach
