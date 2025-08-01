@@ -77,7 +77,7 @@ public function render($request, Throwable $e)
             'id'                 => $c->id,
             'fotografia'         => $c->fotografia,
             'fotografia_original'=> $c->fotografia_original,
-            'url'    => $c->foto ? asset('storage/' . $c->foto) : null,
+            'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
         ]);
     }
 
@@ -213,7 +213,7 @@ public function render($request, Throwable $e)
             'id'                 => $c->id,
             'fotografia'         => $c->fotografia,
             'fotografia_original'=> $c->fotografia_original,
-            'url'    => $c->foto ? asset('storage/' . $c->foto) : null,
+            'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
         ]);
     }
 
@@ -333,7 +333,7 @@ public function foto(int $id): JsonResponse
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
+        'url'                => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
     ]);
 }
 
@@ -348,7 +348,7 @@ public function fotoByNombre(string $nombre): JsonResponse
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
+        'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
     ]);
 }
 
@@ -520,7 +520,7 @@ public function planillaFoto(int $id): JsonResponse
         'id'     => $p->id,
         'nombre' => $p->nombre,
         'foto'   => $p->foto,
-        'url'    => $p->foto ? asset('storage/' . $p->foto) : null,
+        'url'                => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
     ]);
 }
 
@@ -579,7 +579,7 @@ public function planillasFotosByNombre(string $texto): JsonResponse
              ->get()
              
             ->transform(function($p) {
-                $p->url = $p->foto ? asset('storage/' . $p->foto) : null;
+                $p->url = $p->fotografia ? asset('storage/' . $p->fotografia) : null;
                 return $p;
             });
 
