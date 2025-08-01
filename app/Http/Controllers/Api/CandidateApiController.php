@@ -332,9 +332,7 @@ public function render($request, Throwable $e)
 public function foto(int $id): JsonResponse
 {
     $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-    $url = $p->foto && Storage::disk('public')->exists($p->foto)
-        ? Storage::url($p->foto)
-        : null;
+    $url = $p->foto ? Storage::url($p->foto) : null;
 
     return response()->json([
         'id'     => $p->id,
@@ -351,9 +349,7 @@ public function fotoByNombre(string $nombre): JsonResponse
         ->where('nombre', 'like', strtoupper($nombre))
         ->firstOrFail();
 
-    $url = $p->foto && Storage::disk('public')->exists($p->foto)
-        ? Storage::url($p->foto)
-        : null;
+    $url = $p->foto ? Storage::url($p->foto) : null;
 
     return response()->json([
         'id'     => $p->id,
@@ -393,12 +389,10 @@ public function fotografiaByNombre(string $nombre): JsonResponse
         ->orWhere('primer_apellido','like',"%{$nombre}%")
         ->get();
 
-    $candidatos->transform(function($c) {
-        $c->url = $c->fotografia && Storage::disk('public')->exists($c->fotografia)
-            ? Storage::url($c->fotografia)
-            : null;
-        return $c;
-    });
+        $candidatos->transform(function($c) {
+            $c->url = $c->fotografia ? Storage::url($c->fotografia) : null;
+            return $c;
+        });
 
     return response()->json($candidatos);
 }
@@ -528,9 +522,7 @@ public function planilla(int $id): JsonResponse
 public function planillaFoto(int $id): JsonResponse
 {
     $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-    $url = $p->foto && Storage::disk('public')->exists($p->foto)
-         ? Storage::url($p->foto)
-         : null;
+    $url = $p->foto ? Storage::url($p->foto) : null;
 
     return response()->json([
         'id'     => $p->id,
@@ -593,12 +585,10 @@ public function planillasFotosByNombre(string $texto): JsonResponse
              ->where('nombre','like',"%{$texto}%")
              ->orderBy('nombre')
              ->get()
-             ->transform(function($p){
-                 $p->url = $p->foto && Storage::disk('public')->exists($p->foto)
-                     ? Storage::url($p->foto)
-                     : null;
-                 return $p;
-             });
+            ->transform(function($p) {
+                $p->url = $p->foto ? Storage::url($p->foto) : null;
+                return $p;
+            });
 
     return response()->json($list);
 }
