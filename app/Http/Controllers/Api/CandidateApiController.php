@@ -572,12 +572,7 @@ public function planillasFotosByNombre(string $texto): JsonResponse
     $list = Planilla::select(['id','nombre','foto'])
              ->where('nombre','like',"%{$texto}%")
              ->orderBy('nombre')
-             ->get()
-             
-            ->transform(function($p) {
-                $p->url = $p->foto ? asset('storage/' . $p->foto) : null;
-                return $p;
-            });
+             ->get();
 
     return response()->json($list);
 }
