@@ -52,6 +52,7 @@ Route::get('planillas/{id}',                    [CandidateApiController::class,'
 Route::get('planillas/{id}/foto',               [CandidateApiController::class,'planillaFoto']);
 Route::get('planillas/{id}/datos-generales',    [CandidateApiController::class,'planillaDatosGenerales']);
 Route::get('planillas/{id}/ubicacion',          [CandidateApiController::class,'planillaUbicacion']);
+Route::get('planillas/{id}/candidatos',         [CandidateApiController::class,'candidatosByPlanillaId']);
 Route::get('planillas/nombre/{texto}',          [CandidateApiController::class,'planillasByNombre']);
 Route::get('planillas/nombre/{texto}/fotos',    [CandidateApiController::class,'planillasFotosByNombre']);
 
