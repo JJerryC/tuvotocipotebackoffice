@@ -33,4 +33,35 @@ Route::middleware(['check-api-key', 'throttle:candidates-api'])->group(function 
     Route::get('identidad/{numero}/cargo',         [CandidateApiController::class, 'cargoByNumeroIdentidad']);
     Route::get('identidad/{numero}/partido',       [CandidateApiController::class, 'partidoByNumeroIdentidad']);
     Route::get('identidad/{numero}/entidad',       [CandidateApiController::class, 'entidadByNumeroIdentidad']);
+
+
+//Rutas “por nombre”
+Route::get('nombre/{nombre}',                   [CandidateApiController::class,'showByNombre']);
+Route::get('nombre/{nombre}/propuestas',        [CandidateApiController::class,'propuestasByNombre']);
+Route::get('nombre/{nombre}/fotografia',        [CandidateApiController::class,'fotografiaByNombre']);
+Route::get('nombre/{nombre}/datos-generales',   [CandidateApiController::class,'datosGeneralesByNombre']);
+Route::get('nombre/{nombre}/ubicacion',         [CandidateApiController::class,'ubicacionByNombre']);
+Route::get('nombre/{nombre}/sexo',              [CandidateApiController::class,'sexoByNombre']);
+Route::get('nombre/{nombre}/cargo',             [CandidateApiController::class,'cargoByNombre']);
+Route::get('nombre/{nombre}/partido',           [CandidateApiController::class,'partidoByNombre']);
+Route::get('nombre/{nombre}/entidad',           [CandidateApiController::class,'entidadByNombre']);
+
+//Rutas de Planillas
+Route::get('planillas',                         [CandidateApiController::class,'planillas']);
+Route::get('planillas/{id}',                    [CandidateApiController::class,'planilla']);
+Route::get('planillas/{id}/foto',               [CandidateApiController::class,'planillaFoto']);
+Route::get('planillas/{id}/datos-generales',    [CandidateApiController::class,'planillaDatosGenerales']);
+Route::get('planillas/{id}/ubicacion',          [CandidateApiController::class,'planillaUbicacion']);
+Route::get('planillas/{id}/candidatos',         [CandidateApiController::class,'candidatosByPlanillaId']);
+Route::get('planillas/nombre/{texto}',          [CandidateApiController::class,'planillasByNombre']);
+Route::get('planillas/nombre/{texto}/fotos',    [CandidateApiController::class,'planillasFotosByNombre']);
+
+
+});
+
+Route::fallback(function(){
+    return response()->json([
+        'error'   => 'Not Found',
+        'message' => 'Recurso no encontrado'
+    ], 404);
 });

@@ -210,9 +210,8 @@ public function render($request, Throwable $e)
 
         return response()->json([
             'id'                 => $c->id,
-            'fotografia'         => $c->fotografia,
+            'fotografia'         => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
             'fotografia_original'=> $c->fotografia_original,
-            'url'                => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
         ]);
     }
 
@@ -331,8 +330,7 @@ public function foto(int $id): JsonResponse
     return response()->json([
         'id'     => $p->id,
         'nombre' => $p->nombre,
-        'foto'   => $p->foto,
-        'url'                => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
+        'foto'   => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
     ]);
 }
 
@@ -346,8 +344,7 @@ public function fotoByNombre(string $nombre): JsonResponse
     return response()->json([
         'id'     => $p->id,
         'nombre' => $p->nombre,
-        'foto'   => $p->foto,
-        'url'                => $c->foto ? asset('storage/' . $c->foto) : null,
+        'foto'   => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
     ]);
 }
 
@@ -585,5 +582,16 @@ public function planillasFotosByNombre(string $texto): JsonResponse
     return response()->json($list);
 }
 
+public function candidatosByPlanillaId(int $id): JsonResponse
+{
+    $planilla = Planilla::with('candidates.entidad', 'candidates.party', 'candidates.cargo')
+        ->findOrFail($id);
+
+    return response()->json([
+        'planilla_id' => $planilla->id,
+        'nombre'      => $planilla->nombre,
+        'candidatos'  => $planilla->candidates,
+    ]);
+}
 
 }
