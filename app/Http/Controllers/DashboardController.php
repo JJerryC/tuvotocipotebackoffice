@@ -110,12 +110,19 @@ public function reporteria()
     }
 
     // Completitud de perfiles
-    $completitud = Candidate::selectRaw("CASE 
-            WHEN fotografia IS NULL OR fotografia = '' THEN 'Sin fotografía'
-            WHEN propuestas IS NULL OR propuestas = '' THEN 'Sin propuestas'
-            ELSE 'Perfil completo' END as estado, COUNT(*) as total")
-        ->groupBy('estado')
-        ->get();
+$completitudRaw = Candidate::selectRaw("CASE 
+        WHEN fotografia IS NULL OR fotografia = '' THEN 'incompleto'
+        WHEN propuestas IS NULL OR propuestas = '' THEN 'incompleto'
+        ELSE 'completo' END as estado, COUNT(*) as total")
+    ->groupBy('estado')
+    ->pluck('total', 'estado');
+
+$completitud = [
+    'completos' => $completitudRaw->get('completo', 0),
+    'incompletos' => $completitudRaw->get('incompleto', 0),
+];
+
+$estadisticas['completitud'] = $completitud;
 
     // Por partido
     $porPartido = Party::withCount(['candidates as estadisticas_total_candidatos' => function ($q) {
@@ -142,7 +149,7 @@ public function reporteria()
             'candidatos_alcaldes' => $candidatosAlcaldes,
             'total_candidatos' => $totalCandidatos,
             'por_departamento' => collect($estadisticasPorDepartamento),
-            'completitud_perfiles' => $completitud,
+            'completitud' => $completitud,
             'por_partido' => $porPartido,
         ],
         'evolucionRegistros' => $evolucionRegistros
