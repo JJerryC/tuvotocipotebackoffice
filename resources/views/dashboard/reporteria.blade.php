@@ -69,34 +69,40 @@
             <!-- Stats Container -->
             <div class="stats-container d-flex flex-column gap-4">
                 <!-- Completitud Stats -->
-                <div class="stat-card glass-card">
-                    <div class="stat-card-header d-flex align-items-center gap-2 mb-3">
-                        <i class="fas fa-tasks"></i>
-                        <span class="stat-card-title">Perfiles Completados</span>
-                    </div>
+<div class="stat-card glass-card">
+    <div class="stat-card-header d-flex align-items-center gap-2 mb-3">
+        <i class="fas fa-tasks"></i>
+        <span class="stat-card-title">Perfiles Completados</span>
+    </div>
 
-@php
-    $totalDepartamentos = $estadisticas['por_departamento']->sum('total');
-@endphp
-
-@foreach($estadisticas['por_partido']->take(5) as $partidoData)
     @php
-        $partido = data_get($partidoData, 'partido');
-        $totalCandidatos = data_get($partidoData, 'estadisticas.total_candidatos', 0);
-        $width = ($totalDepartamentos > 0 && $totalCandidatos > 0) ? ($totalCandidatos / $totalDepartamentos) * 100 : 0;
+        $completos = $estadisticas['completitud']['completos'] ?? 0;
+        $incompletos = $estadisticas['completitud']['incompletos'] ?? 0;
+        $total = $completos + $incompletos;
+        $porcentajeCompletos = $total > 0 ? ($completos / $total) * 100 : 0;
+        $porcentajeIncompletos = $total > 0 ? ($incompletos / $total) * 100 : 0;
     @endphp
 
     <div class="progress-item mb-3">
         <div class="progress-header d-flex justify-content-between mb-1">
-            <span class="progress-label">{{ $partido ? $partido->name : 'Partido no definido' }}</span>
-            <span class="progress-value">{{ $totalCandidatos }}</span>
+            <span class="progress-label">Perfiles Completos</span>
+            <span class="progress-value">{{ $completos }}</span>
         </div>
         <div class="progress" style="height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1);">
-            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $width }}%"></div>
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $porcentajeCompletos }}%"></div>
         </div>
     </div>
-@endforeach
-                </div>
+
+    <div class="progress-item mb-3">
+        <div class="progress-header d-flex justify-content-between mb-1">
+            <span class="progress-label">Perfiles Incompletos</span>
+            <span class="progress-value">{{ $incompletos }}</span>
+        </div>
+        <div class="progress" style="height: 8px; border-radius: 5px; background: rgba(0,0,0,0.1);">
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ $porcentajeIncompletos }}%"></div>
+        </div>
+    </div>
+</div>
 
                 <!-- Top Departments -->
                 <div class="stat-card glass-card">
@@ -391,7 +397,7 @@
 
     .department-count {
         background: var(--accent-blue);
-        color: black !important;
+        color: white !important;
         padding: 0.25rem 0.75rem;
         border-radius: 15px;
         font-size: 0.8rem;
