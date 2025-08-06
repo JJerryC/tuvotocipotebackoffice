@@ -500,12 +500,13 @@ new Chart(document.getElementById('generoChart'), {
             },
             tooltip: {
                 callbacks: {
-                    title: () => '',  // aquí se oculta el título
+                    title: () => '',
                     label: function(context) {
-                        const index = context.dataIndex;
-                        const genero = generoData[index].genero;
-                        const total = generoData[index].total;
-                        return `${genero}: ${total}`;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const value = context.raw;
+                        const porcentaje = ((value / total) * 100).toFixed(1);
+                        const genero = generoData[context.dataIndex].genero;
+                        return `${genero}: ${porcentaje}%`;
                     }
                 }
             }
@@ -526,7 +527,20 @@ new Chart(document.getElementById('completitudChart'), {
     },
     options: {
         responsive: true,
-        plugins: { legend: { display: false } },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const data = context.dataset.data;
+                        const total = data.reduce((a, b) => a + b, 0);
+                        const value = context.raw;
+                        const porcentaje = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                        return `${context.label}: ${porcentaje}%`;
+                    }
+                }
+            }
+        },
         scales: {
             y: { ticks: { color: '#1f2937' } },
             x: {
