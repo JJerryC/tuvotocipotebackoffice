@@ -272,7 +272,7 @@ $(function(){
     // Cargar municipios según departamento seleccionado
     function cargarMunicipios(departamento_id, selectedMunicipioId = null) {
         if (!departamento_id) {
-            $('#municipio_id').html('<option value="">Seleccione…</option>').prop('disabled', true);
+            $('#municipio_id').html('<option value="">Seleccione…</option>').val('').prop('disabled', true);
         } else {
             $.getJSON('/municipios/por-departamento/' + departamento_id, function(data){
                 var opts = '<option value="">Seleccione…</option>';
@@ -450,6 +450,21 @@ $('#party_id').on('change', function() {
         });
     }
 });
+
+// Forzar que municipio se envíe vacío si no hay departamento seleccionado
+$('#candidate-form').on('submit', function(){
+    if(!$('#departamento_id').val()){
+        $('#municipio_id').prop('disabled', false).val('');
+    }
+});
+
+// Forzar que movimiento se envíe vacío si no hay partido seleccionado
+$('#candidate-form').on('submit', function(){
+    if(!$('#party_id').val()){
+        $('#entidad_id').prop('disabled', false).val('');
+    }
+});
+
 
 });
 </script>
