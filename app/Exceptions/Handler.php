@@ -16,7 +16,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
         // Si la petición es API espera JSON
-        if ($request->is('api/*') || $request->expectsJson()) {
+        if ($request->is('api/*')) {
 
             if ($e instanceof AuthenticationException) {
                 return response()->json([
