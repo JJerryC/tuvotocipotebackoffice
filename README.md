@@ -1,61 +1,96 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tu Voto Cipote Back‑Office
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistema de gestión electoral construido con **Laravel 12** y **MySQL 8**. Permite a los operadores registrar y actualizar candidatos, planillas y catálogos; a su vez publica una **API REST** (v1.6) que terceros —por ejemplo un bot— pueden consumir para obtener los datos en formato JSON fácilmente deserializable.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🎯 Propósito
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Centralizar** la administración del padrón de candidatos y sus metadatos.
+2. **Abstraer** la base de datos tras una API bien documentada.
+3. **Facilitar** la integración de aplicaciones externas (chat‑bots, sitios, móviles) mediante peticiones HTTP estándar.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## ✨ Funcionalidades clave
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- CRUD completo de candidatos, planillas y catálogos (partidos, cargos, movimientos).
+- Importación masiva desde archivos Excel.
+- Panel de control con métricas en tiempo real.
+- Gestión de usuarios, roles y permisos (Spatie Permission).
+- API REST protegida por clave de acceso (en cabecera `X-API-KEY`).
+- Límite configurable de peticiones por minuto para evitar abuso.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🛠️ Stack
 
-## Laravel Sponsors
+| Capa         | Tecnología |
+|--------------|------------|
+| Backend      | Laravel 12 (PHP ≥ 8.3) |
+| Base de datos| MySQL 8 / MariaDB 10 |
+| Frontend     | Blade + TailwindCSS + Alpine.js |
+| Autenticación| Sesiones web + API‑Key |
+| Despliegue   | Docker (nginx + php‑fpm) o Laravel Cloud |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## ⚙️ Instalación local (desarrolladores)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# 1. Clonar repositorio
+$ git clone https://github.com/JJerryC/tuvotocipotebackoffice.git
+$ cd tuvotocipotebackoffice
 
-## Contributing
+# 2. Instalar dependencias
+$ composer install
+$ npm ci --audit false && npm run build
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 3. Configurar entorno
+$ cp .env.example .env
+$ php artisan key:generate
+# ➜ Edita .env y completa las credenciales de tu base MySQL y tu clave para la API
 
-## Code of Conduct
+# 4. Migrar y poblar datos de ejemplo
+$ php artisan migrate --seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 5. Iniciar servidor local
+$ php artisan serve
+```
 
-## Security Vulnerabilities
+> **Nota:** Las variables sensibles (contraseñas, claves de API, etc.) **no** se incluyen en este documento. Usa el archivo `.env` local para definirlas.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 📡 API REST – resumen rápido
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | /ping | Respuesta de salud (`pong`) |
+| GET | /candidates | Lista paginada de candidatos |
+| GET | /candidates/{id} | Detalle de un candidato |
+| GET | /identidad/{dni} | Búsqueda por número de identidad |
+| GET | /planillas | Lista de planillas |
+| GET | /planillas/{id}/foto | Foto pública de la planilla |
+
+Todas las peticiones deben incluir la cabecera:
+
+```http
+X-API-KEY: <tu-clave>
+```
+
+La documentación completa se encuentra en `docs/API.md`.
+
+---
+
+## 🤝 Contribuir
+
+1. Haz *fork* y crea una rama (`git checkout -b feature/NuevaFeature`).
+2. Realiza *commit* siguiendo [Conventional Commits](https://www.conventionalcommits.org/).
+3. Ejecuta PHPStan, Pint y las pruebas unitarias antes de abrir un PR.
+
+---
+
+## 📜 Licencia
+
+Distribuido bajo la licencia **MIT**.
