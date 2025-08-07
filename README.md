@@ -79,7 +79,7 @@ Todas las peticiones deben incluir la cabecera:
 X-API-KEY: <tu-clave>
 ```
 
-La documentación completa se encuentra en `docs/API.md`.
+Documentacion completa consultar doc: ApiCandidatos.
 
 ---
 
@@ -91,6 +91,3 @@ La documentación completa se encuentra en `docs/API.md`.
 
 ---
 
-## 📜 Licencia
-
-Distribuido bajo la licencia **MIT**.
