@@ -1,6 +1,6 @@
 # Tu Voto Cipote Back‑Office
 
-Sistema de gestión electoral construido con **Laravel 12** y **MySQL 8**. Permite a los operadores registrar y actualizar candidatos, planillas y catálogos; a su vez publica una **API REST** (v1.6) que terceros —por ejemplo un bot— pueden consumir para obtener los datos en formato JSON fácilmente deserializable.
+Sistema de gestión de informacion publica electoral construido con **Laravel 12** y **MySQL 8**. Permite a los operadores registrar y actualizar candidatos, planillas y catálogos; a su vez publica una **API REST** (v1.6) que terceros —por ejemplo un bot— pueden consumir para obtener los datos en formato JSON fácilmente deserializable.
 
 ---
 
