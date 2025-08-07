@@ -51,18 +51,27 @@
             <hr>
 
             <div class="row">
-                {{-- Roles --}}
-                <div class="form-group col-md-6">
-                    <label>Roles</label>
-                    @foreach($roles as $id => $name)
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox"
-                                   name="roles[]" value="{{ $id }}" id="r{{ $id }}">
-                            <label class="form-check-label" for="r{{ $id }}">{{ $name }}</label>
-                        </div>
-                    @endforeach
-                </div>
-            </div> {{-- /.row --}}
+{{-- Roles --}}
+<div class="form-group col-md-6">
+    <label>Roles</label>
+
+    {{-- Checkbox maestro --}}
+    <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="checkAllRoles">
+        <label class="form-check-label font-weight-bold" for="checkAllRoles">
+            Marcar / Desmarcar todos los roles
+        </label>
+    </div>
+
+    {{-- Checkboxes individuales --}}
+    @foreach($roles as $id => $name)
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+                   name="roles[]" value="{{ $id }}" id="r{{ $id }}">
+            <label class="form-check-label" for="r{{ $id }}">{{ $name }}</label>
+        </div>
+    @endforeach
+</div>
         </div>
 
         <div class="card-footer d-flex justify-content-between">
@@ -75,4 +84,15 @@
         </div>
     </div>
 </form>
+@stop
+
+@section('js')
+<script>
+    document.getElementById('checkAllRoles').addEventListener('change', function () {
+        const isChecked = this.checked;
+        document.querySelectorAll('input[name="roles[]"]:not(:disabled)').forEach(cb => {
+            cb.checked = isChecked;
+        });
+    });
+</script>
 @stop
