@@ -10,248 +10,340 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use App\Helpers\ApiResponseHelper;
 
 class CandidateApiController extends Controller
 {
+    use ApiResponseHelper;
+
     public function __construct()
     {
         $this->middleware('check-api-key');
     }
 
-    /* ─────────────────────────  BLOQUES COMPLETOS  ───────────────────────── */
+    public function render($request, Throwable $e)
+    {
+        if ($request->is('api/*')) {
+            if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
+                return response()->json([
+                    'error'   => 'Not Found',
+                    'message' => 'Recurso no encontrado',
+                ], 404);
+            }
 
-public function render($request, Throwable $e)
-{
-    // Si es una petición API (route prefix /api)
-    if ($request->is('api/*')) {
-        if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException) {
             return response()->json([
-                'error'   => 'Not Found',
-                'message' => 'Recurso no encontrado',
-            ], 404);
+                'error'   => 'Internal Error',
+                'message' => $e->getMessage(),
+            ], 500);
         }
 
-        return response()->json([
-            'error'   => 'Internal Error',
-            'message' => $e->getMessage(),
-        ], 500);
+        return parent::render($request, $e);
     }
 
-    return parent::render($request, $e);
-}
     public function all(): JsonResponse
     {
         return response()->json(
             Candidate::with([
-                'entidad','party','nomina',
-                'departamento','municipio',
-                'cargo','sexo'
+                'entidad', 'party', 'nomina',
+                'departamento', 'municipio',
+                'cargo', 'sexo'
             ])->get()
         );
     }
 
+    // MÉTODOS CON findOrFail cambiados a findOrJson404
+
     public function show(int $id): JsonResponse
     {
-        return response()->json(
-            Candidate::with([
-                'entidad','party','nomina',
-                'departamento','municipio',
-                'cargo','sexo'
-            ])->findOrFail($id)
-        );
+        $candidate = $this->findOrJson404(Candidate::class, $id, [
+            'entidad', 'party', 'nomina',
+            'departamento', 'municipio',
+            'cargo', 'sexo'
+        ]);
+        if ($candidate instanceof \Illuminate\Http\JsonResponse) return $candidate;
+        return response()->json($candidate);
     }
-
-    /* ─────────────────────────  BLOQUES ESPECÍFICOS  ─────────────────────── */
 
     public function propuestas(int $id): JsonResponse
     {
-        $c = Candidate::select(['id','propuestas'])->findOrFail($id);
+        $c = $this->findOrJson404(Candidate::class, $id, [], ['id', 'propuestas']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json($c);
     }
 
     public function fotografia(int $id): JsonResponse
     {
-        $c   = Candidate::select(['id','fotografia','fotografia_original'])->findOrFail($id);
-
+        $c = $this->findOrJson404(Candidate::class, $id, [], ['id', 'fotografia', 'fotografia_original']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'                 => $c->id,
-            'fotografia'         => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
-            'fotografia_original'=> $c->fotografia_original,
+            'id' => $c->id,
+            'fotografia' => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
+            'fotografia_original' => $c->fotografia_original,
         ]);
     }
 
-    /* 🚩 NUEVOS ENDPOINTS */
-
-/* ── Datos generales rápidos (nombre, identidad, posición, reelección) ── */
     public function datosGenerales(int $id): JsonResponse
     {
-        $c = Candidate::with(['sexo'])
-              ->select([
-                  'id','numero_identidad','primer_nombre','segundo_nombre',
-                  'primer_apellido','segundo_apellido','posicion',
-                  'sexo_id','reeleccion','independiente'
-              ])->findOrFail($id);
-
+        $c = $this->findOrJson404(Candidate::class, $id, ['sexo'], [
+            'id', 'numero_identidad', 'primer_nombre', 'segundo_nombre',
+            'primer_apellido', 'segundo_apellido', 'posicion',
+            'sexo_id', 'reeleccion', 'independiente'
+        ]);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'               => $c->id,
-            'nombre_completo'  => $c->nombre_completo,
+            'id' => $c->id,
+            'nombre_completo' => $c->nombre_completo,
             'numero_identidad' => $c->numero_identidad,
-            'posicion'         => $c->posicion,
-            'sexo'             => $c->sexo->description,
-            'reeleccion'       => $c->reeleccion,
-            'independiente'    => $c->independiente,
+            'posicion' => $c->posicion,
+            'sexo' => $c->sexo->description,
+            'reeleccion' => $c->reeleccion,
+            'independiente' => $c->independiente,
         ]);
     }
 
-/* ── Ubicación (departamento + municipio) ── */
     public function ubicacion(int $id): JsonResponse
     {
-        $c = Candidate::with(['departamento','municipio'])
-              ->select(['id','departamento_id','municipio_id'])
-              ->findOrFail($id);
-
+        $c = $this->findOrJson404(Candidate::class, $id, ['departamento', 'municipio'], ['id', 'departamento_id', 'municipio_id']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'          => $c->id,
-            'departamento'=> [
-                'id'   => $c->departamento->id,
+            'id' => $c->id,
+            'departamento' => [
+                'id' => $c->departamento->id,
                 'name' => $c->departamento->name,
             ],
-            'municipio'   => [
-                'id'   => $c->municipio->id,
+            'municipio' => [
+                'id' => $c->municipio->id,
                 'name' => $c->municipio->name,
             ],
         ]);
     }
 
-/* ── Sexo ── */
     public function sexo(int $id): JsonResponse
     {
-        $c = Candidate::with('sexo')->select(['id','sexo_id'])->findOrFail($id);
+        $c = $this->findOrJson404(Candidate::class, $id, ['sexo'], ['id', 'sexo_id']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'   => $c->id,
+            'id' => $c->id,
             'sexo' => [
-                'id'         => $c->sexo->id,
-                'descripcion'=> $c->sexo->description,
+                'id' => $c->sexo->id,
+                'descripcion' => $c->sexo->description,
             ],
         ]);
     }
 
-/* ── Cargo ── */
     public function cargo(int $id): JsonResponse
     {
-        $c = Candidate::with('cargo')->select(['id','cargo_id'])->findOrFail($id);
+        $c = $this->findOrJson404(Candidate::class, $id, ['cargo'], ['id', 'cargo_id']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'    => $c->id,
+            'id' => $c->id,
             'cargo' => [
-                'id'   => $c->cargo->id,
+                'id' => $c->cargo->id,
                 'name' => $c->cargo->name,
             ],
         ]);
     }
 
-/* ── Partido (o indicador de independiente) ── */
     public function partido(int $id): JsonResponse
     {
-        $c = Candidate::with('party')
-              ->select(['id','party_id','independiente'])
-              ->findOrFail($id);
-
+        $c = $this->findOrJson404(Candidate::class, $id, ['party'], ['id', 'party_id', 'independiente']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'            => $c->id,
+            'id' => $c->id,
             'independiente' => $c->independiente,
-            'partido'       => $c->party ? [
-                'id'   => $c->party->id,
+            'partido' => $c->party ? [
+                'id' => $c->party->id,
                 'name' => $c->party->name,
             ] : null,
         ]);
     }
 
-/* ── Entidad ── */
     public function entidad(int $id): JsonResponse
     {
-        $c = Candidate::with('entidad')->select(['id','entidad_id'])->findOrFail($id);
+        $c = $this->findOrJson404(Candidate::class, $id, ['entidad'], ['id', 'entidad_id']);
+        if ($c instanceof \Illuminate\Http\JsonResponse) return $c;
         return response()->json([
-            'id'      => $c->id,
+            'id' => $c->id,
             'entidad' => $c->entidad ? [
-                'id'   => $c->entidad->id,
+                'id' => $c->entidad->id,
                 'name' => $c->entidad->name,
             ] : null,
         ]);
     }
 
-        /* ──────────────────── BLOQUES ESPECÍFICOS POR NÚMERO_IDENTIDAD ─────────────────── */
+    public function foto(int $id): JsonResponse
+    {
+        $p = $this->findOrJson404(Planilla::class, $id, [], ['id', 'nombre', 'foto']);
+        if ($p instanceof \Illuminate\Http\JsonResponse) return $p;
+        return response()->json([
+            'id' => $p->id,
+            'nombre' => $p->nombre,
+            'foto' => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
+        ]);
+    }
+
+    public function planilla(int $id): JsonResponse
+    {
+        $planilla = $this->findOrJson404(Planilla::class, $id, ['cargo', 'departamento', 'municipio']);
+        if ($planilla instanceof \Illuminate\Http\JsonResponse) return $planilla;
+        return response()->json($planilla);
+    }
+
+    public function planillaFoto(int $id): JsonResponse
+    {
+        $p = $this->findOrJson404(Planilla::class, $id, [], ['id', 'nombre', 'foto']);
+        if ($p instanceof \Illuminate\Http\JsonResponse) return $p;
+        return response()->json([
+            'id' => $p->id,
+            'nombre' => $p->nombre,
+            'foto' => $p->foto,
+            'url' => $p->foto ? asset('storage/' . $p->foto) : null,
+        ]);
+    }
+
+    public function planillaDatosGenerales(int $id): JsonResponse
+    {
+        $p = $this->findOrJson404(Planilla::class, $id, ['cargo'], ['id', 'nombre', 'cargo_id']);
+        if ($p instanceof \Illuminate\Http\JsonResponse) return $p;
+        return response()->json([
+            'id' => $p->id,
+            'nombre' => $p->nombre,
+            'cargo' => [
+                'id' => $p->cargo->id,
+                'name' => $p->cargo->name,
+            ],
+        ]);
+    }
+
+    public function planillaUbicacion(int $id): JsonResponse
+    {
+        $p = $this->findOrJson404(Planilla::class, $id, ['departamento', 'municipio'], ['id', 'departamento_id', 'municipio_id']);
+        if ($p instanceof \Illuminate\Http\JsonResponse) return $p;
+        return response()->json([
+            'id' => $p->id,
+            'departamento' => $p->departamento ? ['id' => $p->departamento->id, 'name' => $p->departamento->name] : null,
+            'municipio' => $p->municipio ? ['id' => $p->municipio->id, 'name' => $p->municipio->name] : null,
+        ]);
+    }
+
+    public function candidatosByPlanillaId(int $id): JsonResponse
+    {
+        $planilla = $this->findOrJson404(Planilla::class, $id, ['candidates.entidad', 'candidates.party', 'candidates.cargo']);
+        if ($planilla instanceof \Illuminate\Http\JsonResponse) return $planilla;
+        return response()->json([
+            'planilla_id' => $planilla->id,
+            'nombre' => $planilla->nombre,
+            'candidatos' => $planilla->candidates,
+        ]);
+    }
+
+    // MÉTODOS CON firstOrFail cambiados a first() + 404 JSON
 
     public function showByNumeroIdentidad(string $numero): JsonResponse
     {
-        return response()->json(
-            Candidate::with([
-                'entidad','party','nomina',
-                'departamento','municipio',
-                'cargo','sexo'
-            ])
-            ->where('numero_identidad', $numero)
-            ->firstOrFail()
-        );
+        $candidate = Candidate::with([
+            'entidad', 'party', 'nomina',
+            'departamento', 'municipio',
+            'cargo', 'sexo'
+        ])->where('numero_identidad', $numero)->first();
+
+        if (!$candidate) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
+
+        return response()->json($candidate);
     }
 
     public function propuestasByNumeroIdentidad(string $numero): JsonResponse
     {
-        $c = Candidate::select(['id','propuestas'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+        $c = Candidate::select(['id', 'propuestas'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
+
         return response()->json($c);
     }
 
     public function fotografiaByNumeroIdentidad(string $numero): JsonResponse
     {
-        $c   = Candidate::select(['id','fotografia','fotografia_original'])
-                ->where('numero_identidad', $numero)
-                ->firstOrFail();
+        $c = Candidate::select(['id', 'fotografia', 'fotografia_original'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'                 => $c->id,
-            'fotografia'         => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
-            'fotografia_original'=> $c->fotografia_original,
+            'id' => $c->id,
+            'fotografia' => $c->fotografia ? asset('storage/' . $c->fotografia) : null,
+            'fotografia_original' => $c->fotografia_original,
         ]);
     }
 
     public function datosGeneralesByNumeroIdentidad(string $numero): JsonResponse
     {
         $c = Candidate::with('sexo')
-              ->select([
-                  'id','numero_identidad','primer_nombre','segundo_nombre',
-                  'primer_apellido','segundo_apellido','posicion',
-                  'sexo_id','reeleccion','independiente'
-              ])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+            ->select([
+                'id', 'numero_identidad', 'primer_nombre', 'segundo_nombre',
+                'primer_apellido', 'segundo_apellido', 'posicion',
+                'sexo_id', 'reeleccion', 'independiente'
+            ])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'               => $c->id,
-            'nombre_completo'  => $c->nombre_completo,
+            'id' => $c->id,
+            'nombre_completo' => $c->nombre_completo,
             'numero_identidad' => $c->numero_identidad,
-            'posicion'         => $c->posicion,
-            'sexo'             => $c->sexo->description,
-            'reeleccion'       => $c->reeleccion,
-            'independiente'    => $c->independiente,
+            'posicion' => $c->posicion,
+            'sexo' => $c->sexo->description,
+            'reeleccion' => $c->reeleccion,
+            'independiente' => $c->independiente,
         ]);
     }
 
     public function ubicacionByNumeroIdentidad(string $numero): JsonResponse
     {
-        $c = Candidate::with(['departamento','municipio'])
-              ->select(['id','departamento_id','municipio_id'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+        $c = Candidate::with(['departamento', 'municipio'])
+            ->select(['id', 'departamento_id', 'municipio_id'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'          => $c->id,
-            'departamento'=> [
-                'id'   => $c->departamento->id,
+            'id' => $c->id,
+            'departamento' => [
+                'id' => $c->departamento->id,
                 'name' => $c->departamento->name,
             ],
-            'municipio'   => [
-                'id'   => $c->municipio->id,
+            'municipio' => [
+                'id' => $c->municipio->id,
                 'name' => $c->municipio->name,
             ],
         ]);
@@ -260,15 +352,22 @@ public function render($request, Throwable $e)
     public function sexoByNumeroIdentidad(string $numero): JsonResponse
     {
         $c = Candidate::with('sexo')
-              ->select(['id','sexo_id'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+            ->select(['id', 'sexo_id'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'   => $c->id,
+            'id' => $c->id,
             'sexo' => [
-                'id'         => $c->sexo->id,
-                'descripcion'=> $c->sexo->description,
+                'id' => $c->sexo->id,
+                'descripcion' => $c->sexo->description,
             ],
         ]);
     }
@@ -276,14 +375,21 @@ public function render($request, Throwable $e)
     public function cargoByNumeroIdentidad(string $numero): JsonResponse
     {
         $c = Candidate::with('cargo')
-              ->select(['id','cargo_id'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+            ->select(['id', 'cargo_id'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'    => $c->id,
+            'id' => $c->id,
             'cargo' => [
-                'id'   => $c->cargo->id,
+                'id' => $c->cargo->id,
                 'name' => $c->cargo->name,
             ],
         ]);
@@ -292,15 +398,22 @@ public function render($request, Throwable $e)
     public function partidoByNumeroIdentidad(string $numero): JsonResponse
     {
         $c = Candidate::with('party')
-              ->select(['id','party_id','independiente'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+            ->select(['id', 'party_id', 'independiente'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'            => $c->id,
+            'id' => $c->id,
             'independiente' => $c->independiente,
-            'partido'       => $c->party ? [
-                'id'   => $c->party->id,
+            'partido' => $c->party ? [
+                'id' => $c->party->id,
                 'name' => $c->party->name,
             ] : null,
         ]);
@@ -309,44 +422,25 @@ public function render($request, Throwable $e)
     public function entidadByNumeroIdentidad(string $numero): JsonResponse
     {
         $c = Candidate::with('entidad')
-              ->select(['id','entidad_id'])
-              ->where('numero_identidad', $numero)
-              ->firstOrFail();
+            ->select(['id', 'entidad_id'])
+            ->where('numero_identidad', $numero)
+            ->first();
+
+        if (!$c) {
+            return response()->json([
+                'error' => 'Not Found',
+                'message' => 'Recurso no encontrado',
+            ], 404);
+        }
 
         return response()->json([
-            'id'      => $c->id,
+            'id' => $c->id,
             'entidad' => $c->entidad ? [
-                'id'   => $c->entidad->id,
+                'id' => $c->entidad->id,
                 'name' => $c->entidad->name,
             ] : null,
         ]);
     }
-
-    /* ── FOTO POR ID ── */
-public function foto(int $id): JsonResponse
-{
-    $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-
-    return response()->json([
-        'id'     => $p->id,
-        'nombre' => $p->nombre,
-        'foto'   => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
-    ]);
-}
-
-/* ── FOTO POR NOMBRE DE PLANILLA ── */
-public function fotoByNombre(string $nombre): JsonResponse
-{
-    $p = Planilla::select(['id','nombre','foto'])
-        ->where('nombre', 'like', strtoupper($nombre))
-        ->firstOrFail();
-
-    return response()->json([
-        'id'     => $p->id,
-        'nombre' => $p->nombre,
-        'foto'   => $p->fotografia ? asset('storage/' . $p->fotografia) : null,
-    ]);
-}
 
 /* ──────────────────── BLOQUES ESPECÍFICOS POR NOMBRE (LIKE) ─────────────────── */
 
@@ -498,63 +592,6 @@ public function planillas(): JsonResponse
     );
 }
 
-// Planilla completa por ID
-public function planilla(int $id): JsonResponse
-{
-    return response()->json(
-        Planilla::with(['cargo','departamento','municipio'])
-                ->findOrFail($id)
-    );
-}
-
-// Solo foto + URL pública de una planilla por ID
-public function planillaFoto(int $id): JsonResponse
-{
-    $p = Planilla::select(['id','nombre','foto'])->findOrFail($id);
-
-    return response()->json([
-        'id'     => $p->id,
-        'nombre' => $p->nombre,
-        'foto'   => $p->foto,
-        'url'                => $p->foto ? asset('storage/' . $p->foto) : null,
-    ]);
-}
-
-// Datos generales (nombre + cargo) por ID
-public function planillaDatosGenerales(int $id): JsonResponse
-{
-    $p = Planilla::with('cargo')
-           ->select(['id','nombre','cargo_id'])
-           ->findOrFail($id);
-
-    return response()->json([
-        'id'     => $p->id,
-        'nombre' => $p->nombre,
-        'cargo'  => [
-            'id'   => $p->cargo->id,
-            'name' => $p->cargo->name,
-        ],
-    ]);
-}
-
-// Ubicación (departamento + municipio) por ID
-public function planillaUbicacion(int $id): JsonResponse
-{
-    $p = Planilla::with(['departamento','municipio'])
-           ->select(['id','departamento_id','municipio_id'])
-           ->findOrFail($id);
-
-    return response()->json([
-        'id'          => $p->id,
-        'departamento'=> $p->departamento
-                           ? ['id'=>$p->departamento->id,'name'=>$p->departamento->name]
-                           : null,
-        'municipio'   => $p->municipio
-                           ? ['id'=>$p->municipio->id,'name'=>$p->municipio->name]
-                           : null,
-    ]);
-}
-
 // Búsqueda LIKE por nombre: todas las planillas que contengan $texto
 public function planillasByNombre(string $texto): JsonResponse
 {
@@ -575,18 +612,6 @@ public function planillasFotosByNombre(string $texto): JsonResponse
              ->get();
 
     return response()->json($list);
-}
-
-public function candidatosByPlanillaId(int $id): JsonResponse
-{
-    $planilla = Planilla::with('candidates.entidad', 'candidates.party', 'candidates.cargo')
-        ->findOrFail($id);
-
-    return response()->json([
-        'planilla_id' => $planilla->id,
-        'nombre'      => $planilla->nombre,
-        'candidatos'  => $planilla->candidates,
-    ]);
 }
 
 }

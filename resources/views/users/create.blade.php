@@ -62,20 +62,6 @@
                         </div>
                     @endforeach
                 </div>
-
-                {{-- Permisos --}}
-                <div class="form-group col-md-6">
-                    <label>Permisos individuales</label>
-                    <div class="border p-2" style="max-height:220px;overflow:auto;">
-                        @foreach($permissions as $id => $name)
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox"
-                                       name="permissions[]" value="{{ $id }}" id="p{{ $id }}">
-                                <label class="form-check-label" for="p{{ $id }}">{{ $name }}</label>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
             </div> {{-- /.row --}}
         </div>
 
